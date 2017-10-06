@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>D.C. Map</title>
+		<link rel="stylesheet" href="styles/styles.css" />
+		<link rel="stylesheet" href="styles/slider_styles.css" />
+		<link rel="stylesheet" href="scripts/leaflet/leaflet.css" />
+		<meta name="description" 
+			content="A GIS of historical black power events in Washington D.C. 
+			based on original research by staff and students of the University of Maryland, Baltimore County." />
+		<meta name="author" 
+			content="Kevin Rapa" />
+		<!-- ADD AUTHORS OF THE DESCRIPTIONS AND IMAGES -->
+		<meta name="pragma" 
+			content="no-cache" />
+		<script type="text/javascript" src="scripts/jquery-3.2.1.slim.min.js"></script>
+		<script type="text/javascript" src="scripts/leaflet/leaflet.js"></script>
+	</head>
+	<body background="images/ralph_featherstone.jpg">
+		<div id="intro_screen">
+			<div id="intro_box" class="black_box">
+				<h2>Thank you for coming</h2>
+				<hr />
+					Hello, welcome to this map. This is currently a work in progress. Click the button
+					below to board the knowledge train.
+				<hr />
+				<button id="to_map">TO MAP</button>
+			</div>
+		</div>
+		<div class="purple_box">
+			<div id="all_content">
+				<div id="title_box">Black History in Washington D.C.<hr /></div>
+				<table id="featured_content">
+					<td id="content_left" class="content_pane">
+						<div id="map_content">
+							<div id="map_box" class="black_box">
+								<div id="map"></div>
+								<div id="slider_box" class="black_box">
+									<span>
+										<input id="slider" class="black_box" type="range" min="1966" max="1995" value="1966" />
+									</span>
+									<span>
+										<select id="year_select">
+											<option value="0">All</option>
+											<option value="1">Jan</option>
+											<option value="2">Feb</option>
+											<option value="3">Mar</option>
+											<option value="4">Apr</option>
+											<option value="5">May</option>
+											<option value="6">Jun</option>
+											<option value="7">Jul</option>
+											<option value="8">Aug</option>
+											<option value="9">Sep</option>
+											<option value="10">Oct</option>
+											<option value="11">Nov</option>
+											<option value="12">Dec</option>
+										</select>
+									</span>
+									<span id="year">1966</span>
+								</div>
+							</div>
+							<div id="legend">
+								<table id="icon_set">
+									<td id="icon1" class="icon_panel">
+										<img src="images/icons/fist3.png" class="icon_img" />
+										<span class="icon_text">Political</span>
+									</td>
+									<td id="icon2" class="icon_panel">
+										<img src="images/icons/brush1.png" class="icon_img" />
+										<span class="icon_text">Artistic</span>
+									</td>
+									<td id="icon3" class="icon_panel">
+										<img src="images/icons/dollar1.png" class="icon_img" />
+										<span class="icon_text">Business</span>
+									</td>
+									<td id="icon4" class="icon_panel">
+										<img src="images/icons/school1.png" class="icon_img" />
+										<span class="icon_text">Educational</span>
+									</td>
+									<td id="icon5" class="icon_panel">
+										<img src="images/icons/globe3.png" class="icon_img" />
+										<span class="icon_text">International</span>
+									</td>
+								</table>
+							</div>
+						</div>
+						<div id="desc_container" class="white_box">
+							<div id="desc_content" class="black_box">
+								<div id="desc_title">Free D.C.</div>
+								<div id="desc_body">
+									Seeking to break Board of Trade opposition to D.C. self-determination, the Student Nonviolent Coordinating Committee and the Coalition of Concience (a coalition of religious and civil rights organizations) canvassed D.C. small businesses (principally in black commercial districts) asking them to support home rule, and threating to boycott those that refused.  Those businesses that added their name to the Free DC petition recieved orange and black "Free DC - Right to Vote" posters.  Marion Barry, who lead the campaign, also asked a small number of businesses to contribute to Free D.C. in February 1966, a tactic that lead to charges of bribery from opponents and discomfort among supporters like the Coalition of Concience and the NAACP.
+								</div>
+							</div>
+						</div>
+					</td>
+					<td id="content_right" class="content_pane">
+						<div id="image_container" class="white_box">
+							<div id="image_content" class="black_box">
+								<div id="large_img">
+									<img id="hist_img" src="images/historical/historical_sample.jpg" />
+								</div>
+								<div id="small_img">
+									<iframe src="https://www.google.com/maps/embed?pb=!1m0!4v1507140473269!6m8!1m7!1sLX0sI9V0SNq6oUIleQvOcw!2m2!1d39.30401321264321!2d-76.60174522014584!3f85.37998749637356!4f-10.782062233572162!5f0.7820865974627469" width="200" height="250" frameborder="0" style="border:0" allowfullscreen></iframe>
+								</div>
+							</div>
+						</div>
+					</td>
+				</table>
+			</div>
+		</div>
+		<div id="footer_box" class="purple_box">
+		</div>
+		<script src="scripts/script.js"></script>
+	</body>
+</html>
+
+<!-- 
+Sources:
+
+Brush icons:
+https://d30y9cdsu7xlg0.cloudfront.net/png/1137-200.png
+http://www.freeiconspng.com/img/9020
+
+Fist icons:
+https://pixabay.com/p-1294353/?no_redirect
+
+School images:
+http://www.freeiconspng.com/img/14052
+https://d30y9cdsu7xlg0.cloudfront.net/png/20228-200.png
+
+Dollar images:
+https://www.alt-codes.net/images/dollar-sign.png
+http://cliparting.com/wp-content/uploads/2017/01/Dollar-sign-dollar-symbol-clipart-kid.png
+
+Globe images:
+http://images.clipartpanda.com/globe-clipart-black-and-white-RcGnEjGcL.png
+https://www.roadrunnerwm.com/wp-content/uploads/2015/02/rr-globe-icon-transparent1.png
+https://www.shareicon.net/tag/globe?cat=mixed
+
+Slider helper:
+http://danielstern.ca/range.css/#/
+
+-->
