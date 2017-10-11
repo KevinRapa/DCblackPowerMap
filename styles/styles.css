@@ -61,7 +61,6 @@ body {
 }
 
 .white_box {
-	height: 605px;
 	box-shadow: 5px 5px 5px #151515;
 	-moz-box-shadow: 5px 5px 5px #151515;
 	-webkit-box-shadow: 5px 5px 5px #151515;
@@ -79,6 +78,11 @@ body {
 	width: 50%;
 	padding-left: 10px;
 	padding-right: 10px;
+}
+
+#mobile_holder {
+	width: 570px;
+	color: white;
 }
 
 #map_box {
@@ -149,13 +153,17 @@ body {
 }
 
 .icon {
-	height: 55px;
+	height: 63px;
+	position: relative;
+	top: 3px;
 	float: left;
 }
 
 .icon_text {
-	margin-left: 5px;
-	margin-top: 2px;
+	position: relative;
+	left: 5px;
+	top: 7px;
+	font-size: 18px;
 	float: left;
 }
 

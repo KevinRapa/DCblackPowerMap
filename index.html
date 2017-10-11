@@ -33,61 +33,63 @@
 					Black History in Washington D.C.
 				</div>
 				<table id="featured_content"> <!-- All main content. Divides page in half. -->
-					<td class="content_pane"> <!-- Left half. Contains all map elements. -->
-						<div class="white_box">
-							<div id="map_box" class="black_box">
-								<div id="map">
-								</div> <!-- The Leaflet map -->
-								<div id="slider_box" class="black_box">
-									<span>
-										<input id="slider" class="black_box" type="range" min="1966" max="1995" value="1966" />
-									</span>
-									<span>
-										<select id="month_select" class="black_box">
-											<option value="0">All</option>
-											<option value="1">Jan</option>
-											<option value="2">Feb</option>
-											<option value="3">Mar</option>
-											<option value="4">Apr</option>
-											<option value="5">May</option>
-											<option value="6">Jun</option>
-											<option value="7">Jul</option>
-											<option value="8">Aug</option>
-											<option value="9">Sep</option>
-											<option value="10">Oct</option>
-											<option value="11">Nov</option>
-											<option value="12">Dec</option>
-										</select>
-									</span>
-									<span id="year">1966</span>
+					<td class="content_pane" id="left_half"> <!-- Left half. Contains all map elements. -->
+						<div id="mobile_holder">
+							<div class="white_box">
+								<div id="map_box" class="black_box">
+									<div id="map">
+									</div> <!-- The Leaflet map -->
+									<div id="slider_box" class="black_box">
+										<span>
+											<input id="slider" class="black_box" type="range" min="1966" max="1995" value="1966" />
+										</span>
+										<span>
+											<select id="month_select" class="black_box">
+												<option value="0">All</option>
+												<option value="1">Jan</option>
+												<option value="2">Feb</option>
+												<option value="3">Mar</option>
+												<option value="4">Apr</option>
+												<option value="5">May</option>
+												<option value="6">Jun</option>
+												<option value="7">Jul</option>
+												<option value="8">Aug</option>
+												<option value="9">Sep</option>
+												<option value="10">Oct</option>
+												<option value="11">Nov</option>
+												<option value="12">Dec</option>
+											</select>
+										</span>
+										<span id="year">1966</span>
+									</div>
 								</div>
 							</div>
-							<table id="legend" class="black_box">
+							<table id="legend">
 								<td class="icon_panel">
-									<img src="images/icons/fist_neg.png" class="icon" />
+									<img src="images/icons/fist2.png" class="icon" />
 									<span class="icon_text">Political</span>
 								</td>
 								<td class="icon_panel">
-									<img src="images/icons/brush_neg.png" class="icon" />
+									<img src="images/icons/brush2.png" class="icon" />
 									<span class="icon_text">Artistic</span>
 								</td>
 								<td class="icon_panel">
-									<img src="images/icons/dollar_neg.png" class="icon" />
+									<img src="images/icons/dollar1.png" class="icon" />
 									<span class="icon_text">Business</span>
 								</td>
 								<td class="icon_panel">
-									<img src="images/icons/school_neg.png" class="icon" />
+									<img src="images/icons/school1.png" class="icon" />
 									<span class="icon_text">Educational</span>
 								</td>
 								<td class="icon_panel">
-									<img src="images/icons/globe_neg.png" class="icon" />
+									<img src="images/icons/globe3.png" class="icon" />
 									<span class="icon_text">International</span>
 								</td>
 							</table>
 						</div>
 					</td> <!-- END OF LEFT HALF -->
-					<td class="content_pane"> <!-- Right half. Contains all event details. -->
-						<div class="white_box">
+					<td class="content_pane" id="right_half"> <!-- Right half. Contains all event details. -->
+						<div class="white_box" id="right_box">
 							<div id="desc_container" class="black_box">
 								<div id="desc_title">Free D.C.</div>
 								<hr />
