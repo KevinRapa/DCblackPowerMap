@@ -11,14 +11,12 @@ var resize_fun = function(e) {
 		window.state = 'mobile';
 		var right = $("#right_box");
 		$("#right_box").detach();
-		$("#legend").after(right);
-		$("#right_box").css("margin-top", "10px");
+		$("#legend").after(right).css("margin-bottom", "5px");
 		var holder = $("#mobile_holder");
 		$("#mobile_holder").detach();
 		$("#title_box").after(holder).text("D.C. Black History");
-		$("#mobile_holder").css("margin", "auto auto");
 		$(".purple_box").each(function() {
-			$(this).css("width", "700px");
+			$(this).css("width", "650px");
 		});
 	}
 	else if ($(this).width() >= 1200 && window.state === 'mobile') {
@@ -26,7 +24,7 @@ var resize_fun = function(e) {
 		$(".purple_box").each(function() {
 			$(this).css("width", "1200px");
 		});
-		$("#mobile_holder").removeProp("margin");
+		$("#legend").css("margin-bottom", "");
 		$("#title_box").text("Black History in Washington D.C.");
 		var holder = $("#mobile_holder");
 		$("#mobile_holder").detach();
@@ -34,6 +32,7 @@ var resize_fun = function(e) {
 		var right = $("#right_box");
 		$("#right_box").detach();
 		$("#right_half").html(right);
+
 	}
 }
 
