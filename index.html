@@ -35,7 +35,10 @@
 						<div id="mobile_holder"> <!-- Holds all main content when window is thin-->
 							<div class="white_box">
 								<div id="map_box" class="black_box">
-									<div id="map"></div> <!-- The Leaflet map -->
+									<div id="map">
+										<!-- The Leaflet map, which alternates space with the street view image 
+										when the street view button is pressed. -->
+									</div> 
 									<div id="slider_box" class="black_box">
 										<input id="slider" class="black_box" type="range" min="1966" max="1995" value="1966" />
 										<select id="month_select" class="black_box">
@@ -55,6 +58,9 @@
 										</select>
 										<span id="year">1966</span>
 									</div>
+									<div id="street_view"> <!-- Hidden when page loads -->
+										<iframe src="https://www.google.com/maps/embed?pb=!1m0!4v1507840148158!6m8!1m7!1sTTtaaOb12rP5ltcb35fy7g!2m2!1d39.25553661017232!2d-76.70945447663095!3f316!4f0!5f0.7820865974627469" width="550" height="500" frameborder="0" style="border:0" allowfullscreen></iframe>
+									</div>
 								</div>
 							</div>
 							<table id="legend">
@@ -67,7 +73,7 @@
 									<span class="icon_text">Artistic</span>
 								</td>
 								<td class="icon_panel">
-									<img src="images/icons/dollar1.png" class="icon" />
+									<img src="images/icons/dollar2.png" class="icon" />
 									<span class="icon_text">Business</span>
 								</td>
 								<td class="icon_panel">

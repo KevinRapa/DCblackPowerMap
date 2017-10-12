@@ -1,5 +1,6 @@
 var myMap = L.map('map', {doubleClickZoom: false}).setView([40.741895, -73.989308], 16);
 window.mobile = false; // If page is in compact mode.
+$("#street_view").hide(); // Street view is visible when the street_view_button is pressed.
 
 // Create Leaflet map and add it to the page.
 var simple = L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
@@ -22,6 +23,7 @@ var resize_fun = function() {
 		$("#legend").after(right).css("margin-bottom", "10px");
 		var holder = $("#mobile_holder").detach();
 		$("#title_box").after(holder).text("D.C. Black History");
+		$("#button_and_address").css("bottom", "365px");
 
 		$(".purple_box").each(function() {
 			$(this).css("width", "650px");
@@ -39,19 +41,48 @@ var resize_fun = function() {
 		$("#left_pane").html(holder);
 		var right = $("#right_box").detach();
 		$("#right_pane").html(right);
+		$("#button_and_address").css("bottom", "48px");
 	}
 };
+
+/*
+ * Removes each marker from the map, then populates the map with all events
+ * that fall in [year] and [month]. If month == 'all', then month is irrelevant.
+ * In the future, may add functionality to filter by event type too, using icons
+ * in the legend as buttons.
+ */
+var event_query = function(year, month) {
+	
+}
 
 resize_fun(); // If looking at webpage on a phone, rearranges elements.
 $(window).resize(resize_fun);
 
+// Removes the intro screen.
 $("#to_map").on("click", function() {
 	$("#intro_screen").remove();
 	$("body").css("overflow", "visible");
 });
 
+// Toggles between the map and the street view image.
+$("#street_view_button").on("click", function() {
+	if ($(this).text() === "See modern day") {
+		$(this).text("Back to map");
+		$("#slider_box").hide();
+		$("#map").hide();
+		$("#street_view").show();
+	}
+	else {
+		$(this).text("See modern day");
+		$("#street_view").hide();
+		$("#map").show();
+		$("#slider_box").show();
+	}
+});
+
+// Changes year, then calls event_query to update markers.
 $("#slider").on("input", function() {
-	var curYear = document.getElementById('slider').value;
-	$('#year').html(curYear);
+	var year = $(this).val();
+	$('#year').html(year);
 });
 

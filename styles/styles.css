@@ -247,15 +247,16 @@ body {
 
 #street_view_button {
 	height: 36px;
+	width: 170px;
 	margin-left: 5px;
 	padding: 0px 10px;
+	background-color: rgba(200,200,200,.70);
 	box-shadow: 5px 5px 5px #151515;
 	-moz-box-shadow: 5px 5px 5px #151515;
 	-webkit-box-shadow: 5px 5px 5px #151515;
 	border: none;
 	border-radius: 0px 20px;
-	opacity: 0.80;
-	transition: .2s;	
+	transition: .1s;	
 	color: rgb(100,79,142);
 	font-family: sans-serif;
 	font-size: inherit;
@@ -267,8 +268,7 @@ body {
 
 #street_view_button:hover {
 	color: rgb(255, 240, 232);
-	background-color: rgb(46,46,46);
-	opacity: 1.0;
+	background-color: rgba(46,46,46, 0.95);
 }
 
 #street_view_button:focus {
