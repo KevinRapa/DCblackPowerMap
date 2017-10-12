@@ -196,7 +196,7 @@ body {
 	overflow-y: auto;
 }
 
-#image_content {
+#image_container {
 	height: 370px;
 	padding: 5px;
 }

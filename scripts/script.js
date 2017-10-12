@@ -39,7 +39,6 @@ var resize_fun = function() {
 		$("#left_pane").html(holder);
 		var right = $("#right_box").detach();
 		$("#right_pane").html(right);
-
 	}
 };
 
