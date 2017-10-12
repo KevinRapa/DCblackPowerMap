@@ -26,16 +26,40 @@ body {
 }
 
 #to_map {
-	height: 50px;
-	width: 120px;
+	padding: 10px 27px;
+	background-color: #707070;
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #707070), color-stop(1, #1a1a1a));
+	background: -moz-linear-gradient(top, #707070 5%, #1a1a1a 100%);
+	background: -webkit-linear-gradient(top, #707070 5%, #1a1a1a 100%);
+	background: -o-linear-gradient(top, #707070 5%, #1a1a1a 100%);
+	background: -ms-linear-gradient(top, #707070 5%, #1a1a1a 100%);
+	background: linear-gradient(to bottom, #707070 5%, #1a1a1a 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#707070', endColorstr='#1a1a1a',GradientType=0);
 	border: none;
-	letter-spacing: 1px;
-	font-style: italic;
-	font-size: 20px;
 	color: white;
-	background-color: rgb(56,56,56); 
+	font-family: Impact, Arial black, sans-serif;
+	font-size: 24px;
+	letter-spacing: 3px;
+	cursor: pointer;
 }
 
+#to_map:hover {
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #1a1a1a), color-stop(1, #707070));
+	background: -moz-linear-gradient(top, #1a1a1a 5%, #707070 100%);
+	background: -webkit-linear-gradient(top, #1a1a1a 5%, #707070 100%);
+	background: -o-linear-gradient(top, #1a1a1a 5%, #707070 100%);
+	background: -ms-linear-gradient(top, #1a1a1a 5%, #707070 100%);
+	background: linear-gradient(to bottom, #1a1a1a 5%, #707070 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1a1a1a', endColorstr='#707070',GradientType=0);
+	background-color: #1a1a1a;
+}
+
+#to_map:active {
+	position: relative;
+	top: 1px;
+	outline: none;
+}
+	
 .purple_box {
 	width: 1200px;
 	margin: auto auto;
@@ -129,6 +153,8 @@ body {
 	font-size: 16px;
 	font-style: italic;
 	letter-spacing: 1px;
+	transition: .2s;
+	cursor: pointer;
 }
 
 #month_select:hover {
@@ -202,41 +228,73 @@ body {
 }
 
 #large_img {
-	height: 90%;
+	height: 100%;
 	width: 100%;
+	z-index: 1;
 	overflow: hidden;
 }
 
 #hist_img {
 	width: 100%;
+	
 }
 
 #button_and_address {
-	height: 10%;
-	padding-top: 6px;
+	position: relative;
+	z-index: 2;
+	bottom: 48px;
 }
 
 #street_view_button {
-	height: 30px;
-	font-weight: bold;
-	font-style: italic;
-	opacity: 0.5;
-	transition: .3s;
+	height: 36px;
+	margin-left: 5px;
+	padding: 0px 10px;
+	box-shadow: 5px 5px 5px #151515;
+	-moz-box-shadow: 5px 5px 5px #151515;
+	-webkit-box-shadow: 5px 5px 5px #151515;
 	border: none;
-	display: inline;
-	background-color: light gray;
+	border-radius: 0px 20px;
+	opacity: 0.80;
+	transition: .2s;	
+	color: rgb(100,79,142);
+	font-family: sans-serif;
+	font-size: inherit;
+	font-style: oblique;
+	font-weight: bold;
+	letter-spacing: 1px;
+	cursor: pointer;
 }
 
 #street_view_button:hover {
+	color: rgb(255, 240, 232);
+	background-color: rgb(46,46,46);
 	opacity: 1.0;
+}
+
+#street_view_button:focus {
+	outline: none;
+}
+
+#street_view_button:active {
+	position: relative;
+	top: 1px;
+	left: 1px;
 }
 
 #address {
 	float: right;
-	margin-right: 10px;
+	padding: 5px;
+	margin-right: 5px;
+	background-color: rgba(200,200,200,.60);
+	border-radius: 20px 0px;
+	box-shadow: 5px 5px 5px #151515;
+	-moz-box-shadow: 5px 5px 5px #151515;
+	-webkit-box-shadow: 5px 5px 5px #151515;
+	color: black;
 	font-size: 22px;
 	letter-spacing: 2px;
 	font-style: italic;
+	font-weight: bold;
 }
 
 #footer_box {
