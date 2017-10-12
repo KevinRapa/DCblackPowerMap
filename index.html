@@ -5,13 +5,12 @@
 		<link rel="stylesheet" href="styles/styles.css" />
 		<link rel="stylesheet" href="styles/slider_styles.css" />
 		<link rel="stylesheet" href="scripts/leaflet/leaflet.css" />
-		<meta name="description" 
-			content="A GIS of historical black power events in Washington D.C. 
+		<meta name="description" content="A GIS of historical black power events in Washington D.C. 
 			based on original research by staff and students of the University of Maryland, Baltimore County." />
 		<meta name="author" content="Kevin Rapa" />
 		<!-- ADD AUTHORS OF THE DESCRIPTIONS AND IMAGES -->
 		<meta name="pragma" content="no-cache" /> <!-- Don't want this page to cache. Lot of data to hold? -->
-		<meta name="viewport" content="width=670, initial-scale=1.0">
+		<meta name="viewport" content="width=670, initial-scale=0.75">
 		<script type="text/javascript" src="scripts/jquery-3.2.1.slim.min.js"></script>
 		<script type="text/javascript" src="scripts/leaflet/leaflet.js"></script>
 	</head>
@@ -23,7 +22,7 @@
 					Hello, welcome to this map. This is currently a work in progress. Click the button
 					below to board the knowledge train.
 				<hr />
-				<button id="to_map">TO MAP</button>
+				<button id="to_map">TO THE MAP</button>
 			</div>
 		</div> <!-- END OF INTRO SCREEN -->
 		<div class="purple_box">
@@ -39,26 +38,22 @@
 									<div id="map">
 									</div> <!-- The Leaflet map -->
 									<div id="slider_box" class="black_box">
-										<span>
-											<input id="slider" class="black_box" type="range" min="1966" max="1995" value="1966" />
-										</span>
-										<span>
-											<select id="month_select" class="black_box">
-												<option value="0">All</option>
-												<option value="1">Jan</option>
-												<option value="2">Feb</option>
-												<option value="3">Mar</option>
-												<option value="4">Apr</option>
-												<option value="5">May</option>
-												<option value="6">Jun</option>
-												<option value="7">Jul</option>
-												<option value="8">Aug</option>
-												<option value="9">Sep</option>
-												<option value="10">Oct</option>
-												<option value="11">Nov</option>
-												<option value="12">Dec</option>
-											</select>
-										</span>
+										<input id="slider" class="black_box" type="range" min="1966" max="1995" value="1966" />
+										<select id="month_select" class="black_box">
+											<option value="0">All</option>
+											<option value="1">Jan</option>
+											<option value="2">Feb</option>
+											<option value="3">Mar</option>
+											<option value="4">Apr</option>
+											<option value="5">May</option>
+											<option value="6">Jun</option>
+											<option value="7">Jul</option>
+											<option value="8">Aug</option>
+											<option value="9">Sep</option>
+											<option value="10">Oct</option>
+											<option value="11">Nov</option>
+											<option value="12">Dec</option>
+										</select>
 										<span id="year">1966</span>
 									</div>
 								</div>
