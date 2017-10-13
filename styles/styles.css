@@ -2,6 +2,7 @@ body {
 	background-attachment: fixed;
 	font-family: Times, serif;
 	overflow: hidden;
+	cursor: default;
 }
 
 #intro_screen {
@@ -225,30 +226,23 @@ body {
 #image_container {
 	height: 370px;
 	padding: 5px;
-}
-
-#large_img {
-	height: 100%;
-	width: 100%;
 	z-index: 1;
 	overflow: hidden;
 }
 
 #hist_img {
 	width: 100%;
-	
 }
 
 #button_and_address {
 	position: relative;
 	z-index: 2;
-	bottom: 48px;
+	bottom: 30px;
 }
 
 #street_view_button {
 	height: 36px;
 	width: 170px;
-	margin-left: 5px;
 	padding: 0px 10px;
 	background-color: rgba(200,200,200,.70);
 	box-shadow: 5px 5px 5px #151515;
@@ -282,16 +276,19 @@ body {
 }
 
 #address {
+	height: 42px;
+	width: 300px;
+	padding: 5px 10px;
+	position: relative;
+	bottom: 16px;
 	float: right;
-	padding: 5px;
-	margin-right: 5px;
 	background-color: rgba(200,200,200,.60);
 	border-radius: 20px 0px;
 	box-shadow: 5px 5px 5px #151515;
 	-moz-box-shadow: 5px 5px 5px #151515;
 	-webkit-box-shadow: 5px 5px 5px #151515;
 	color: black;
-	font-size: 22px;
+	font-size: 18px;
 	letter-spacing: 2px;
 	font-style: italic;
 	font-weight: bold;

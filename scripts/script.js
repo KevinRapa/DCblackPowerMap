@@ -23,7 +23,8 @@ var resize_fun = function() {
 		$("#legend").after(right).css("margin-bottom", "10px");
 		var holder = $("#mobile_holder").detach();
 		$("#title_box").after(holder).text("D.C. Black History");
-		$("#button_and_address").css("bottom", "365px");
+		$("#button_and_address").css("bottom", "371px");
+		$("#address").css("bottom", "0px");
 
 		$(".purple_box").each(function() {
 			$(this).css("width", "650px");
@@ -41,7 +42,8 @@ var resize_fun = function() {
 		$("#left_pane").html(holder);
 		var right = $("#right_box").detach();
 		$("#right_pane").html(right);
-		$("#button_and_address").css("bottom", "48px");
+		$("#button_and_address").css("bottom", "30px");
+		$("#address").css("bottom", "16px");
 	}
 };
 
