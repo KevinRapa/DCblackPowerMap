@@ -34,17 +34,21 @@ for (i = 0; i < YEAR_RANGE + 1; i++) {
  * Rearranges page elements when the window gets thinner.
  * Basically moves the right half of the table into the left half,
  * then moves THAT element above the table so that it centers on
- * the page.
+ * the page. Also swaps the slider to mobile version.
  */
 var resizeFun = function() {
-	window.mobile = !window.mobile; // Switch mode.
-
-	if ($(this).width() < 1200 && window.mobile) {
+	if ($(this).width() < 1200 && !window.mobile) {
 		// Tranforms into compact mode.
+		window.mobile = !window.mobile; // Switch mode.
+		var year = $("#year").text();
 		var right = $("#right_box").detach();
 		$("#legend").after(right).css("margin-bottom", "10px");
 		var holder = $("#mobile_holder").detach();
 		$("#title_box").after(holder).text("D.C. Black History");
+		$("#slider_box").css("visibility", "hidden");
+		$("#slider_box").before('<div id="mobile_year">' + year + '</div>');
+		$("#legend").before('<input type="range" id="mobile_slider" min="1961" max="1995" value="' + year + '"/>');
+		$("#mobile_slider").on('input', sliderFun);
 		$("#button_and_address").css("bottom", "371px");
 		$("#address").css("bottom", "0px");
 
@@ -52,13 +56,19 @@ var resizeFun = function() {
 			$(this).css("width", "650px");
 		});
 	}
-	else if ($(this).width() >= 1200 && !window.mobile) {
+	else if ($(this).width() >= 1200 && window.mobile) {
 		// Transforms into desktop mode.
+		window.mobile = !window.mobile; // Switch mode.
+		var year = $("#year").text();
 		$(".purple_box").each(function() {
 			$(this).css("width", "1200px");
 		});
 
 		$("#legend").css("margin-bottom", "");
+		$("#slider").val(year);
+		$("#mobile_slider").off('input').detach();
+		$("#mobile_year").detach();
+		$("#slider_box").css("visibility", "visible");
 		$("#title_box").text("Black History in Washington D.C.");
 		var holder = $("#mobile_holder").detach();
 		$("#left_pane").html(holder);
@@ -67,6 +77,14 @@ var resizeFun = function() {
 		$("#button_and_address").css("bottom", "30px");
 		$("#address").css("bottom", "16px");
 	}
+};
+
+
+var sliderFun = function() {
+	var year = $(this).val();
+	$('#year').html(year);
+	$('#mobile_year').html(year);
+	eventQuery(year, $("#month_select option:selected").text());
 };
 
 
@@ -163,11 +181,7 @@ $("#street_view_button").on("click", function() {
 
 
 // Changes year, then calls event_query to update markers.
-$("#slider").on("input", function() {
-	var year = $(this).val();
-	$('#year').html(year);
-	eventQuery(year, $("#month_select option:selected").text());
-});
+$("#slider").on("input", sliderFun);
 
 
 // Instantiate all icon types.
