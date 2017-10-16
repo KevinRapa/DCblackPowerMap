@@ -13,7 +13,9 @@ $("#street_view").hide(); // Street view is visible when the street_view_button 
 // Create Leaflet map and add it to the page.
 var simple = L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
 	maxZoom: 18,
-	attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" \
+		target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; \
+		<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(myMap);
 
 
@@ -25,7 +27,7 @@ var displayed = [];
 // Array is indexed by [event year] - BEGIN_YEAR
 var allMarkers = new Array(YEAR_RANGE);
 
-for (i = 0; i < YEAR_RANGE + 1; i++) {
+for (i = 0; i <= YEAR_RANGE; i++) {
 	allMarkers[i] = new Array(); 
 }
 
@@ -37,18 +39,28 @@ for (i = 0; i < YEAR_RANGE + 1; i++) {
  * the page. Also swaps the slider to mobile version.
  */
 var resizeFun = function() {
-	if ($(this).width() < 1200 && !window.mobile) {
+	if ($(this).width() < 1200 && ! window.mobile) {
 		// Tranforms into compact mode.
-		window.mobile = !window.mobile; // Switch mode.
-		var year = $("#year").text();
-		var right = $("#right_box").detach();
-		$("#legend").after(right).css("margin-bottom", "10px");
-		var holder = $("#mobile_holder").detach();
-		$("#title_box").after(holder).text("D.C. Black History");
+		window.mobile = ! window.mobile; // Switch mode.
+		var yr = $("#year").text();
+
+		$("#legend")
+			.after($("#right_box").detach())
+			.before('<input type="range" id="mobile_slider" \
+				min="1961" max="1995" value="' + yr + '"/>')
+			.css("margin-bottom", "10px");
+
+		$("#title_box")
+			.after($("#mobile_holder").detach())
+			.text("D.C. Black History");
+
 		$("#slider_box").css("visibility", "hidden");
-		$("#slider_box").before('<div id="mobile_year">' + year + '</div>');
-		$("#legend").before('<input type="range" id="mobile_slider" min="1961" max="1995" value="' + year + '"/>');
-		$("#mobile_slider").on('input', sliderFun);
+
+		$("#mobile_slider")
+			.before('<div id="mobile_year">' + yr + '</div>')
+			.on('input', sliderFun);
+
+		$("#mobile_year").css("left", ((yr - BEGIN_YEAR) * 15) + "px");
 		$("#button_and_address").css("bottom", "371px");
 		$("#address").css("bottom", "0px");
 
@@ -58,33 +70,37 @@ var resizeFun = function() {
 	}
 	else if ($(this).width() >= 1200 && window.mobile) {
 		// Transforms into desktop mode.
-		window.mobile = !window.mobile; // Switch mode.
-		var year = $("#year").text();
+		window.mobile = ! window.mobile; // Switch mode.
+
 		$(".purple_box").each(function() {
 			$(this).css("width", "1200px");
 		});
 
 		$("#legend").css("margin-bottom", "");
-		$("#slider").val(year);
+		$("#slider").val($("#year").text());
 		$("#mobile_slider").off('input').detach();
 		$("#mobile_year").detach();
 		$("#slider_box").css("visibility", "visible");
 		$("#title_box").text("Black History in Washington D.C.");
-		var holder = $("#mobile_holder").detach();
-		$("#left_pane").html(holder);
-		var right = $("#right_box").detach();
-		$("#right_pane").html(right);
+		$("#left_pane").html($("#mobile_holder").detach());
+		$("#right_pane").html($("#right_box").detach());
 		$("#button_and_address").css("bottom", "30px");
 		$("#address").css("bottom", "16px");
 	}
 };
 
 
+/*
+ * Fires when a slider changes. Changes year text and switches up markers.
+ */
 var sliderFun = function() {
 	var year = $(this).val();
 	$('#year').html(year);
 	$('#mobile_year').html(year);
 	eventQuery(year, $("#month_select option:selected").text());
+
+	// Moves year text above mobile_slider. Mobile-mode only.
+	$("#mobile_year").css("left", ((year - BEGIN_YEAR) * 15) + "px");
 };
 
 
@@ -92,29 +108,24 @@ var sliderFun = function() {
  * Removes each marker from the map, then populates the map with all events
  * that fall in [year] and [month]. If month == 'all', then month is irrelevant.
  * Finally, fits bounds of the map around the points.
- * In the future, may add functionality to filter by event type too, using icons
- * in the legend as buttons.
  */
 var eventQuery = function(year, month) {
 	displayed.forEach(function(marker) {
 		marker.remove();
 	});
 
-	while (displayed.length > 0) {
-		displayed.pop();
-	}
+	while (displayed.pop()) {}
 
 	var bounds = new Array(allMarkers[year - BEGIN_YEAR].length);
 
-	allMarkers[year - BEGIN_YEAR].forEach(function(marker) {
-		displayed.push(marker);
-		marker.addTo(myMap);
-		bounds.push(marker.getLatLng());
-	});
+	if(bounds.length) {
+		allMarkers[year - BEGIN_YEAR].forEach(function(marker) {
+			displayed.push(marker);
+			marker.addTo(myMap);
+			bounds.push(marker.getLatLng());
+		});
 
-	myMap.fitBounds(bounds, {maxZoom: 15, padding: L.point(20,20)});
-
-	if (displayed.length > 0) {
+		myMap.fitBounds(bounds, {maxZoom: 15, padding: L.point(20,20)});
 		displayed[0].fire('click');
 	}
 };
@@ -170,12 +181,16 @@ $("#street_view_button").on("click", function() {
 		$("#slider_box").hide();
 		$("#map").hide();
 		$("#street_view").show();
+		$("#mobile_slider").hide();
+		$("#mobile_year").hide();
 	}
 	else {
 		$(this).text("See modern day");
 		$("#street_view").hide();
 		$("#map").show();
 		$("#slider_box").show();
+		$("#mobile_slider").show();
+		$("#mobile_year").show();
 	}
 });
 
@@ -188,8 +203,8 @@ $("#slider").on("input", sliderFun);
 var p = 'images/icons/';
 
 var fists = [
-	L.icon({iconUrl: p + 'fst_ic_un.png',   iconSize: [25, 50]}),
-	L.icon({iconUrl: p + 'fst_ic_sel.png',  iconSize: [25, 50]})
+	L.icon({iconUrl: p + 'fst_ic_un.png',   iconSize: [30, 63]}),
+	L.icon({iconUrl: p + 'fst_ic_sel.png',  iconSize: [30, 63]})
 ];
 var brushes = [
 	L.icon({iconUrl: p + 'brsh_ic_un.png',  iconSize: [47, 70]}),
