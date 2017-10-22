@@ -128,7 +128,9 @@ $(window).resize(function() {
 		$("#left_pane").html($("#mobile_holder").detach());
 		$("#right_pane").html($("#right_box").detach());
 		$("#button_and_address").css("bottom", "30px");
-		$("#address").css("bottom", "16px");
+		$("#address").hide(0, function() {
+			$(this).css("bottom", ($(this).height() - 26) + "px").show();
+		});
 	}
 }).trigger('resize'); // Trigger resize when page loads.
 
@@ -235,7 +237,7 @@ var SCHOOLS = [
 	// Fast is false if event is caused from the slider moving.
 	var iconFlip = function(speed = {fast: false}) {
 		if (selected == this) return; // User clicked the same one twice.
-		
+
 		if (selected) {
 			selected.remove();
 			selected.setIcon(marker.ICONS[0]);
@@ -257,7 +259,9 @@ var SCHOOLS = [
 			$("#desc_title").text(e[E_NAME]);
 			$("#desc_body").html('<sup><i>' + timeSpan + '</i></sup><br>' + e[E_DESC]);
 			$("#address").hide(0, function() {
-				$(this).text(e[E_ADDR]).css('bottom', ($(this).height() - 26) + "px").show();
+				$(this).text(e[E_ADDR])
+					.css('bottom', mobile ? "0px" : ($(this).height() - 26) + "px")
+					.show();
 			});
 		}
 		else {
@@ -268,7 +272,8 @@ var SCHOOLS = [
 				$(this).text(e[E_NAME]).slideDown(200);	
 			});
 			$("#address").fadeOut(200, function() {
-				$(this).text(e[E_ADDR]).css('bottom', ($(this).height() - 26) + "px").fadeIn(200);
+				$(this).text(e[E_ADDR])
+					.css('bottom', mobile ? "0px" : ($(this).height() - 26) + "px").fadeIn(200);
 			});
 		}
 	};
