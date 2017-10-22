@@ -40,7 +40,7 @@
 										<!-- The Leaflet map, which alternates space with the street view image 
 										when the street view button is pressed. -->
 									</div> 
-									<div id="slider_box" class="black_box">
+									<div id="slider_box" class="black_box fade_group">
 										<input id="slider" class="black_box" type="range" min="1961" max="1995" value="1961" />
 										<select id="month_select" class="black_box">
 											<option value="0">All</option>
@@ -60,29 +60,39 @@
 										<span id="year">1961</span>
 									</div>
 									<div id="street_view"> <!-- Hidden when page loads -->
-										<iframe src="https://www.google.com/maps/embed?pb=!1m0!4v1507840148158!6m8!1m7!1sTTtaaOb12rP5ltcb35fy7g!2m2!1d39.25553661017232!2d-76.70945447663095!3f316!4f0!5f0.7820865974627469" width="550" height="500" frameborder="0" style="border:0" allowfullscreen></iframe>
+										<iframe></iframe>
 									</div>
 								</div>
 							</div>
 							<table id="legend">
 								<td class="icon_panel">
-									<img src="images/icons/fist.png" class="icon" />
+									<button id="1" class="icon_button">
+										<img src="images/icons/fist.png" class="icon" />
+									</button>
 									<span class="icon_text">Political</span>
 								</td>
 								<td class="icon_panel">
-									<img src="images/icons/brush.png" class="icon" />
+									<button id="2" class="icon_button">
+										<img src="images/icons/brush.png" class="icon" />
+									</button>
 									<span class="icon_text">Artistic</span>
 								</td>
 								<td class="icon_panel">
-									<img src="images/icons/dollar.png" class="icon" />
+									<button id="3" class="icon_button">
+										<img src="images/icons/dollar.png" class="icon" />
+									</button>
 									<span class="icon_text">Business</span>
 								</td>
 								<td class="icon_panel">
-									<img src="images/icons/school.png" class="icon" />
+									<button id="4" class="icon_button">
+										<img src="images/icons/school.png" class="icon" />
+									</button>
 									<span class="icon_text">Educational</span>
 								</td>
 								<td class="icon_panel">
-									<img src="images/icons/globe.png" class="icon" />
+									<button id="5" class="icon_button">
+										<img src="images/icons/globe.png" class="icon" />
+									</button>
 									<span class="icon_text">International</span>
 								</td>
 							</table>

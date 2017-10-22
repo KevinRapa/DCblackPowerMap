@@ -21,6 +21,12 @@
 	z-index: 1;
 }
 
+#street_view iframe {
+	height: 500px;
+	width: 550px;
+	border: none;
+}
+
 .tooltip {
 	font-size: 10px;
 }
@@ -93,6 +99,17 @@
 .icon_panel {
 	width: 20%;
 }
+
+.icon_button {
+	position: relative;
+	background: none;
+	border: none;
+	cursor: pointer;
+} 
+
+.icon_button:focus {
+	outline: none;
+} 
 
 .icon {
 	height: 63px;

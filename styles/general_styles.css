@@ -1,3 +1,9 @@
+/*********************************
+ * This file contains all the styles
+ * for the title, footer, intro screen,
+ * and classes.
+ */
+
 body {
 	background-attachment: fixed;
 	font-family: Times, serif;
@@ -31,9 +37,6 @@ body {
 	margin: 1% 1%;
 }
 
-/**************************
- * INTRO SCREEN STYLES
- */
 #intro_screen {
 	height: 100%;
 	width: 100%;
@@ -43,12 +46,11 @@ body {
 }
 
 #intro_box {
-	height: 60%;
+	height: 600px;
 	width: 500px;
-	position: relative;
-	top: 10%;
 	padding: 10px;
-	margin: auto auto;
+	margin: 0% auto;
+	margin-top: 10%;
 	color: white;
 	line-height: 1.5em;
 	text-align: center;
@@ -108,9 +110,6 @@ body {
 	padding-right: 10px;
 }
 
-/**************************
- * FOOTER STYLES
- */
 #footer_box {
 	height: 100px;
 	margin-top: 30px;
