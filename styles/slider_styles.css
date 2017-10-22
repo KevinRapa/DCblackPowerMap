@@ -1,9 +1,16 @@
+/*********************************
+ * This contains styles for the 
+ * default map slider and the
+ * mobile slider.
+ */
+
 #slider {
-  -webkit-appearance: none;
+  width: 310px;
   position: relative;
   bottom: 1px;
-  width: 310px;
   margin-left: 10px;
+  cursor: pointer;
+  -webkit-appearance: none;
 }
 
 #slider:focus {
@@ -11,25 +18,20 @@
 }
 
 #slider::-webkit-slider-runnable-track {
-  width: 100%;
   height: 7px;
-  cursor: pointer;
   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
   background: #c8bfb0;
   border-radius: 9.7px;
-  border: 0.2px solid rgba(1, 1, 1, 0.17);
 }
 
 #slider::-webkit-slider-thumb {
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.48), 0px 0px 1px rgba(13, 13, 13, 0.48);
-  border: 0.2px solid rgba(0, 0, 0, 0.31);
   height: 25px;
   width: 10px;
-  border-radius: 10px;
-  background: #eeebef;
-  cursor: pointer;
-  -webkit-appearance: none;
   margin-top: -9.2px;
+  border-radius: 10px;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.48), 0px 0px 1px rgba(13, 13, 13, 0.48);
+  background: #eeebef;
+  -webkit-appearance: none;
 }
 
 #slider:focus::-webkit-slider-runnable-track {
@@ -37,29 +39,22 @@
 }
 
 #slider::-moz-range-track {
-  width: 100%;
   height: 7px;
-  cursor: pointer;
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-  background: #c8bfb0;
   border-radius: 9.7px;
-  border: 0.2px solid rgba(1, 1, 1, 0.17);
+  background: #c8bfb0;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
 }
 
 #slider::-moz-range-thumb {
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.48), 0px 0px 1px rgba(13, 13, 13, 0.48);
-  border: 0.2px solid rgba(0, 0, 0, 0.31);
   height: 15px;
   width: 8px;
   border-radius: 10px;
   background: #eeebef;
-  cursor: pointer;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.48), 0px 0px 1px rgba(13, 13, 13, 0.48);
 }
 
 #slider::-ms-track {
-  width: 100%;
   height: 7px;
-  cursor: pointer;
   background: transparent;
   border-color: transparent;
   color: transparent;
@@ -81,13 +76,11 @@
 
 #slider::-ms-thumb {
   box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.48), 0px 0px 1px rgba(13, 13, 13, 0.48);
-  border: 0.2px solid rgba(0, 0, 0, 0.31);
-  height: 25px;
+  margin-top: 2px;
+  height: 15px;
   width: 10px;
   border-radius: 10px;
   background: #eeebef;
-  cursor: pointer;
-  height: 7px;
 }
 
 #slider:focus::-ms-fill-lower {
@@ -98,20 +91,18 @@
   background: #d2cbbf;
 }
 
-
-/*
-
+/************************************************************************************
   Mobile version of slider.
-
-*/
+/*************************************************************************************/
 
 #mobile_slider {
-  -webkit-appearance: none;
-  position: relative;
-  background-color: rgba(0,0,0,0);
-  bottom: 10px;
   width: 570px;
+  position: relative;
+  bottom: 10px;
   margin: 10px auto;
+  background-color: rgba(0,0,0,0);
+  -webkit-appearance: none;
+  cursor: pointer;
 }
 
 #mobile_slider:focus {
@@ -119,72 +110,58 @@
 }
 
 #mobile_slider::-webkit-slider-runnable-track {
-  width: 100%;
   height: 80px;
-  cursor: pointer;
   box-shadow: 5px 5px 5.3px #0f0f0f, 0px 0px 5px #1c1c1c;
   background: #787878;
   border-radius: 20px;
 }
 
 #mobile_slider::-webkit-slider-thumb {
-  border: none;
   height: 80px;
   width: 60px;
+  margin-top: -0.2px;
   border-radius: 20px;
   background: #2a2a2a;
-  cursor: pointer;
+  border: none;
   -webkit-appearance: none;
-  margin-top: -0.2px;
 }
 
 #mobile_slider::-moz-range-track {
-  width: 100%;
   height: 80px;
-  cursor: pointer;
-  box-shadow: 5px 5px 5.3px #0f0f0f, 0px 0px 5px #1c1c1c;
   background: #787878;
+  box-shadow: 5px 5px 5.3px #0f0f0f, 0px 0px 5px #1c1c1c;
   border-radius: 20px;
 }
 
 #mobile_slider::-moz-range-thumb {
-  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
-  border: none;
   height: 80px;
   width: 60px;
   border-radius: 20px;
   background: #2a2a2a;
-  cursor: pointer;
+  border: none;
 }
 
 #mobile_slider::-ms-track {
-  width: 100%;
   height: 80px;
-  cursor: pointer;
   background: transparent;
   border-color: transparent;
-  color: transparent;
 }
 
 #mobile_slider::-ms-fill-lower {
   background: #787878;
   border: 0.2px solid #010101;
-  border-radius: 2.6px;
-  box-shadow: 5px 5px 5.3px #0f0f0f, 0px 0px 5px #1c1c1c;
+  border-radius: 20px;
 }
 
 #mobile_slider::-ms-fill-upper {
   background: #787878;
   border: 0.2px solid #010101;
-  border-radius: 2.6px;
-  box-shadow: 5px 5px 5.3px #0f0f0f, 0px 0px 5px #1c1c1c;
+  border-radius: 20px;
 }
 
 #mobile_slider::-ms-thumb {
-  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  height: 80px;
   width: 60px;
   border-radius: 20px;
   background: #2a2a2a;
-  cursor: pointer;
-  height: 80px;
 }

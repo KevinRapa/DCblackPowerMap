@@ -2,17 +2,19 @@
 <html>
 	<head>
 		<title>D.C. Map</title>
-		<link rel="stylesheet" href="styles/styles.css" />
+		<link rel="stylesheet" href="styles/general_styles.css" />
+		<link rel="stylesheet" href="styles/left_pane_styles.css" />
+		<link rel="stylesheet" href="styles/right_pane_styles.css" />
 		<link rel="stylesheet" href="styles/slider_styles.css" />
-		<link rel="stylesheet" href="scripts/leaflet/leaflet.css" />
+		<link rel="stylesheet" href="leaflet/leaflet.css" />
 		<meta name="description" content="A GIS of historical black power events in Washington D.C. 
 			based on original research by staff and students of the University of Maryland, Baltimore County." />
 		<meta name="author" content="Kevin Rapa" />
 		<!-- ADD AUTHORS OF THE DESCRIPTIONS AND IMAGES -->
 		<meta name="pragma" content="no-cache" /> <!-- Don't want this page to cache. Lot of data to hold? -->
 		<meta name="viewport" content="width=670, initial-scale=0.60">
-		<script type="text/javascript" src="scripts/jquery-3.2.1.slim.min.js"></script>
-		<script type="text/javascript" src="scripts/leaflet/leaflet.js"></script>
+		<script type="text/javascript" src="scripts/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="leaflet/leaflet.js"></script>
 	</head>
 	<body background="images/ralph_featherstone.jpg">
 		<div id="intro_screen"> <!-- Protects page contents until user hits 'to_map' button -->
@@ -115,7 +117,7 @@
 			</span>
 		</div>
 		<script type="text/javascript" src="scripts/all_data.js"></script>
-		<script type="text/javascript" src="scripts/script.js"></script>
+		<script type="text/javascript" src="scripts/setup.js"></script>
 	</body>
 </html>
 

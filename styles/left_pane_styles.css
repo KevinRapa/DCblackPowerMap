@@ -1,0 +1,110 @@
+/*********************************
+ * This file contains all the styles
+ * for the left half of the screen.
+ */
+
+#mobile_holder {
+	width: 570px;
+	margin: auto auto;
+	color: white;
+}
+
+#map_box {
+	height: 500px;
+	width: 550px;
+	padding: 5px;
+}
+
+#map {
+	height: 100%;
+	width: 100%;
+	z-index: 1;
+}
+
+.tooltip {
+	font-size: 10px;
+}
+
+#mobile_year {
+	float: left;
+	position: relative;
+	padding: 6px;
+	z-index: 2;
+	color: white;
+	font-style: italic;
+	font-size: 24px;
+	letter-spacing: 1px;
+}
+
+#slider_box {
+	height: 29px;
+	width: 460px;
+	position: relative;
+	bottom: 55px;
+	padding-top: 2px;
+	margin: auto auto;
+	z-index: 2;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	opacity: .5;
+	transition: .3s;
+	box-shadow: 0 0 10px #262626;
+	visibility: visible;
+}
+
+#slider_box:hover {
+	opacity: 0.9;
+}
+
+#month_select {
+	margin-right: 3px;
+	margin-left: 3px;
+	color: inherit;
+	border-radius: 4px;
+	border-width: 1px;
+	border-color: white;
+	font-family: inherit;
+	font-size: 16px;
+	font-style: italic;
+	letter-spacing: 1px;
+	transition: .2s;
+	cursor: pointer;
+}
+
+#month_select:hover {
+	background-color: #363636;
+}
+
+#month_select:focus {
+	outline: none;
+}
+
+#year {
+	font-size: 20px;
+	font-style: italic;
+}
+
+#legend {
+	height: 90px;
+	margin-top: 5px;
+}
+
+.icon_panel {
+	width: 20%;
+}
+
+.icon {
+	height: 63px;
+	position: relative;
+	top: 3px;
+	float: left;
+}
+
+.icon_text {
+	float: left;
+	position: relative;
+	left: 5px;
+	top: 7px;
+	font-size: 18px;
+}
