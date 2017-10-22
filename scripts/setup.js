@@ -100,7 +100,11 @@ $(window).resize(function() {
 			$(this).css("bottom", ($(this).height() - 26) + "px").show();
 		});
 	}
-}).trigger('resize'); // Trigger resize when page loads.
+});
+
+$(window).ready(function() {
+	$(this)
+})
 
 
 /*
