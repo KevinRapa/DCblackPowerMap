@@ -103,7 +103,7 @@ $(window).resize(function() {
 });
 
 $(window).ready(function() {
-	$(this)
+	$(this).trigger('resize');
 })
 
 
