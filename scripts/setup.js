@@ -100,11 +100,9 @@ $(window).resize(function() {
 			$(this).css("bottom", ($(this).height() - 26) + "px").show();
 		});
 	}
-});
-
-$(window).ready(function() {
+}).ready(function() {
 	$(this).trigger('resize');
-})
+});
 
 
 /*
@@ -168,7 +166,7 @@ $("#to_map").click(function() {
 /*
  * Toggles between the map and the street view image.
  */
-$("#street_view_button").click(function(e, show = false) {
+$("#street_view_button").click(function(e, show) {
 	if ($(this).text() === ST_VIEW_UNSELECTED) {
 		$(this).text(ST_VIEW_SELECTED);
 		$(".fade_group").fadeOut(); // mobile_slider, mobile_year, slider_box
@@ -255,7 +253,7 @@ $("#slider").on("input", changeYear);
 	 * Fast is false if event is caused from the slider moving.
 	 * This is bound to each marker.
 	 */
-	var iconFlip = function(speed = {fast: false}) {
+	var iconFlip = function(speed) {
 		if (selected == this) return; // User clicked the same one twice.
 
 		if (selected) {
@@ -307,8 +305,9 @@ $("#slider").on("input", changeYear);
 
 		if (e[E_STRT] && e[E_LAT] && e[E_LONG]) {
 			// To add a marker, it must have a start date and a position.
-			var marker = L.marker([e[E_LAT], e[E_LONG]], {icon: FISTS[0]});
+			var marker = L.marker([e[E_LAT], e[E_LONG]]);
 			var start = e[E_STRT] - BEGIN_YR;
+			marker.setIcon(FISTS[0]);
 			marker.EVENT_INDEX = i;
 			marker.ICONS = FISTS;
 			marker.on('click', iconFlip);
