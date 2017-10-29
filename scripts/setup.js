@@ -19,6 +19,7 @@ var E_NAME = "Event_Name";
 var E_LAT  = "Latitude";
 var E_LONG = "Longitude";
 var E_STVW = "Street_View_URL";
+var E_LBL  = "Label";
 // ------------------------------------------
 
 var mobile = false;  // If page is in compact mode.
@@ -37,7 +38,7 @@ $("#street_view").hide(); // Street view is visible when the street_view_button 
  * Adds the tile layer to the map, then adds the map to the page.
  * TO CHANGE MAP, VISIT https://leaflet-extras.github.io/leaflet-providers/preview/
  */
-var myMap = L.map('map'); // Create map
+var myMap = L.map('leaflet_map'); // Create map
 
 L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
 	maxZoom: 18,
@@ -170,7 +171,7 @@ $("#street_view_button").click(function(e, show) {
 	if ($(this).text() === ST_VIEW_UNSELECTED) {
 		$(this).text(ST_VIEW_SELECTED);
 		$(".fade_group").fadeOut(); // mobile_slider, mobile_year, slider_box
-		$("#map").fadeOut(function() {
+		$("#leaflet_map").fadeOut(function() {
 			$("#street_view").fadeIn();
 		});
 	}
@@ -180,12 +181,12 @@ $("#street_view_button").click(function(e, show) {
 		if (show) {
 			// Animation causes seizing when screen resizes.
 			$("#street_view").hide();
-			$("#map").show();
+			$("#leaflet_map").show();
 			$(".fade_group").show();
 		}
 		else {
 			$("#street_view").fadeOut(function() {
-				$("#map").fadeIn();
+				$("#leaflet_map").fadeIn();
 				$(".fade_group").fadeIn();
 			});
 		}
@@ -205,17 +206,32 @@ $("#slider").on("input", changeYear);
  */
 (function() {
 	var clickE = function(e) {
-		$(".icon_text").css("font-style", "normal");
-		$(this).next().css("font-style", "oblique");
+		var text = $(this).next();
+		
 		$(this).animate({bottom: "-6px"}, 90)
 			.animate({bottom: "4px"}, 90).animate({bottom: "0px"}, 90);
-	}
+
+		if (text.css("font-style") == "normal") {
+			var lbl = $(this).attr('id');
+			$(".icon_text").css("font-style", "normal");
+			text.css("font-style", "oblique");
+			displayed.forEach(function(m) {
+				spreadsheet.events[m.EVENT_INDEX][E_LBL] == lbl ? m.addTo(myMap) : m.remove();
+			});
+		}
+		else {
+			text.css("font-style", "normal");
+			displayed.forEach(function(m) {
+				m.addTo(myMap);
+			});
+		}
+	};
 	var hvrInE = function() {
 		$(this).animate({bottom: "4px"}, 90);
-	}
+	};
 	var hvrOutE = function() {
 		$(this).animate({bottom: "0px"}, 90);
-	}
+	};
 	$(".icon_button").click(clickE).hover(hvrInE, hvrOutE);
 })();
 
@@ -258,7 +274,7 @@ $("#slider").on("input", changeYear);
 
 		if (selected) {
 			selected.remove();
-			selected.setIcon(marker.ICONS[0]);
+			selected.setIcon(selected.ICONS[0]);
 			selected.addTo(myMap);
 		}
 
@@ -307,9 +323,17 @@ $("#slider").on("input", changeYear);
 			// To add a marker, it must have a start date and a position.
 			var marker = L.marker([e[E_LAT], e[E_LONG]]);
 			var start = e[E_STRT] - BEGIN_YR;
-			marker.setIcon(FISTS[0]);
+
+			switch (e[E_LBL]) {
+				case "P/EP":  marker.ICONS = FISTS;   break;
+				case "BA": 	  marker.ICONS = BRUSHES; break;
+				case "BB":    marker.ICONS = DOLLARS; break;
+				case "IS":    marker.ICONS = SCHOOLS; break;
+				case "PA/IS": marker.ICONS = GLOBES;  break;
+				default:      marker.ICONS = FISTS;   break;
+			}
+			marker.setIcon(marker.ICONS[0]); 
 			marker.EVENT_INDEX = i;
-			marker.ICONS = FISTS;
 			marker.on('click', iconFlip);
 			marker.bindTooltip(e[E_NAME], toolTipOptions);
 			

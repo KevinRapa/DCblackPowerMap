@@ -35,10 +35,7 @@
 						<div id="mobile_holder"> <!-- Holds all main content when window is thin-->
 							<div class="white_box">
 								<div id="map_box" class="black_box">
-									<div id="map">
-										<!-- The Leaflet map, which alternates space with the street view image 
-										when the street view button is pressed. -->
-									</div> 
+									<div id="leaflet_map"></div> <!-- Trade places with street view when button is pressed. -->
 									<div id="slider_box" class="black_box fade_group">
 										<input id="slider" class="black_box" type="range" min="1961" max="1995" value="1961" />
 										<select id="month_select" class="black_box">
@@ -58,9 +55,7 @@
 										</select>
 										<span id="year">1961</span>
 									</div>
-									<div id="street_view"> <!-- Hidden when page loads -->
-										<iframe></iframe>
-									</div>
+									<div id="street_view"><iframe></iframe></div> <!-- Hidden when page loads -->
 								</div>
 							</div>
 							<table id="legend"><tbody><tr>
