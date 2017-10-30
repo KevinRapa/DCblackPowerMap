@@ -49,9 +49,9 @@ L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
 
 
 /*
- * Rearranges page elements when the window gets thinner. Basically moves the 
- * right half of the table into the left half, then moves THAT element above 
- * the table so that it centers on the page. Also swaps the slider to mobile 
+ * Rearranges page elements when the window gets thinner. Basically moves the
+ * right half of the table into the left half, then moves THAT element above
+ * the table so that it centers on the page. Also swaps the slider to mobile
  * version. If street view is showing, first resets back to map or else map SEIZES.
  */
 $(window).resize(function() {
@@ -72,10 +72,20 @@ $(window).resize(function() {
 		$("#title_box")
 			.after($("#mobile_holder").detach())
 			.text(MOBILE_TTL);
-		$("#slider_box").css("visibility", "hidden");
+		$("#slider_box").css("visibility", "hidden")
+		    .before('<div id="mobile_arrows" class="fade_group"></div>');
+		$("#mobile_arrows")
+		    .html('<button id="mobile_left_arrow" class="arrow"></button> \
+		           <button id="mobile_right_arrow" class="arrow"></button>');
 		$("#mobile_slider")
 			.before('<div id="mobile_year" class="fade_group">' + yr + '</div>')
 			.on('input', changeYear);
+		$("#mobile_left_arrow").click(function() {
+		    $("#left_arrow").click();
+		});
+		$("#mobile_right_arrow").click(function() {
+		    $("#right_arrow").click();
+		});
 		$("#mobile_year").css("left", ((yr - BEGIN_YR) * 15) + "px");
 		$("#button_and_address").css("bottom", "371px");
 		$("#address").css("bottom", "0px");
@@ -92,6 +102,7 @@ $(window).resize(function() {
 		$("#slider").val($("#year").text());
 		$("#mobile_slider").off('input').detach();
 		$("#mobile_year").detach();
+		$("#mobile_arrows").detach();
 		$("#slider_box").css("visibility", "visible");
 		$("#title_box").text(DESKTOP_TTL);
 		$("#left_pane").html($("#mobile_holder").detach());
@@ -107,10 +118,24 @@ $(window).resize(function() {
 
 
 /*
- * Removes each marker from the map, then populates the map with all events
- * that fall in [year]. Fits bounds of the map around the points.
+ * Deselects the currently selected marker.
+ * 'replace' can be anything.
  */
-var eventQuery = function(year) {
+function clearSelected(replace) {
+    if (selected) {
+		selected.remove();
+		selected.setIcon(selected.ICONS[0]);
+		replace ? selected.addTo(myMap) : selected = null;
+	}
+}
+
+
+/*
+ * Removes each marker from the map, then populates the map with all events
+ * that fall in [year]. If type is defined, also checks that the event is
+ * same type. Fits bounds of the map around the points.
+ */
+function eventQuery(year, type) {
 	for (i = 0; i < displayed.length; i++) {
 		displayed[i].remove();
 	}
@@ -120,9 +145,11 @@ var eventQuery = function(year) {
 	var bounds = [];      // List of coordinates for map panning.
 
 	allMarkers[year - BEGIN_YR].forEach(function(marker) {
-		displayed.push(marker);
-		marker.addTo(myMap);
-		bounds.push(marker.getLatLng());
+	    if (! type || spreadsheet.events[marker.EVENT_INDEX][E_LBL] == type) {
+    		displayed.push(marker);
+    		marker.addTo(myMap);
+    		bounds.push(marker.getLatLng());
+	    }
 	});
 
 	if(bounds.length) {
@@ -144,12 +171,7 @@ var changeYear = function() {
 		left: ((yr - BEGIN_YR) * 15) + "px"
 	}, 15, 'linear');
 
-	if (selected) {
-		selected.remove();
-		selected.setIcon(selected.ICONS[0]);
-		selected = null; // Not needed, just for consistency.
-	}
-
+	clearSelected();
 	eventQuery(yr);
 };
 
@@ -170,7 +192,7 @@ $("#to_map").click(function() {
 $("#street_view_button").click(function(e, show) {
 	if ($(this).text() === ST_VIEW_UNSELECTED) {
 		$(this).text(ST_VIEW_SELECTED);
-		$(".fade_group").fadeOut(); // mobile_slider, mobile_year, slider_box
+		$(".fade_group").fadeOut(); // mobile_slider, mobile_year, slider_box, mobile_arrows
 		$("#leaflet_map").fadeOut(function() {
 			$("#street_view").fadeIn();
 		});
@@ -206,25 +228,27 @@ $("#slider").on("input", changeYear);
  */
 (function() {
 	var clickE = function(e) {
-		var text = $(this).next();
-		
-		$(this).animate({bottom: "-6px"}, 90)
-			.animate({bottom: "4px"}, 90).animate({bottom: "0px"}, 90);
-
-		if (text.css("font-style") == "normal") {
-			var lbl = $(this).attr('id');
-			$(".icon_text").css("font-style", "normal");
-			text.css("font-style", "oblique");
-			displayed.forEach(function(m) {
-				spreadsheet.events[m.EVENT_INDEX][E_LBL] == lbl ? m.addTo(myMap) : m.remove();
-			});
-		}
-		else {
-			text.css("font-style", "normal");
-			displayed.forEach(function(m) {
-				m.addTo(myMap);
-			});
-		}
+    	var text = $(this).next();
+    		
+    	$(this)
+    	    .animate({bottom: "-6px"}, 90)
+    		.animate({bottom: "4px"}, 90)
+    		.animate({bottom: "0px"}, 90);
+    			
+        if ($("#street_view_button").text() != ST_VIEW_SELECTED) {
+            clearSelected();
+    
+    		if (text.css("font-style") == "normal") {
+    			var lbl = $(this).attr('id');
+    			$(".icon_text").css("font-style", "normal");
+    			text.css("font-style", "oblique");
+    			eventQuery($("#year").text(), lbl);
+    		}
+    		else {
+    			text.css("font-style", "normal");
+    			eventQuery($("#year").text());
+    		}
+	    }
 	};
 	var hvrInE = function() {
 		$(this).animate({bottom: "4px"}, 90);
@@ -235,6 +259,30 @@ $("#slider").on("input", changeYear);
 	$(".icon_button").click(clickE).hover(hvrInE, hvrOutE);
 })();
 
+
+/*
+ * Adds functionality to arrow buttons. Switches between markers on map.
+ */
+(function() {
+    $("#right_arrow").click(function() {
+        var i = 0;
+        
+        for (; i < displayed.length && displayed[i] != selected; i++)
+            ;
+
+        (i != displayed.length - 1) && displayed[i+1].fire('click');
+    });
+    
+    $("#left_arrow").click(function() {
+        var i = 0;
+       
+        for (; i < displayed.length && displayed[i] != selected; i++)
+            ;
+        
+        (i > 0) && displayed[i-1].fire('click');
+    });
+})();
+ 
 
 /*
  * Load markers and display first year.
@@ -258,7 +306,7 @@ $("#slider").on("input", changeYear);
 		L.icon({iconUrl: ICN_PTH + 'glb_ic_un.png',   iconSize: [47, 70]}),
 	    L.icon({iconUrl: ICN_PTH + 'glb_ic_sel.png',  iconSize: [47, 70]})
 	];
-	var SCHOOLS = [ 
+	var SCHOOLS = [
 		L.icon({iconUrl: ICN_PTH + 'schl_ic_un.png',  iconSize: [47, 70]}),
 		L.icon({iconUrl: ICN_PTH + 'schl_ic_sel.png', iconSize: [47, 70]})
 	];
@@ -272,11 +320,7 @@ $("#slider").on("input", changeYear);
 	var iconFlip = function(speed) {
 		if (selected == this) return; // User clicked the same one twice.
 
-		if (selected) {
-			selected.remove();
-			selected.setIcon(selected.ICONS[0]);
-			selected.addTo(myMap);
-		}
+		clearSelected('replace');
 
 		// Changes icon.
 		this.remove();
@@ -287,7 +331,7 @@ $("#slider").on("input", changeYear);
 		// Display all the event information.
 		var e = spreadsheet.events[this.EVENT_INDEX];
 		var end = (e[E_END] == "") ? "?" : e[E_END];
-		var timeSpan = (e[E_STRT] == end) ? e[E_STRT] : '(' + e[E_STRT] + " - " + end + ')';
+		var timeSpan = (e[E_STRT] == end) ? e[E_STRT] : e[E_STRT] + " - " + end;
 
 		if (speed.fast) {
 			$("#desc_title").text(e[E_NAME]);
@@ -301,9 +345,9 @@ $("#slider").on("input", changeYear);
 		else {
 			$("#desc_body").fadeOut(200, function() {
 				$(this).html('<sup><i>' + timeSpan + '</i></sup><br>' + e[E_DESC]).fadeIn(200)
-			});		
+			});
 			$("#desc_title").slideUp(200, function() {
-				$(this).text(e[E_NAME]).slideDown(200);	
+				$(this).text(e[E_NAME]).slideDown(200);
 			});
 			$("#address").fadeOut(200, function() {
 				$(this).text(e[E_ADDR])
@@ -332,10 +376,12 @@ $("#slider").on("input", changeYear);
 				case "PA/IS": marker.ICONS = GLOBES;  break;
 				default:      marker.ICONS = FISTS;   break;
 			}
-			marker.setIcon(marker.ICONS[0]); 
+			marker.setIcon(marker.ICONS[0]);
 			marker.EVENT_INDEX = i;
 			marker.on('click', iconFlip);
-			marker.bindTooltip(e[E_NAME], toolTipOptions);
+			if ($(window).width() >= 1200) {
+			    marker.bindTooltip(e[E_NAME], toolTipOptions); // Tooltip not needed for mobile
+			}
 			
 			if (e[E_END]) {
 				// Add this to every year it falls into.

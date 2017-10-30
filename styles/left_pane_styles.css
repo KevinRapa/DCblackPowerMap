@@ -43,8 +43,8 @@
 }
 
 #slider_box {
-	height: 29px;
-	width: 460px;
+	height: 32px;
+	width: 450px;
 	position: relative;
 	bottom: 55px;
 	padding-top: 2px;
@@ -60,34 +60,80 @@
 }
 
 #slider_box:hover {
-	opacity: 0.9;
+	opacity: 1.0
 }
 
-#month_select {
-	margin-right: 3px;
-	margin-left: 3px;
-	color: inherit;
-	border-radius: 4px;
-	border-width: 1px;
-	border-color: white;
-	font-family: inherit;
-	font-size: 16px;
-	font-style: italic;
-	letter-spacing: 1px;
-	transition: .2s;
-	cursor: pointer;
+.arrow {
+    height: 0px;
+    width: 0px;
+    position: relative;
+    bottom: 6px;
+    background-color: transparent;
+    border: 8px solid rgb(42,42,42);
 }
 
-#month_select:hover {
-	background-color: #363636;
+#mobile_arrows {
+    position: relative;
+    bottom: 105px;
+    right: 50px;
+    z-index: 2;
 }
 
-#month_select:focus {
-	outline: none;
+#mobile_left_arrow {
+    border: 50px solid transparent;
+    margin-right: 4px;
+    border-right-color: rgb(42,42,42);
+}
+
+#mobile_left_arrow:hover {
+    border-right-color: rgb(200,200,200);
+}
+
+#mobile_left_arrow:active {
+    border-right-color: rgb(42,42,42);
+}
+
+#mobile_right_arrow {
+    border: 50px solid transparent;
+    margin-left: 4px;
+    border-left-color: rgb(42,42,42);
+}
+
+#mobile_right_arrow:active {
+    border-left-color: rgb(42,42,42);
+}
+
+#mobile_right_arrow:hover {
+    border-left-color: rgb(200,200,200);
+}
+
+#arrows button {
+    transition: .2s;
+}
+
+#left_arrow {
+    margin-right: 2px;
+    border-right: 10px solid rgb(200,200,200);
+    border-left: none;
+}
+
+#left_arrow:hover {
+    border-right-color: rgb(240,240,240);
+}
+
+#right_arrow {
+    margin-left: 2px;
+    border-left: 10px solid rgb(200,200,200);
+    border-right: none;
+}
+
+#right_arrow:hover {
+    border-left-color: rgb(240,240,240);
 }
 
 #year {
-	font-size: 20px;
+    margin-left: 10px;
+	font-size: 22px;
 	font-style: italic;
 }
 
@@ -104,12 +150,7 @@
 	position: relative;
 	background: none;
 	border: none;
-	cursor: pointer;
-} 
-
-.icon_button:focus {
-	outline: none;
-} 
+}
 
 .icon {
 	height: 63px;

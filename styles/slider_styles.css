@@ -1,5 +1,5 @@
 /*********************************
- * This contains styles for the 
+ * This contains styles for the
  * default map slider and the
  * mobile slider.
  */
@@ -7,8 +7,8 @@
 #slider {
   width: 310px;
   position: relative;
-  bottom: 1px;
-  margin-left: 10px;
+  bottom: 2px;
+  margin-left: 15px;
   cursor: pointer;
   -webkit-appearance: none;
 }
