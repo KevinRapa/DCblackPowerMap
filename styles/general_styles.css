@@ -61,7 +61,8 @@ button {
 	height: 70%;
 	width: 500px;
 	padding: 10px;
-	margin: 0px auto;
+	margin: 0 auto;
+	margin-top: 5%;
 	color: white;
 	line-height: 1.5em;
 	text-align: center;
@@ -112,18 +113,18 @@ button {
 }
 
 #footer_box {
-	height: 100px;
+	padding: 10px 0;
 	margin-top: 30px;
-	padding-top: 1px;
 }
 
 #footer_content_upper {
-	height: 50%;
-	margin: 10px;
-	padding-left: 10px;
+	padding: 15px 15px;
+	margin: 0 10px;
+	margin-bottom: 6px;
 	color:white;
 }
 
 #footer_content_lower {
-	margin-left: 10px;
+	margin-left: 20px;
+	padding-bottom: 5px;
 }

@@ -1,8 +1,6 @@
 // ------ OPTIONS ---------------------------
 var BEGIN_YR = 1961;  // Earliest year an event occurs. Change if adding events!
 var END_YR = 1995;    // Latest year an event occurs. See above.
-var ALL = END_YR + 1; // If slider is in last position, all markers are displayed.
-var NUM_YEARS = END_YR - BEGIN_YR + 1;
 var ST_VIEW_UNSELECTED = "See modern day";
 var ST_VIEW_SELECTED = "Back to map";
 var DESKTOP_TTL = "Black History in Washington D.C.";
@@ -29,15 +27,17 @@ var E_STVW = "Street_View_URL";
 var E_LBL  = "Label";
 // ------------------------------------------
 
+// The '+ 1' is there since last index is used to display all the markers.
+var ALL = END_YR + 1; // If slider is in last position, all markers are displayed.
+var NUM_YEARS = END_YR - BEGIN_YR + 1;
+var ALL_MARKERS = new Array(NUM_YEARS + 1); // Holds arrays of markers. Indexed by [year] - BEGIN_YR + offset.
+
 var mobile = false;  // If page is in compact mode.
 var selected = null; // The currently selected marker.
 var displayed = [];  // All icons currently being displayed on the map.
 
-// The '+ 1' is there since last index is used to display all the markers.
-var allMarkers = new Array(NUM_YEARS + 1); // Holds arrays of markers. Indexed by [year] - BEGIN_YR + offset.
-
 for (i = 0; i < NUM_YEARS + 1; i++) {
-	allMarkers[i] = []; // Each element holds a list of events that happen in same year.
+	ALL_MARKERS[i] = []; // Each element holds a list of events that happen in same year.
 }
 
 $("#street_view").hide(); // Street view is visible when the street_view_button is pressed.
@@ -48,9 +48,9 @@ $("#street_view").hide(); // Street view is visible when the street_view_button 
  * TO CHANGE MAP, VISIT https://leaflet-extras.github.io/leaflet-providers/preview/
  */
 var myMap = L.map('leaflet_map', {
-	zoomSnap: 0,
-	zoomDelta: 0.6,
-	minZoom: 10,
+	zoomSnap: 0,    // Map zoom must be a multiple of this. 
+	zoomDelta: 0.6, // How much map zoom changes. 
+	minZoom: 10,    // Map cannot zoom out beyond this.
 	zoomAnimationThreshold: 10,
 	layers: L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', 
 		{
@@ -157,7 +157,7 @@ function eventQuery(year, type) {
 	displayed.length = 0; // Clears array.
 	var bounds = [];      // List of coordinates for map panning.
 
-	allMarkers[year - BEGIN_YR].forEach(function(marker) {
+	ALL_MARKERS[year - BEGIN_YR].forEach(function(marker) {
 	    if (! type || spreadsheet.events[marker.EVENT_INDEX][E_LBL] == type) {
     		displayed.push(marker);
     		marker.addTo(myMap);
@@ -181,7 +181,7 @@ var changeYear = function() {
 	var yr = $(this).val();
 	$('#year').text(yr == ALL ? 'All' : yr);
 	$('#mobile_year').text(yr == ALL ? 'All' : yr).animate({
-		left: ((yr - BEGIN_YR) * 15) + "px"
+		left: ((yr - BEGIN_YR) * 14.5) + "px"
 	}, 15, 'linear');
 
 	clearSelected();
@@ -361,20 +361,22 @@ $("#slider").on("input", changeYear);
 		}
 		else {
 			$("#desc_body").fadeOut(ANIMATE_TIME, function() {
-				$(this).html('<sup><i>' + timeSpan + '</i></sup><br>' + e[E_DESC]).fadeIn(ANIMATE_TIME)
+				$(this).html('<sup><i>' + timeSpan + '</i></sup><br>' + e[E_DESC])
+					.fadeIn(ANIMATE_TIME)
 			});
 			$("#desc_title").slideUp(ANIMATE_TIME, function() {
 				$(this).text(e[E_NAME]).slideDown(ANIMATE_TIME);
 			});
 			$("#address").fadeOut(ANIMATE_TIME, function() {
 				$(this).text(e[E_ADDR])
-					.css('bottom', mobile ? "0px" : ($(this).height() - 26) + "px").fadeIn(ANIMATE_TIME);
+					.css('bottom', mobile ? "0px" : ($(this).height() - 26) + "px")
+					.fadeIn(ANIMATE_TIME);
 			});
 		}
 		$("#street_view iframe").attr("src", e[E_STVW] || "");
 	};
 
-	// Populate allMarkers.
+	// Populate ALL_MARKERS.
 	var toolTipOptions = {opacity: 0.8, className: 'tooltip'};
 
 	for (i = 0; i < spreadsheet.events.length; i++) {
@@ -402,20 +404,19 @@ $("#slider").on("input", changeYear);
 			
 			if (e[E_END]) {
 				// Add this to every year it falls into.
-				var range = (e[E_END] === PRESENT) ? allMarkers.length : e[E_END] - e[E_STRT];
+				var range = (e[E_END] === PRESENT) ? ALL_MARKERS.length : e[E_END] - e[E_STRT];
 
-				for (j = 0; start + j < allMarkers.length - 1 && j <= range; j++) {
-					allMarkers[start + j].push(marker);
+				for (j = 0; start + j < ALL_MARKERS.length - 1 && j <= range; j++) {
+					ALL_MARKERS[start + j].push(marker);
 				}
 			}
 			else {
-				allMarkers[start].push(marker);
+				ALL_MARKERS[start].push(marker);
 			}
 
-			allMarkers[allMarkers.length-1].push(marker); // All markers are put in final slot.
+			ALL_MARKERS[ALL_MARKERS.length-1].push(marker); // All markers are put in final slot.
 		}
 	}
 
 	eventQuery(BEGIN_YR);
 })();
-
