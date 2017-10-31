@@ -43,10 +43,9 @@
 }
 
 #slider_box {
-	width: 466px;
+	height: 20px;
 	position: relative;
 	bottom: 55px;
-	padding: 2px 0;
 	margin: 0 auto;
 	z-index: 2;
 	border-radius: 3px;
@@ -62,12 +61,12 @@
 }
 
 .arrow {
-    height: 0px;
-    width: 0px;
+    height: 0;
+    width: 0;
     position: relative;
-    bottom: 6px;
+    bottom: 3px;
     background-color: transparent;
-    border: 8px solid rgb(42,42,42);
+    border: 9px solid rgb(42,42,42);
 }
 
 #mobile_arrows {
@@ -122,7 +121,6 @@
 }
 
 #year {
-    margin-left: 10px;
 	font-size: 22px;
 	font-style: italic;
 }

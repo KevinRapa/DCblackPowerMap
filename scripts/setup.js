@@ -42,6 +42,7 @@ var myMap = L.map('leaflet_map'); // Create map
 
 L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
 	maxZoom: 18,
+	zoomDelta: 0.5,
 	attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" \
 		target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; \
 		<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -153,7 +154,7 @@ function eventQuery(year, type) {
 	});
 
 	if(bounds.length) {
-		myMap.fitBounds(bounds, {maxZoom: 13, padding: L.point(23,23)});
+		myMap.fitBounds(bounds, {maxZoom: 13});
 		displayed[0].fire('click', {fast: true});
 		displayed[0].closeTooltip();
 	}
@@ -268,7 +269,7 @@ $("#slider").on("input", changeYear);
         var i = 0;
         
         for (; i < displayed.length && displayed[i] != selected; i++)
-            ;
+            ; // Finds currently selected marker. Index is needed.
 
         (i != displayed.length - 1) && displayed[i+1].fire('click');
     });
@@ -291,20 +292,20 @@ $("#slider").on("input", changeYear);
 
 	// Instantiate all icon types.
 	var FISTS = [
-		L.icon({iconUrl: ICN_PTH + 'fst_ic_un.png',   iconSize: [30, 63]}), // Unselected icon.
-		L.icon({iconUrl: ICN_PTH + 'fst_ic_sel.png',  iconSize: [30, 63]})  // Selected icon.
+		L.icon({iconUrl: ICN_PTH + 'fst_ic_un.png',   iconSize: [25, 50]}), // Unselected icon.
+		L.icon({iconUrl: ICN_PTH + 'fst_ic_sel.png',  iconSize: [25, 50]})  // Selected icon.
 	];
 	var BRUSHES = [
 		L.icon({iconUrl: ICN_PTH + 'brsh_ic_un.png',  iconSize: [47, 70]}),
 		L.icon({iconUrl: ICN_PTH + 'brsh_ic_sel.png', iconSize: [47, 70]})
 	];
 	var DOLLARS = [
-		L.icon({iconUrl: ICN_PTH + 'dllr_ic_un.png',  iconSize: [30, 70]}),
-	    L.icon({iconUrl: ICN_PTH + 'dllr_ic_sel.png', iconSize: [30, 70]})
+		L.icon({iconUrl: ICN_PTH + 'dllr_ic_un.png',  iconSize: [20, 50]}),
+	    L.icon({iconUrl: ICN_PTH + 'dllr_ic_sel.png', iconSize: [20, 50]})
 	];
 	var GLOBES = [
-		L.icon({iconUrl: ICN_PTH + 'glb_ic_un.png',   iconSize: [47, 70]}),
-	    L.icon({iconUrl: ICN_PTH + 'glb_ic_sel.png',  iconSize: [47, 70]})
+		L.icon({iconUrl: ICN_PTH + 'glb_ic_un.png',   iconSize: [37, 55]}),
+	    L.icon({iconUrl: ICN_PTH + 'glb_ic_sel.png',  iconSize: [37, 55]})
 	];
 	var SCHOOLS = [
 		L.icon({iconUrl: ICN_PTH + 'schl_ic_un.png',  iconSize: [47, 70]}),

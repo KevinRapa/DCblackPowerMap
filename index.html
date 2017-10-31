@@ -20,9 +20,9 @@
 			<div id="intro_box" class="black_box">
 				<h2>Thank you for coming</h2>
 				<hr />
-					Hello, welcome to this map. This is currently a work in progress. Click the button
-					below to board the knowledge train. *Note- This site may not look optimal on all
-					mobile screens.
+				Hello, welcome to this map. This is currently a work in progress. Click the button
+				below to board the knowledge train. *Note- This site may not look optimal on all
+				mobile screens.
 				<hr />
 				<button id="to_map">TO MAP</button>
 			</div>
@@ -30,75 +30,89 @@
 		<div class="purple_box">
 			<div id="all_content">
 				<div id="title_box">Black History in Washington D.C.</div>
-				<table id="featured_content"><tbody><tr> <!-- All main content. Divides page in half. -->
-					<td class="content_pane" id="left_pane"> <!-- Left half. Contains all map elements. -->
-						<div id="mobile_holder"> <!-- Holds all main content when window is thin-->
-							<div class="white_box">
-								<div id="map_box" class="black_box">
-									<div id="leaflet_map"></div> <!-- Trade places with street view when button is pressed. -->
-									<div id="slider_box" class="black_box fade_group">
-										<input id="slider" class="black_box" type="range" min="1961" max="1995" value="1961" />
-										<span id="year">1961</span>
-										<span id="arrows">
-										    <button id="left_arrow" class="arrow"></button>
-										    <button id="right_arrow" class="arrow"></button>
-										</span>
+				<table id="featured_content">
+					<tbody>
+						<tr> <!-- All main content. Divides page in half. -->
+							<td class="content_pane" id="left_pane"> <!-- Left half. Contains all map elements. -->
+								<div id="mobile_holder"> <!-- Holds all main content when window is thin-->
+									<div class="white_box">
+										<div id="map_box" class="black_box">
+											<div id="leaflet_map"></div> <!-- Trade places with street view when button is pressed. -->
+											<table id="slider_box" class="black_box fade_group">
+												<tbody>
+													<tr>
+														<td>
+															<input id="slider" class="black_box" type="range" min="1961" max="1995" value="1961" />
+														</td>
+														<td id="year">1961</td>
+														<td id="arrows">
+														    <button id="left_arrow" class="arrow"></button>
+														    <button id="right_arrow" class="arrow"></button>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+											<div id="street_view"><iframe></iframe></div> <!-- Hidden when page loads -->
+										</div>
 									</div>
-									<div id="street_view"><iframe></iframe></div> <!-- Hidden when page loads -->
+									<table id="legend">
+										<tbody>
+											<tr>
+												<td class="icon_panel">
+													<button id="P/EP" class="icon_button">
+														<img src="images/icons/fist.png" class="icon" />
+													</button>
+													<span class="icon_text">Political</span>
+												</td>
+												<td class="icon_panel">
+													<button id="BA" class="icon_button">
+														<img src="images/icons/brush.png" class="icon" />
+													</button>
+													<span class="icon_text">Artistic</span>
+												</td>
+												<td class="icon_panel">
+													<button id="BB" class="icon_button">
+														<img src="images/icons/dollar.png" class="icon" />
+													</button>
+													<span class="icon_text">Business</span>
+												</td>
+												<td class="icon_panel">
+													<button id="IS" class="icon_button">
+														<img src="images/icons/school.png" class="icon" />
+													</button>
+													<span class="icon_text">Educational</span>
+												</td>
+												<td class="icon_panel">
+													<button id="PA/IS" class="icon_button">
+														<img src="images/icons/globe.png" class="icon" />
+													</button>
+													<span class="icon_text">International</span>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+									<div id="key_box" class="black_box"></div>
 								</div>
-							</div>
-							<table id="legend"><tbody><tr>
-								<td class="icon_panel">
-									<button id="P/EP" class="icon_button">
-										<img src="images/icons/fist.png" class="icon" />
-									</button>
-									<span class="icon_text">Political</span>
-								</td>
-								<td class="icon_panel">
-									<button id="BA" class="icon_button">
-										<img src="images/icons/brush.png" class="icon" />
-									</button>
-									<span class="icon_text">Artistic</span>
-								</td>
-								<td class="icon_panel">
-									<button id="BB" class="icon_button">
-										<img src="images/icons/dollar.png" class="icon" />
-									</button>
-									<span class="icon_text">Business</span>
-								</td>
-								<td class="icon_panel">
-									<button id="IS" class="icon_button">
-										<img src="images/icons/school.png" class="icon" />
-									</button>
-									<span class="icon_text">Educational</span>
-								</td>
-								<td class="icon_panel">
-									<button id="PA/IS" class="icon_button">
-										<img src="images/icons/globe.png" class="icon" />
-									</button>
-									<span class="icon_text">International</span>
-								</td>
-							</tr></tbody></table>
-							<div id="key_box" class="black_box"></div>
-						</div>
-					</td> <!-- END OF LEFT HALF -->
-					<td class="content_pane" id="right_pane"> <!-- Right half. Contains all event details. -->
-						<div class="white_box" id="right_box"> <!-- Moves into #mobile holder when page is thin. -->
-							<div id="desc_container" class="black_box">
-								<div id="desc_title"></div>
-								<hr />
-								<div id="desc_body"></div> <!-- Scroll bar appears if overflow in description -->
-							</div>
-							<div id="image_container" class="black_box"> <!-- Holds historical image -->
-								<img id="hist_img" src="images/historical/historical_sample.jpg" />
-								<div id="button_and_address"> <!-- Button toggles Google Street View visibility -->
-									<button id="street_view_button" class="img_info">See modern day</button>
-									<span id="address" class="img_info"></span>
+							</td> <!-- END OF LEFT HALF -->
+							<td class="content_pane" id="right_pane"> <!-- Right half. Contains all event details. -->
+								<div class="white_box" id="right_box"> <!-- Moves into #mobile holder when page is thin. -->
+									<div id="desc_container" class="black_box">
+										<div id="desc_title"></div>
+										<hr />
+										<div id="desc_body"></div> <!-- Scroll bar appears if overflow in description -->
+									</div>
+									<div id="image_container" class="black_box"> <!-- Holds historical image -->
+										<img id="hist_img" src="images/historical/historical_sample.jpg" />
+										<div id="button_and_address"> <!-- Button toggles Google Street View visibility -->
+											<button id="street_view_button" class="img_info">See modern day</button>
+											<span id="address" class="img_info"></span>
+										</div>
+									</div>
 								</div>
-							</div>
-						</div>
-					</td>
-				</tr></tbody></table> <!-- END OF RIGHT HALF AND ALL MAIN CONTENT -->
+							</td>
+						</tr>
+					</tbody>
+				</table> <!-- END OF RIGHT HALF AND ALL MAIN CONTENT -->
 			</div>
 		</div>
 		<div id="footer_box" class="purple_box">
