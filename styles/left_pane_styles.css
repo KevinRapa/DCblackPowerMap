@@ -45,7 +45,7 @@
 #slider_box {
 	height: 20px;
 	position: relative;
-	bottom: 55px;
+	bottom: 50px;
 	margin: 0 auto;
 	z-index: 2;
 	border-radius: 3px;
@@ -70,6 +70,7 @@
 }
 
 #mobile_arrows {
+	width: 250px;
     position: relative;
     bottom: 105px;
     right: 50px;
@@ -82,22 +83,10 @@
     border-right-color: rgb(42,42,42);
 }
 
-#mobile_left_arrow:active {
-    border-right-color: rgb(200,200,200);
-}
-
 #mobile_right_arrow {
     border: 50px solid transparent;
     margin-left: 4px;
     border-left-color: rgb(42,42,42);
-}
-
-#mobile_right_arrow:active {
-    border-left-color: rgb(200,200,200);
-}
-
-#arrows button {
-    transition: .2s;
 }
 
 #left_arrow {
@@ -121,6 +110,7 @@
 }
 
 #year {
+	width: 48px;
 	font-size: 22px;
 	font-style: italic;
 }

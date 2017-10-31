@@ -1,13 +1,20 @@
 // ------ OPTIONS ---------------------------
-var BEGIN_YR = 1961; // Earliest year an event occurs. Change if adding events!
-var END_YR = 1995;   // Latest year an event occurs. See above.
-var YEAR_RANGE = END_YR - BEGIN_YR;
+var BEGIN_YR = 1961;  // Earliest year an event occurs. Change if adding events!
+var END_YR = 1995;    // Latest year an event occurs. See above.
+var ALL = END_YR + 1; // If slider is in last position, all markers are displayed.
+var NUM_YEARS = END_YR - BEGIN_YR + 1;
 var ST_VIEW_UNSELECTED = "See modern day";
 var ST_VIEW_SELECTED = "Back to map";
 var DESKTOP_TTL = "Black History in Washington D.C.";
 var MOBILE_TTL = "D.C. Black History";
-var PRESENT = "present"; // Word used in spreadsheet to say event is still occuring.
+var PRESENT = "present"; // Word used in spreadsheet to say event is still occurring.
 var ICN_PTH = 'images/icons/'; // Path to where icons are.
+var MBL_THRESH = 1200; // Width at which devince is considered 'mobile'.
+var BOUNDS_OPTIONS = {
+	maxZoom: 15, 
+	paddingBottomRight: L.point(60,60), 
+	paddingTopLeft: L.point(30,30)
+}; // Bounds used to fit markers on map.
 
 // Change if modifying spreadsheet field names.
 var SHEET_NAME = "DC BLACK POWER CHRONICLES - Chronology";
@@ -25,9 +32,11 @@ var E_LBL  = "Label";
 var mobile = false;  // If page is in compact mode.
 var selected = null; // The currently selected marker.
 var displayed = [];  // All icons currently being displayed on the map.
-var allMarkers = new Array(YEAR_RANGE); // Holds arrays of markers. Indexed by [year] - BEGIN_YR + offset.
 
-for (i = 0; i <= YEAR_RANGE; i++) {
+// The '+ 1' is there since last index is used to display all the markers.
+var allMarkers = new Array(NUM_YEARS + 1); // Holds arrays of markers. Indexed by [year] - BEGIN_YR + offset.
+
+for (i = 0; i < NUM_YEARS + 1; i++) {
 	allMarkers[i] = []; // Each element holds a list of events that happen in same year.
 }
 
@@ -38,16 +47,19 @@ $("#street_view").hide(); // Street view is visible when the street_view_button 
  * Adds the tile layer to the map, then adds the map to the page.
  * TO CHANGE MAP, VISIT https://leaflet-extras.github.io/leaflet-providers/preview/
  */
-var myMap = L.map('leaflet_map'); // Create map
-
-L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
-	maxZoom: 18,
-	zoomDelta: 0.5,
-	attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" \
-		target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; \
-		<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-}).addTo(myMap);
-
+var myMap = L.map('leaflet_map', {
+	zoomSnap: 0,
+	zoomDelta: 0.6,
+	minZoom: 10,
+	zoomAnimationThreshold: 10,
+	layers: L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', 
+		{
+			attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" \
+			target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; \
+			<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+		}
+	)
+});
 
 /*
  * Rearranges page elements when the window gets thinner. Basically moves the
@@ -58,17 +70,17 @@ L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
 $(window).resize(function() {
 	var b = $("#street_view_button");
 
-	if ($(this).width() < 1200 && ! mobile) {
+	if ($(this).width() < MBL_THRESH && ! mobile) {
 		// Tranforms into compact mode.
 		mobile = ! mobile; // Switch mode.
-		var yr = $("#year").text();
+		var yr = $("#slider").val();
 
 		b.text() == ST_VIEW_SELECTED && b.trigger('click', true); // Prevents map seizing.
 
 		$("#legend")
 			.after($("#right_box").detach())
 			.before('<input type="range" id="mobile_slider" class="fade_group" \
-				min="1961" max="1995" value="' + yr + '"/>')
+				min="1961" max="' + ALL + '" value="' + yr + '"/>')
 			.css("margin-bottom", "10px");
 		$("#title_box")
 			.after($("#mobile_holder").detach())
@@ -79,7 +91,7 @@ $(window).resize(function() {
 		    .html('<button id="mobile_left_arrow" class="arrow"></button> \
 		           <button id="mobile_right_arrow" class="arrow"></button>');
 		$("#mobile_slider")
-			.before('<div id="mobile_year" class="fade_group">' + yr + '</div>')
+			.before('<div id="mobile_year" class="fade_group">' + (yr == ALL ? 'All' : yr) + '</div>')
 			.on('input', changeYear);
 		$("#mobile_left_arrow").click(function() {
 		    $("#left_arrow").click();
@@ -92,15 +104,15 @@ $(window).resize(function() {
 		$("#address").css("bottom", "0px");
 		$(".purple_box").css("width", "650px");
 	}
-	else if ($(this).width() >= 1200 && mobile) {
+	else if ($(this).width() >= MBL_THRESH && mobile) {
 		// Transforms into desktop mode.
 		mobile = ! mobile; // Switch mode.
 		
 		b.text() == ST_VIEW_SELECTED && b.trigger('click', true);
 
-		$(".purple_box").css("width", "1200px");
+		$(".purple_box").css("width", MBL_THRESH + "px");
 		$("#legend").css("margin-bottom", "");
-		$("#slider").val($("#year").text());
+		$("#slider").val($("#mobile_slider").val());
 		$("#mobile_slider").off('input').detach();
 		$("#mobile_year").detach();
 		$("#mobile_arrows").detach();
@@ -154,7 +166,7 @@ function eventQuery(year, type) {
 	});
 
 	if(bounds.length) {
-		myMap.fitBounds(bounds, {maxZoom: 13});
+		myMap.fitBounds(bounds, BOUNDS_OPTIONS);
 		displayed[0].fire('click', {fast: true});
 		displayed[0].closeTooltip();
 	}
@@ -167,8 +179,8 @@ function eventQuery(year, type) {
  */
 var changeYear = function() {
 	var yr = $(this).val();
-	$('#year').text(yr);
-	$('#mobile_year').text(yr).animate({
+	$('#year').text(yr == ALL ? 'All' : yr);
+	$('#mobile_year').text(yr == ALL ? 'All' : yr).animate({
 		left: ((yr - BEGIN_YR) * 15) + "px"
 	}, 15, 'linear');
 
@@ -191,11 +203,13 @@ $("#to_map").click(function() {
  * Toggles between the map and the street view image.
  */
 $("#street_view_button").click(function(e, show) {
+	var FADE_TIME = 150;
+
 	if ($(this).text() === ST_VIEW_UNSELECTED) {
 		$(this).text(ST_VIEW_SELECTED);
-		$(".fade_group").fadeOut(); // mobile_slider, mobile_year, slider_box, mobile_arrows
-		$("#leaflet_map").fadeOut(function() {
-			$("#street_view").fadeIn();
+		$(".fade_group").fadeOut(FADE_TIME); // mobile_slider, mobile_year, slider_box, mobile_arrows
+		$("#leaflet_map").fadeOut(FADE_TIME, function() {
+			$("#street_view").fadeIn(FADE_TIME);
 		});
 	}
 	else {
@@ -208,9 +222,9 @@ $("#street_view_button").click(function(e, show) {
 			$(".fade_group").show();
 		}
 		else {
-			$("#street_view").fadeOut(function() {
-				$("#leaflet_map").fadeIn();
-				$(".fade_group").fadeIn();
+			$("#street_view").fadeOut(FADE_TIME, function() {
+				$("#leaflet_map").fadeIn(FADE_TIME);
+				$(".fade_group").fadeIn(FADE_TIME);
 			});
 		}
 	}
@@ -238,16 +252,17 @@ $("#slider").on("input", changeYear);
     			
         if ($("#street_view_button").text() != ST_VIEW_SELECTED) {
             clearSelected();
+            var yr = mobile ? $("#mobile_slider").val() : $("#slider").val();
     
     		if (text.css("font-style") == "normal") {
     			var lbl = $(this).attr('id');
     			$(".icon_text").css("font-style", "normal");
     			text.css("font-style", "oblique");
-    			eventQuery($("#year").text(), lbl);
+    			eventQuery(yr, lbl);
     		}
     		else {
     			text.css("font-style", "normal");
-    			eventQuery($("#year").text());
+    			eventQuery(yr);
     		}
 	    }
 	};
@@ -267,11 +282,11 @@ $("#slider").on("input", changeYear);
 (function() {
     $("#right_arrow").click(function() {
         var i = 0;
-        
+
         for (; i < displayed.length && displayed[i] != selected; i++)
             ; // Finds currently selected marker. Index is needed.
 
-        (i != displayed.length - 1) && displayed[i+1].fire('click');
+        (i < displayed.length - 1) && displayed[i+1].fire('click');
     });
     
     $("#left_arrow").click(function() {
@@ -292,20 +307,20 @@ $("#slider").on("input", changeYear);
 
 	// Instantiate all icon types.
 	var FISTS = [
-		L.icon({iconUrl: ICN_PTH + 'fst_ic_un.png',   iconSize: [25, 50]}), // Unselected icon.
-		L.icon({iconUrl: ICN_PTH + 'fst_ic_sel.png',  iconSize: [25, 50]})  // Selected icon.
+		L.icon({iconUrl: ICN_PTH + 'fst_ic_un.png',   iconSize: [20, 40]}), // Unselected icon.
+		L.icon({iconUrl: ICN_PTH + 'fst_ic_sel.png',  iconSize: [20, 40]})  // Selected icon.
 	];
 	var BRUSHES = [
 		L.icon({iconUrl: ICN_PTH + 'brsh_ic_un.png',  iconSize: [47, 70]}),
 		L.icon({iconUrl: ICN_PTH + 'brsh_ic_sel.png', iconSize: [47, 70]})
 	];
 	var DOLLARS = [
-		L.icon({iconUrl: ICN_PTH + 'dllr_ic_un.png',  iconSize: [20, 50]}),
-	    L.icon({iconUrl: ICN_PTH + 'dllr_ic_sel.png', iconSize: [20, 50]})
+		L.icon({iconUrl: ICN_PTH + 'dllr_ic_un.png',  iconSize: [15, 40]}),
+	    L.icon({iconUrl: ICN_PTH + 'dllr_ic_sel.png', iconSize: [15, 40]})
 	];
 	var GLOBES = [
-		L.icon({iconUrl: ICN_PTH + 'glb_ic_un.png',   iconSize: [37, 55]}),
-	    L.icon({iconUrl: ICN_PTH + 'glb_ic_sel.png',  iconSize: [37, 55]})
+		L.icon({iconUrl: ICN_PTH + 'glb_ic_un.png',   iconSize: [20, 32]}),
+	    L.icon({iconUrl: ICN_PTH + 'glb_ic_sel.png',  iconSize: [20, 32]})
 	];
 	var SCHOOLS = [
 		L.icon({iconUrl: ICN_PTH + 'schl_ic_un.png',  iconSize: [47, 70]}),
@@ -333,6 +348,7 @@ $("#slider").on("input", changeYear);
 		var e = spreadsheet.events[this.EVENT_INDEX];
 		var end = (e[E_END] == "") ? "?" : e[E_END];
 		var timeSpan = (e[E_STRT] == end) ? e[E_STRT] : e[E_STRT] + " - " + end;
+		var ANIMATE_TIME = 200;
 
 		if (speed.fast) {
 			$("#desc_title").text(e[E_NAME]);
@@ -344,15 +360,15 @@ $("#slider").on("input", changeYear);
 			});
 		}
 		else {
-			$("#desc_body").fadeOut(200, function() {
-				$(this).html('<sup><i>' + timeSpan + '</i></sup><br>' + e[E_DESC]).fadeIn(200)
+			$("#desc_body").fadeOut(ANIMATE_TIME, function() {
+				$(this).html('<sup><i>' + timeSpan + '</i></sup><br>' + e[E_DESC]).fadeIn(ANIMATE_TIME)
 			});
-			$("#desc_title").slideUp(200, function() {
-				$(this).text(e[E_NAME]).slideDown(200);
+			$("#desc_title").slideUp(ANIMATE_TIME, function() {
+				$(this).text(e[E_NAME]).slideDown(ANIMATE_TIME);
 			});
-			$("#address").fadeOut(200, function() {
+			$("#address").fadeOut(ANIMATE_TIME, function() {
 				$(this).text(e[E_ADDR])
-					.css('bottom', mobile ? "0px" : ($(this).height() - 26) + "px").fadeIn(200);
+					.css('bottom', mobile ? "0px" : ($(this).height() - 26) + "px").fadeIn(ANIMATE_TIME);
 			});
 		}
 		$("#street_view iframe").attr("src", e[E_STVW] || "");
@@ -380,7 +396,7 @@ $("#slider").on("input", changeYear);
 			marker.setIcon(marker.ICONS[0]);
 			marker.EVENT_INDEX = i;
 			marker.on('click', iconFlip);
-			if ($(window).width() >= 1200) {
+			if ($(window).width() >= MBL_THRESH) {
 			    marker.bindTooltip(e[E_NAME], toolTipOptions); // Tooltip not needed for mobile
 			}
 			
@@ -388,13 +404,15 @@ $("#slider").on("input", changeYear);
 				// Add this to every year it falls into.
 				var range = (e[E_END] === PRESENT) ? allMarkers.length : e[E_END] - e[E_STRT];
 
-				for (j = 0; start + j < allMarkers.length && j <= range; j++) {
+				for (j = 0; start + j < allMarkers.length - 1 && j <= range; j++) {
 					allMarkers[start + j].push(marker);
 				}
 			}
 			else {
 				allMarkers[start].push(marker);
 			}
+
+			allMarkers[allMarkers.length-1].push(marker); // All markers are put in final slot.
 		}
 	}
 
