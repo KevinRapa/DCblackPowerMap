@@ -14,8 +14,8 @@ var IC_PTH = 'images/icons/'; // Path to where icons are.
 var MBL_THRESH = 1200; // Width at which devince is considered 'mobile'.
 var BOUNDS_OPTIONS = {
 	maxZoom: 15, // Auto-panning of map can't zoom in past this.
-	paddingBottomRight: L.point(60,60), // So markers don't hide behind slider.
-	paddingTopLeft: L.point(30,30) // So markers don't appear half off the map.
+	paddingBottomRight: L.point(80,80), // So markers don't hide behind slider.
+	paddingTopLeft: L.point(25,25) // So markers don't appear half off the map.
 };
 
 // ---------------------------------------------------------------------
@@ -62,7 +62,7 @@ $("#street_view").hide(); // Visible when the street_view_button is pressed.
 var myMap = L.map('leaflet_map', {
 	zoomSnap: 0,    // Map zoom must be a multiple of this. 
 	zoomDelta: 0.6, // How much map zoom changes. 
-	minZoom: 10,    // Map cannot zoom out beyond this.
+	minZoom: 8,     // Map cannot zoom out beyond this.
 	zoomAnimationThreshold: 10, // How high zoom must be for no pan animation to occur.
 	layers: L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', 
 		{
@@ -423,7 +423,7 @@ $("#slider").on("input", changeYear);
 				case BUS:  marker.ICONS = DOLLARS; break;
 				case EDU:  marker.ICONS = SCHOOLS; break;
 				case INTR: marker.ICONS = GLOBES;  break;
-				default:   marker.ICONS = UNKNOWN;   break;
+				default:   marker.ICONS = UNKNOWN; break; // No label entered for it.
 			}
 			marker.setIcon(marker.ICONS[0]);
 			marker.EVENT_INDEX = i;
