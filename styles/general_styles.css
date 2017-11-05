@@ -5,6 +5,8 @@
  */
 
 body {
+	background-image: url("../images/ralph_featherstone.jpg");
+	background-color: black;
 	background-attachment: fixed;
 	font-family: Times, serif;
 	overflow: hidden;

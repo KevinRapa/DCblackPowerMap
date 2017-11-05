@@ -94,20 +94,29 @@ $(window).resize(function() {
 			.before('<input type="range" id="mobile_slider" class="fade_group" \
 					min="1961" max="' + ALL + '" value="' + yr + '"/>')
 			.css("margin-bottom", "10px");
+
 		$("#title_box")
 			.after($("#mobile_holder").detach())
 			.text(MOBILE_TTL);
+
 		$("#slider_box")
 			.css("visibility", "hidden")
 			.before('<input type="range" id="mobile_marker_slider" class="fade_group" \
 			    	min="0" max="' + (displayed.length - 1) + '" val="0"></input>');
-		$("#mobile_marker_slider").on("input", function() {
+
+		var mbl_mrkr_sldr = $("#mobile_marker_slider");
+		mbl_mrkr_sldr.on("input", function() {
 			displayed[$(this).val()].fire('click');
 		});
+		if (displayed.length <= 1) {
+			mbl_mrkr_sldr.hide();
+		}
+
 		$("#mobile_slider")
 			.before('<div id="mobile_year" class="fade_group">' + 
 					(yr == ALL ? 'All' : yr) + '</div>')
 			.on('input', changeYear);
+
 		$("#mobile_year").css("left", ((yr - BEGIN_YR) * 15) + "px");
 		$("#button_and_address").css("bottom", "371px");
 		$("#address").css("bottom", "0");
@@ -174,14 +183,17 @@ function eventQuery(year, type) {
 	selected = null; 	  // Not needed, just for consistency.
 	displayed = [];
 	var bounds = [];      // List of coordinates for map panning.
+	var markerArr = ALL_MARKERS[year - BEGIN_YR];
 
-	ALL_MARKERS[year - BEGIN_YR].forEach(function(marker) {
-	    if (! type || spreadsheet.events[marker.EVENT_INDEX][E_LBL] == type) {
+	for (i = 0; i < markerArr.length; i++) {
+		var marker = markerArr[i];
+
+		if (! type || spreadsheet.events[marker.EVENT_INDEX][E_LBL] == type) {
     		displayed.push(marker);
     		marker.addTo(myMap);
     		bounds.push(marker.getLatLng());
 	    }
-	});
+	}
 
 	if(bounds.length) {
 		myMap.fitBounds(bounds, BOUNDS_OPTIONS);
@@ -193,8 +205,14 @@ function eventQuery(year, type) {
 	var mbl_mrkr_sldr = $('#mobile_marker_slider');
 
 	if (mbl_mrkr_sldr) {
-		mbl_mrkr_sldr.val(0);
-		mbl_mrkr_sldr.attr('max', displayed.length - 1);
+		if (displayed.length > 1) {
+			mbl_mrkr_sldr.val(0);
+			mbl_mrkr_sldr.attr('max', displayed.length - 1);
+			mbl_mrkr_sldr.show();
+		}
+		else {
+			mbl_mrkr_sldr.hide();
+		}
 	}
 };
 
