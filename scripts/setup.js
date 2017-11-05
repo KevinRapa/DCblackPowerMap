@@ -97,21 +97,17 @@ $(window).resize(function() {
 		$("#title_box")
 			.after($("#mobile_holder").detach())
 			.text(MOBILE_TTL);
-		$("#slider_box").css("visibility", "hidden")
-		    .before('<div id="mobile_arrows" class="fade_group"></div>');
-		$("#mobile_arrows")
-		    .html('<button id="mobile_left_arrow" class="arrow"></button> \
-		          <button id="mobile_right_arrow" class="arrow"></button>');
+		$("#slider_box")
+			.css("visibility", "hidden")
+			.before('<input type="range" id="mobile_marker_slider" class="fade_group" \
+			    	min="0" max="' + (displayed.length - 1) + '" val="0"></input>');
+		$("#mobile_marker_slider").on("input", function() {
+			displayed[$(this).val()].fire('click');
+		});
 		$("#mobile_slider")
 			.before('<div id="mobile_year" class="fade_group">' + 
 					(yr == ALL ? 'All' : yr) + '</div>')
 			.on('input', changeYear);
-		$("#mobile_left_arrow").click(function() {
-		    $("#left_arrow").click();
-		});
-		$("#mobile_right_arrow").click(function() {
-		    $("#right_arrow").click();
-		});
 		$("#mobile_year").css("left", ((yr - BEGIN_YR) * 15) + "px");
 		$("#button_and_address").css("bottom", "371px");
 		$("#address").css("bottom", "0");
@@ -129,7 +125,7 @@ $(window).resize(function() {
 		$("#slider").val($("#mobile_slider").val());
 		$("#mobile_slider").off('input').detach();
 		$("#mobile_year").detach();
-		$("#mobile_arrows").detach();
+		$("#mobile_marker_slider").detach();
 		$("#slider_box").css("visibility", "visible");
 		$("#title_box").text(DESKTOP_TTL);
 		$("#left_pane").html($("#mobile_holder").detach());
@@ -158,6 +154,14 @@ function clearSelected(replace) {
 
 
 /*
+ * Used to sort markers in 'displayed' based on latitude.
+ */
+function compareMarkers(a, b) {
+	return a.getLatLng().lat - b.getLatLng().lat;
+}
+
+
+/*
  * Removes each marker from the map, then populates the map with all events
  * that fall in [year]. If type is defined, also checks that the event is
  * same type. Fits bounds of the map around the points.
@@ -181,8 +185,16 @@ function eventQuery(year, type) {
 
 	if(bounds.length) {
 		myMap.fitBounds(bounds, BOUNDS_OPTIONS);
+		displayed.sort(compareMarkers); // Sorts on latitude.
 		displayed[0].fire('click', {fast: true});
 		displayed[0].closeTooltip();
+	}
+
+	var mbl_mrkr_sldr = $('#mobile_marker_slider');
+
+	if (mbl_mrkr_sldr) {
+		mbl_mrkr_sldr.val(0);
+		mbl_mrkr_sldr.attr('max', displayed.length - 1);
 	}
 };
 
@@ -222,7 +234,7 @@ $("#street_view_button").click(function(e, show) {
 
 	if (btn.text() === ST_VIEW_UNSELECTED) {
 		btn.text(ST_VIEW_SELECTED);
-		$(".fade_group").fadeOut(FADE_TIME); // mobile_slider, mobile_year, slider_box, mobile_arrows
+		$(".fade_group").fadeOut(FADE_TIME); // mobile_slider, mobile_year, slider_box, mobile_marker_slider
 		$("#leaflet_map").fadeOut(FADE_TIME, function() {
 			if (btn.text() === ST_VIEW_SELECTED) {
 				// 'If' needed since clicking the button quickly will mess things up.
@@ -406,9 +418,14 @@ $("#slider").on("input", changeYear);
 		$("#street_view iframe").attr("src", e[E_STVW] || "");
 	};
 
-	// Populate ALL_MARKERS.
-	var toolTipOptions = {opacity: 0.8, className: 'tooltip'};
+	
+	var TOOLTIP_OPTIONS = {
+		opacity: 0.8, 
+		offset: L.point(12,10),
+		className: 'tooltip'
+	};
 
+	// Populate ALL_MARKERS.
 	for (i = 0; i < spreadsheet.events.length; i++) {
 		var e = spreadsheet.events[i];
 
@@ -429,7 +446,7 @@ $("#slider").on("input", changeYear);
 			marker.EVENT_INDEX = i;
 			marker.on('click', iconFlip);
 			if ($(window).width() >= MBL_THRESH) {
-			    marker.bindTooltip(e[E_NAME], toolTipOptions); // Tooltip not needed for mobile
+			    marker.bindTooltip(e[E_NAME], TOOLTIP_OPTIONS); // Tooltip not needed for mobile
 			}
 			
 			if (e[E_END]) {

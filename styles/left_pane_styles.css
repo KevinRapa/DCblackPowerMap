@@ -69,26 +69,6 @@
     border: 9px solid rgb(42,42,42);
 }
 
-#mobile_arrows {
-	width: 250px;
-    position: relative;
-    bottom: 105px;
-    right: 50px;
-    z-index: 2;
-}
-
-#mobile_left_arrow {
-    border: 50px solid transparent;
-    margin-right: 4px;
-    border-right-color: rgb(42,42,42);
-}
-
-#mobile_right_arrow {
-    border: 50px solid transparent;
-    margin-left: 4px;
-    border-left-color: rgb(42,42,42);
-}
-
 #left_arrow {
     margin-right: 2px;
     border-right: 10px solid rgb(200,200,200);
