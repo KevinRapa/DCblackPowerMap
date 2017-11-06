@@ -163,14 +163,6 @@ function clearSelected(replace) {
 
 
 /*
- * Used to sort markers in 'displayed' based on latitude.
- */
-function compareMarkers(a, b) {
-	return a.getLatLng().lat - b.getLatLng().lat;
-}
-
-
-/*
  * Removes each marker from the map, then populates the map with all events
  * that fall in [year]. If type is defined, also checks that the event is
  * same type. Fits bounds of the map around the points.
@@ -197,7 +189,6 @@ function eventQuery(year, type) {
 
 	if(bounds.length) {
 		myMap.fitBounds(bounds, BOUNDS_OPTIONS);
-		displayed.sort(compareMarkers); // Sorts on latitude.
 		displayed[0].fire('click', {fast: true});
 		displayed[0].closeTooltip();
 	}
@@ -481,6 +472,16 @@ $("#slider").on("input", changeYear);
 
 			ALL_MARKERS[ALL_MARKERS.length-1].push(marker); // All markers are put in final slot.
 		}
+	}
+
+
+	// Sort all the marker arrays on latitude. Good for navigating with arrows.
+	var compareMarkers = function(a, b) {
+		return a.getLatLng().lat - b.getLatLng().lat;
+	}
+
+	for (i = 0; i < ALL_MARKERS.length; i++) {
+		ALL_MARKERS[i].sort(compareMarkers);
 	}
 
 	eventQuery(BEGIN_YR);
