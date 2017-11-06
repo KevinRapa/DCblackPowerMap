@@ -32,11 +32,11 @@ var E_STVW = "Street_View_URL";
 var E_LBL  = "Label";
 
 // Label names
-var INTR = "PA/IS";
-var ART = "BA";
-var BUS = "BB";
-var EDU = "IS";
-var POL = "P/EP";
+var INTR = "PA/IS"; // Pan Africanism
+var ART = "BA";		// Black arts
+var BUS = "BB";		// Black business
+var EDU = "IS"; 	// Education
+var POL = "P/EP";	// Electoral politics
 // ---------------------------------------------------------------------
 
 // The '+ 1' is there since last index is used to display all the markers.
@@ -149,7 +149,7 @@ $(window).resize(function() {
 });
 
 
-/**
+/*
  * Deselects the currently selected marker.
  * 'replace' can be anything. Specifies selected should be added back.
  */
@@ -175,10 +175,10 @@ function eventQuery(year, type) {
 	selected = null; 	  // Not needed, just for consistency.
 	displayed = [];
 	var bounds = [];      // List of coordinates for map panning.
-	var markerArr = ALL_MARKERS[year - BEGIN_YR];
+	var MARKER_ARR = ALL_MARKERS[year - BEGIN_YR];
 
-	for (i = 0; i < markerArr.length; i++) {
-		var marker = markerArr[i];
+	for (i = 0; i < MARKER_ARR.length; i++) {
+		var marker = MARKER_ARR[i];
 
 		if (! type || spreadsheet.events[marker.EVENT_INDEX][E_LBL] == type) {
     		displayed.push(marker);
@@ -209,11 +209,14 @@ function eventQuery(year, type) {
 
 
 /*
- * Fires when a slider changes. Changes year text and switches up markers.
- * Global since #mobile_slider is dynamically attached and detached from the DOM.
+ * Fires when a slider changes OR when an arrow button is pressed while the last or
+ * first marker in a year is selected. Changes year text and switches up markers.
+ *
+ * The parameter 'year' is assigned a value only if this is called by an arrow button.
+ * The sliders do not explicitly pass any arguments.
  */
-var changeYear = function() {
-	var yr = $(this).val();
+var changeYear = function(event, year) {
+	var yr = year ? year : $(this).val();
 	$('#year').text(yr == ALL ? 'All' : yr);
 	$('#mobile_year').text(yr == ALL ? 'All' : yr).animate({
 		left: ((yr - BEGIN_YR) * 14.5) + "px"
@@ -330,20 +333,36 @@ $("#slider").on("input", changeYear);
 (function() {
     $("#right_arrow").click(function() {
         var i = 0;
+        var sldr = $("#slider");
+        var yr = parseInt(sldr.val());
 
         while (i < displayed.length && displayed[i] != selected)
             i++; // Finds currently selected marker. Index is needed.
 
-        (i < displayed.length - 1) && displayed[i+1].fire('click');
+        if (i < displayed.length - 1) {
+        	displayed[i+1].fire('click');
+        }
+        else if (yr < END_YR + 1) {
+        	changeYear(null, yr + 1);
+        	sldr.val(yr + 1);
+        }
     });
     
     $("#left_arrow").click(function() {
         var i = 0;
+        var sldr = $("#slider");
+        var yr = parseInt(sldr.val());
        
         while (i < displayed.length && displayed[i] != selected)
             i++;
         
-        (i > 0) && displayed[i-1].fire('click');
+        if (i > 0) {
+        	displayed[i-1].fire('click');
+        }
+        else if (yr > BEGIN_YR) {
+        	changeYear(null, yr - 1);
+        	sldr.val(yr - 1);
+        }
     });
 })();
  
@@ -352,8 +371,6 @@ $("#slider").on("input", changeYear);
  * Load markers and display first year.
  */
 (function() {
-
-	// Instantiate all icon types.
 	var FISTS = [
 		L.icon({iconUrl: IC_PTH + 'fst_un.png'}), // Unselected icon.
 		L.icon({iconUrl: IC_PTH + 'fst_sel.png'}) // Selected icon.
