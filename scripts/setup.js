@@ -39,10 +39,13 @@ var EDU = "IS"; 	// Education
 var POL = "P/EP";	// Electoral politics
 // ---------------------------------------------------------------------
 
-// The '+ 1' is there since last index is used to display all the markers.
-var ALL = END_YR + 1;
+var ALL = END_YR + 1; // '+ 1' there since last index is used to display every marker.
 var NUM_YEARS = END_YR - BEGIN_YR + 1;
 var ALL_MARKERS = new Array(NUM_YEARS + 1); // Indexed by [year] - BEGIN_YR + offset.
+
+var M_SLDR_THMB_W = 80; // Mobile slider thumb width.
+var M_SLDR_W = 570;     // Width of the mobile sider.
+var CELL_WIDTH = (M_SLDR_W - M_SLDR_THMB_W) / NUM_YEARS; // To align mobile_year with mobile_slider thumb
 
 var mobile = false;  // If page is in compact mode.
 var selected = null; // The currently selected marker.
@@ -60,11 +63,11 @@ $("#street_view").hide(); // Visible when the street_view_button is pressed.
  * TO CHANGE MAP, VISIT https://leaflet-extras.github.io/leaflet-providers/preview/
  */
 var myMap = L.map('leaflet_map', {
-	zoomSnap: 0,    // Map zoom must be a multiple of this. 
-	zoomDelta: 0.6, // How much map zoom changes. 
+	zoomSnap: 0,    // Map zoom must be a multiple of this.
+	zoomDelta: 0.6, // How much map zoom changes.
 	minZoom: 8,     // Map cannot zoom out beyond this.
 	zoomAnimationThreshold: 10, // How high zoom must be for no pan animation to occur.
-	layers: L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', 
+	layers: L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png',
 		{
 			attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" \
 			target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; \
@@ -98,26 +101,26 @@ $(window).resize(function() {
 		$("#title_box")
 			.after($("#mobile_holder").detach())
 			.text(MOBILE_TTL);
-
+        
 		$("#slider_box")
 			.css("visibility", "hidden")
 			.before('<input type="range" id="mobile_marker_slider" class="fade_group" \
 			    	min="0" max="' + (displayed.length - 1) + '" val="0"></input>');
 
-		var mbl_mrkr_sldr = $("#mobile_marker_slider");
-		mbl_mrkr_sldr.on("input", function() {
-			displayed[$(this).val()].fire('click');
-		});
+		$("#mobile_slider")
+			.before('<div id="mobile_year" class="fade_group">' +
+					(yr == ALL ? 'All' : yr) + '</div>')
+			.on('input', changeYear);
+        
+		var mbl_mrkr_sldr = $("#mobile_marker_slider")
+			.on("input", function() {
+				displayed[$(this).val()].fire('click');
+			});
 		if (displayed.length <= 1) {
 			mbl_mrkr_sldr.hide();
 		}
 
-		$("#mobile_slider")
-			.before('<div id="mobile_year" class="fade_group">' + 
-					(yr == ALL ? 'All' : yr) + '</div>')
-			.on('input', changeYear);
-
-		$("#mobile_year").css("left", ((yr - BEGIN_YR) * 15) + "px");
+		$("#mobile_year").css("left", ((yr - BEGIN_YR) * CELL_WIDTH + 10) + "px"); // Aligns it
 		$("#button_and_address").css("bottom", "371px");
 		$("#address").css("bottom", "0");
 		$(".purple_box").css("width", "650px");
@@ -216,10 +219,11 @@ function eventQuery(year, type) {
  * The sliders do not explicitly pass any arguments.
  */
 var changeYear = function(event, year) {
-	var yr = year ? year : $(this).val();
+    var yr = year ? year : $(this).val();
+	
 	$('#year').text(yr == ALL ? 'All' : yr);
 	$('#mobile_year').text(yr == ALL ? 'All' : yr).animate({
-		left: ((yr - BEGIN_YR) * 14.5) + "px"
+		left: ((yr - BEGIN_YR) * CELL_WIDTH + 10) + "px"
 	}, 15, 'linear');
 
 	clearSelected();
@@ -303,10 +307,9 @@ $("#slider").on("input", changeYear);
             var yr = mobile ? $("#mobile_slider").val() : $("#slider").val();
     
     		if (text.css("font-style") == "normal") {
-    			var lbl = $(this).attr('id');
     			$(".icon_text").css("font-style", "normal");
     			text.css("font-style", "oblique");
-    			eventQuery(yr, lbl);
+    			eventQuery(yr, $(this).attr('id'));
     		}
     		else {
     			text.css("font-style", "normal");
@@ -337,7 +340,7 @@ $("#slider").on("input", changeYear);
         var yr = parseInt(sldr.val());
 
         while (i < displayed.length && displayed[i] != selected)
-            i++; // Finds currently selected marker. Index is needed.
+            i++;
 
         if (i < displayed.length - 1) {
         	displayed[i+1].fire('click');
@@ -362,6 +365,7 @@ $("#slider").on("input", changeYear);
         else if (yr > BEGIN_YR) {
         	changeYear(null, yr - 1);
         	sldr.val(yr - 1);
+        	displayed[displayed.length - 1].fire('click');
         }
     });
 })();
@@ -446,7 +450,7 @@ $("#slider").on("input", changeYear);
 
 	
 	var TOOLTIP_OPTIONS = {
-		opacity: 0.8, 
+		opacity: 0.8,
 		offset: L.point(12,10),
 		className: 'tooltip'
 	};

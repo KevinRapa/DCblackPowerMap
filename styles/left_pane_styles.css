@@ -36,7 +36,6 @@
 	position: relative;
 	padding: 6px;
 	z-index: 2;
-	color: white;
 	font-style: italic;
 	font-size: 24px;
 	letter-spacing: 1px;
@@ -69,6 +68,11 @@
     border: 9px solid rgb(42,42,42);
 }
 
+.arrow:active {
+    bottom: 2px;
+    left: 1px;
+}
+
 #left_arrow {
     margin-right: 2px;
     border-right: 10px solid rgb(200,200,200);
@@ -79,6 +83,10 @@
     border-right-color: rgb(240,240,240);
 }
 
+#left_arrow:active {
+    border-right-color: rgb(100,100,100);
+}
+
 #right_arrow {
     margin-left: 2px;
     border-left: 10px solid rgb(200,200,200);
@@ -87,6 +95,10 @@
 
 #right_arrow:hover {
     border-left-color: rgb(240,240,240);
+}
+
+#right_arrow:active {
+    border-left-color: rgb(100,100,100);
 }
 
 #year {
