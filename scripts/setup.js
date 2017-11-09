@@ -230,6 +230,8 @@ var changeYear = function(event, year) {
 	eventQuery(yr);
 };
 
+$("#slider").on("input", changeYear);
+
 
 /*
  * Removes the intro screen.
@@ -280,12 +282,6 @@ $("#street_view_button").click(function(e, show) {
 		}
 	}
 });
-
-
-/*
- * Changes year, then calls event_query to update markers.
- */
-$("#slider").on("input", changeYear);
 
 
 /*

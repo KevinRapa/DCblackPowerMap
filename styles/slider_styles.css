@@ -113,7 +113,7 @@ input[type='range']::-webkit-slider-thumb {
 #mobile_slider::-webkit-slider-runnable-track {
   height: 80px;
   box-shadow: 5px 5px 5px #0f0f0f;
-  background: rgb(200,191,176);
+  background: rgb(140,140,140);
   border-radius: 40px;
 }
 
@@ -127,7 +127,7 @@ input[type='range']::-webkit-slider-thumb {
 
 #mobile_slider::-moz-range-track {
   height: 80px;
-  background: rgb(200,191,176);
+  background: rgb(140,140,140);
   box-shadow: 5px 5px 5px #0f0f0f;
   border-radius: 40px;
 }
@@ -147,12 +147,12 @@ input[type='range']::-webkit-slider-thumb {
 }
 
 #mobile_slider::-ms-fill-lower {
-  background: rgb(200,191,176);
+  background: rgb(140,140,140);
   border-radius: 20px;
 }
 
 #mobile_slider::-ms-fill-upper {
-  background: rgb(200,191,176);
+  background: rgb(140,140,140);
   border-radius: 20px;
 }
 
@@ -181,7 +181,7 @@ input[type='range']::-webkit-slider-thumb {
 
 #mobile_marker_slider::-webkit-slider-runnable-track {
   height: 20px;
-  background: rgb(200,191,176);
+  background: rgb(140,140,140);
   border-radius: 10px;
   box-shadow: -3px 3px 3px #0f0f0f;
 }
@@ -196,7 +196,7 @@ input[type='range']::-webkit-slider-thumb {
 
 #mobile_marker_slider::-moz-range-track {
   height: 20px;
-  background: rgb(200,191,176);
+  background: rgb(140,140,140);
   margin-top: 5px;
   border-radius: 10px;
   box-shadow: -3px 3px 3px #0f0f0f;
@@ -225,9 +225,9 @@ input[type='range']::-webkit-slider-thumb {
 }
 
 #mobile_marker_slider::-ms-fill-lower {
-  background: rgb(200,191,176);
+  background: rgb(140,140,140);
 }
 
 #mobile_marker_slider::-ms-fill-upper {
-  background: rgb(200,191,176);
+  background: rgb(140,140,140);
 }
