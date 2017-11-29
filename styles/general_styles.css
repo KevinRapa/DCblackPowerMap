@@ -100,6 +100,7 @@ button {
 	font-family: Impact, Arial black, sans-serif;
 	font-size: 60px;
 	text-align: center;
+	text-shadow: 3px 3px 5px rgb(42,42,42);
 }
 
 #featured_content {

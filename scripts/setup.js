@@ -20,7 +20,7 @@ var BOUNDS_OPTIONS = {
 
 // ---------------------------------------------------------------------
 // Change if modifying spreadsheet field names.
-var SHEET_NAME = "DC BLACK POWER CHRONICLES - Chronology";
+var SHEET_NM = "Black Power Events and Organizations";
 var E_STRT = "Start_Year";
 var E_END  = "End_Date";
 var E_ADDR = "Geography_Address ";
@@ -44,8 +44,8 @@ var NUM_YEARS = END_YR - BEGIN_YR + 1;
 var ALL_MARKERS = new Array(NUM_YEARS + 1); // Indexed by [year] - BEGIN_YR + offset.
 
 var M_SLDR_THMB_W = 80; // Mobile slider thumb width.
-var M_SLDR_W = 570;     // Width of the mobile sider.
-var CELL_WIDTH = (M_SLDR_W - M_SLDR_THMB_W) / NUM_YEARS; // To align mobile_year with mobile_slider thumb
+var M_SLDR_W = 570;     // Width of the mbl sider.
+var CELL_WIDTH = (M_SLDR_W - M_SLDR_THMB_W) / NUM_YEARS; // To align mbl_year with mbl_slider thumb
 
 var mobile = false;  // If page is in compact mode.
 var selected = null; // The currently selected marker.
@@ -94,25 +94,25 @@ $(window).resize(function() {
 
 		$("#legend")
 			.after($("#right_box").detach())
-			.before('<input type="range" id="mobile_slider" class="fade_group" \
+			.before('<input type="range" id="mbl_slider" class="fade_group" \
 					min="1961" max="' + ALL + '" value="' + yr + '"/>')
 			.css("margin-bottom", "10px");
 
 		$("#title_box")
-			.after($("#mobile_holder").detach())
+			.after($("#mbl_holder").detach())
 			.text(MOBILE_TTL);
         
 		$("#slider_box")
 			.css("visibility", "hidden")
-			.before('<input type="range" id="mobile_marker_slider" class="fade_group" \
+			.before('<input type="range" id="mbl_marker_slider" class="fade_group" \
 			    	min="0" max="' + (displayed.length - 1) + '" val="0"></input>');
 
-		$("#mobile_slider")
-			.before('<div id="mobile_year" class="fade_group">' +
+		$("#mbl_slider")
+			.before('<div id="mbl_year" class="fade_group">' +
 					(yr == ALL ? 'All' : yr) + '</div>')
 			.on('input', changeYear);
         
-		var mbl_mrkr_sldr = $("#mobile_marker_slider")
+		var mbl_mrkr_sldr = $("#mbl_marker_slider")
 			.on("input", function() {
 				displayed[$(this).val()].fire('click');
 			});
@@ -120,7 +120,7 @@ $(window).resize(function() {
 			mbl_mrkr_sldr.hide();
 		}
 
-		$("#mobile_year").css("left", ((yr - BEGIN_YR) * CELL_WIDTH + 10) + "px"); // Aligns it
+		$("#mbl_year").css("left", ((yr - BEGIN_YR) * CELL_WIDTH + 10) + "px"); // Aligns it
 		$("#button_and_address").css("bottom", "371px");
 		$("#address").css("bottom", "0");
 		$(".purple_box").css("width", "650px");
@@ -134,13 +134,13 @@ $(window).resize(function() {
 
 		$(".purple_box").css("width", MBL_THRESH + "px");
 		$("#legend").css("margin-bottom", "");
-		$("#slider").val($("#mobile_slider").val());
-		$("#mobile_slider").off('input').detach();
-		$("#mobile_year").detach();
-		$("#mobile_marker_slider").detach();
+		$("#slider").val($("#mbl_slider").val());
+		$("#mbl_slider").off('input').detach();
+		$("#mbl_year").detach();
+		$("#mbl_marker_slider").detach();
 		$("#slider_box").css("visibility", "visible");
 		$("#title_box").text(DESKTOP_TTL);
-		$("#left_pane").html($("#mobile_holder").detach());
+		$("#left_pane").html($("#mbl_holder").detach());
 		$("#right_pane").html($("#right_box").detach());
 		$("#button_and_address").css("bottom", "30px");
 		$("#address").hide(0, function() {
@@ -183,7 +183,7 @@ function eventQuery(year, type) {
 	for (i = 0; i < MARKER_ARR.length; i++) {
 		var marker = MARKER_ARR[i];
 
-		if (! type || spreadsheet.events[marker.EVENT_INDEX][E_LBL] == type) {
+		if (! type || spreadsheet[SHEET_NM][marker.EVENT_INDEX][E_LBL] == type) {
     		displayed.push(marker);
     		marker.addTo(myMap);
     		bounds.push(marker.getLatLng());
@@ -196,7 +196,7 @@ function eventQuery(year, type) {
 		displayed[0].closeTooltip();
 	}
 
-	var mbl_mrkr_sldr = $('#mobile_marker_slider');
+	var mbl_mrkr_sldr = $('#mbl_marker_slider');
 
 	if (mbl_mrkr_sldr) {
 		if (displayed.length > 1) {
@@ -219,10 +219,10 @@ function eventQuery(year, type) {
  * The sliders do not explicitly pass any arguments.
  */
 var changeYear = function(event, year) {
-    var yr = year ? year : $(this).val();
+	var yr = year ? year : $(this).val();
 	
 	$('#year').text(yr == ALL ? 'All' : yr);
-	$('#mobile_year').text(yr == ALL ? 'All' : yr).animate({
+	$('#mbl_year').text(yr == ALL ? 'All' : yr).animate({
 		left: ((yr - BEGIN_YR) * CELL_WIDTH + 10) + "px"
 	}, 15, 'linear');
 
@@ -252,7 +252,7 @@ $("#street_view_button").click(function(e, show) {
 
 	if (btn.text() === ST_VIEW_UNSELECTED) {
 		btn.text(ST_VIEW_SELECTED);
-		$(".fade_group").fadeOut(FADE_TIME); // mobile_slider, mobile_year, slider_box, mobile_marker_slider
+		$(".fade_group").fadeOut(FADE_TIME); // mbl_slider, mbl_year, slider_box, mbl_marker_slider
 		$("#leaflet_map").fadeOut(FADE_TIME, function() {
 			if (btn.text() === ST_VIEW_SELECTED) {
 				// 'If' needed since clicking the button quickly will mess things up.
@@ -300,7 +300,7 @@ $("#street_view_button").click(function(e, show) {
     			
         if ($("#street_view_button").text() != ST_VIEW_SELECTED) {
             clearSelected();
-            var yr = mobile ? $("#mobile_slider").val() : $("#slider").val();
+            var yr = mobile ? $("#mbl_slider").val() : $("#slider").val();
     
     		if (text.css("font-style") == "normal") {
     			$(".icon_text").css("font-style", "normal");
@@ -413,7 +413,7 @@ $("#street_view_button").click(function(e, show) {
 		selected = this;
 		
 		// Display all the event information.
-		var e = spreadsheet.events[this.EVENT_INDEX];
+		var e = spreadsheet[SHEET_NM][this.EVENT_INDEX];
 		var end = (e[E_END] == "") ? "?" : e[E_END];
 		var timeSpan = (e[E_STRT] == end) ? e[E_STRT] : e[E_STRT] + " - " + end;
 		var ANIMATE_TIME = 150; // Change to adjust time for description to change.
@@ -452,8 +452,8 @@ $("#street_view_button").click(function(e, show) {
 	};
 
 	// Populate ALL_MARKERS.
-	for (i = 0; i < spreadsheet.events.length; i++) {
-		var e = spreadsheet.events[i];
+	for (i = 0; i < spreadsheet[SHEET_NM].length; i++) {
+		var e = spreadsheet[SHEET_NM][i];
 
 		if (e[E_STRT] && e[E_LAT] && e[E_LONG]) {
 			// To add a marker, it must have a start date and a position.

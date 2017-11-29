@@ -1,7 +1,7 @@
 /*********************************
  * This contains styles for the
  * default map slider and the
- * mobile slider.
+ * mbl slider.
  */
 input[type='range'] {
   -webkit-appearance: none;
@@ -103,21 +103,21 @@ input[type='range']::-webkit-slider-thumb {
   Mobile version of slider.
 /*************************************************************************************/
 
-#mobile_slider {
+#mbl_slider {
   height: 80px;
   width: 570px;
   margin: 0 auto;
   border-radius: 40px; 
 }
 
-#mobile_slider::-webkit-slider-runnable-track {
+#mbl_slider::-webkit-slider-runnable-track {
   height: 80px;
   box-shadow: 5px 5px 5px #0f0f0f;
   background: rgb(140,140,140);
   border-radius: 40px;
 }
 
-#mobile_slider::-webkit-slider-thumb {
+#mbl_slider::-webkit-slider-thumb {
   height: 80px;
   width: 80px; /* If changing, change constant in changeYear() in setup.js */
   border-radius: 40px;
@@ -125,14 +125,14 @@ input[type='range']::-webkit-slider-thumb {
   border: none;
 }
 
-#mobile_slider::-moz-range-track {
+#mbl_slider::-moz-range-track {
   height: 80px;
   background: rgb(140,140,140);
   box-shadow: 5px 5px 5px #0f0f0f;
   border-radius: 40px;
 }
 
-#mobile_slider::-moz-range-thumb {
+#mbl_slider::-moz-range-thumb {
   height: 80px;
   width: 80px; /* If changing, also change constant in setup.js */
   border-radius: 40px;
@@ -140,23 +140,23 @@ input[type='range']::-webkit-slider-thumb {
   border: none;
 }
 
-#mobile_slider::-ms-track {
+#mbl_slider::-ms-track {
   height: 80px;
   background: transparent;
   border-color: transparent;
 }
 
-#mobile_slider::-ms-fill-lower {
+#mbl_slider::-ms-fill-lower {
   background: rgb(140,140,140);
   border-radius: 20px;
 }
 
-#mobile_slider::-ms-fill-upper {
+#mbl_slider::-ms-fill-upper {
   background: rgb(140,140,140);
   border-radius: 20px;
 }
 
-#mobile_slider::-ms-thumb {
+#mbl_slider::-ms-thumb {
   height: 80px;
   width: 80px; /* If changing, also change constant in setup.js */
   border-radius: 40px;
@@ -167,7 +167,7 @@ input[type='range']::-webkit-slider-thumb {
   Mobile slider from switching events.
 /*************************************************************************************/
 
-#mobile_marker_slider {
+#mbl_marker_slider {
   width: 470px;
   height: 20px;
   float: right;
@@ -179,14 +179,14 @@ input[type='range']::-webkit-slider-thumb {
   z-index: 2;
 }
 
-#mobile_marker_slider::-webkit-slider-runnable-track {
+#mbl_marker_slider::-webkit-slider-runnable-track {
   height: 20px;
   background: rgb(140,140,140);
   border-radius: 10px;
   box-shadow: -3px 3px 3px #0f0f0f;
 }
 
-#mobile_marker_slider::-webkit-slider-thumb {
+#mbl_marker_slider::-webkit-slider-thumb {
   height: 35px;
   width: 55px;
   margin-top: -7px;
@@ -194,7 +194,7 @@ input[type='range']::-webkit-slider-thumb {
   border-radius: 16px;
 }
 
-#mobile_marker_slider::-moz-range-track {
+#mbl_marker_slider::-moz-range-track {
   height: 20px;
   background: rgb(140,140,140);
   margin-top: 5px;
@@ -202,7 +202,7 @@ input[type='range']::-webkit-slider-thumb {
   box-shadow: -3px 3px 3px #0f0f0f;
 }
 
-#mobile_marker_slider::-moz-range-thumb {
+#mbl_marker_slider::-moz-range-thumb {
   height: 35px;
   width: 55px;
   border-radius: 8px;
@@ -211,12 +211,12 @@ input[type='range']::-webkit-slider-thumb {
   border: none;
 }
 
-#mobile_marker_slider::-ms-track {
+#mbl_marker_slider::-ms-track {
   width: 470px;
   height: 20px;
 }
 
-#mobile_marker_slider::-ms-thumb {
+#mbl_marker_slider::-ms-thumb {
   height: 35px;
   width: 55px;
   border-radius: 0;
@@ -224,10 +224,10 @@ input[type='range']::-webkit-slider-thumb {
   background: #2a2a2a;
 }
 
-#mobile_marker_slider::-ms-fill-lower {
+#mbl_marker_slider::-ms-fill-lower {
   background: rgb(140,140,140);
 }
 
-#mobile_marker_slider::-ms-fill-upper {
+#mbl_marker_slider::-ms-fill-upper {
   background: rgb(140,140,140);
 }

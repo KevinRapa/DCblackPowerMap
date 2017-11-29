@@ -15,7 +15,7 @@ var spreadsheet =
 // CODE INSIDE HERE vvv
 
 {
-  "events" : [
+  "Black Power Events and Organizations" : [
     {
       "Event_Name" : "Malcolm X Visit to DC",
       "Start_Year" : 1961,

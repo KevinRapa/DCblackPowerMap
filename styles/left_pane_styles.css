@@ -3,7 +3,7 @@
  * for the left half of the screen.
  */
 
-#mobile_holder {
+#mbl_holder {
 	width: 570px;
 	margin: auto auto;
 	color: white;
@@ -31,7 +31,7 @@
 	font-size: 10px;
 }
 
-#mobile_year {
+#mbl_year {
 	float: left;
 	position: relative;
 	padding: 6px;
@@ -39,6 +39,7 @@
 	font-style: italic;
 	font-size: 24px;
 	letter-spacing: 1px;
+	text-shadow: 4px 4px 1px rgb(42,42,42);
 }
 
 #slider_box {
@@ -135,4 +136,5 @@
 	left: 5px;
 	top: 7px;
 	font-size: 18px;
+	text-shadow: 4px 4px 1px rgb(42,42,42);
 }
