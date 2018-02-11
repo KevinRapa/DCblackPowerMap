@@ -5,8 +5,8 @@
 // ------ OPTIONS ------------------------------------------------------
 var BEGIN_YR = 1961;  // Earliest year an event occurs. Change if adding events!
 var END_YR = 1995;    // Latest year an event occurs. See above.
-var ST_VIEW_UNSELECTED = "See modern day";
-var ST_VIEW_SELECTED = "Back to map";
+var ST_VIEW_UNSELECTED = "To street view";
+var ST_VIEW_SELECTED = "To map";
 var DESKTOP_TTL = "Black History in Washington D.C.";
 var MOBILE_TTL = "D.C. Black History";
 var PRESENT = "present"; // Word used in spreadsheet to say event is still occurring.
@@ -37,6 +37,8 @@ var ART = "BA";		// Black arts
 var BUS = "BB";		// Black business
 var EDU = "IS"; 	// Education
 var POL = "P/EP";	// Electoral politics
+
+var IMG_EXT = ".jpg"; // File extension for the historical images
 // ---------------------------------------------------------------------
 
 var ALL = END_YR + 1; // '+ 1' there since last index is used to display every marker.
@@ -90,7 +92,9 @@ $(window).resize(function() {
 		var b = $("#street_view_button");
 		var yr = $("#slider").val();
 
-		b.text() == ST_VIEW_SELECTED && b.trigger('click', true); // Prevents map seizing.
+		if (b.text() == ST_VIEW_SELECTED) {
+			b.trigger('click', true); // Prevents map seizing.
+		} 
 
 		$("#legend")
 			.after($("#right_box").detach())
@@ -121,8 +125,6 @@ $(window).resize(function() {
 		}
 
 		$("#mbl_year").css("left", ((yr - BEGIN_YR) * CELL_WIDTH + 10) + "px"); // Aligns it
-		$("#button_and_address").css("bottom", "371px");
-		$("#address").css("bottom", "0");
 		$(".purple_box").css("width", "650px");
 	}
 	else if (mobile && $(this).width() >= MBL_THRESH) {
@@ -130,7 +132,9 @@ $(window).resize(function() {
 		mobile = ! mobile;
 		var b = $("#street_view_button");
 
-		b.text() == ST_VIEW_SELECTED && b.trigger('click', true);
+		if(b.text() == ST_VIEW_SELECTED) {
+			b.trigger('click', true);
+		}
 
 		$(".purple_box").css("width", MBL_THRESH + "px");
 		$("#legend").css("margin-bottom", "");
@@ -142,10 +146,6 @@ $(window).resize(function() {
 		$("#title_box").text(DESKTOP_TTL);
 		$("#left_pane").html($("#mbl_holder").detach());
 		$("#right_pane").html($("#right_box").detach());
-		$("#button_and_address").css("bottom", "30px");
-		$("#address").hide(0, function() {
-			$(this).css("bottom", ($(this).height() - 26) + "px").show();
-		});
 	}
 }).ready(function() {
 	$(this).trigger('resize');
@@ -153,8 +153,11 @@ $(window).resize(function() {
 
 
 /*
- * Deselects the currently selected marker.
- * 'replace' can be anything. Specifies selected should be added back.
+ * Removes the currently selected marker.
+ * 'replace' can be anything. If replace is not null, the unselected version of the marker 
+ * will be added back to the map . This only happens currently when the user clicks another 
+ * marker in the current year. Otherwise, marker stays invisble (Like when the event types 
+ * are being filtered).
  */
 function clearSelected(replace) {
     if (selected) {
@@ -216,13 +219,15 @@ function eventQuery(year, type) {
  * first marker in a year is selected. Changes year text and switches up markers.
  *
  * The parameter 'year' is assigned a value only if this is called by an arrow button.
- * The sliders do not explicitly pass any arguments.
+ * The sliders do not explicitly pass any arguments since the slider's value is used for
+ * the year instead.
  */
 var changeYear = function(event, year) {
 	var yr = year ? year : $(this).val();
+	var text = yr == ALL ? 'All' : yr
 	
-	$('#year').text(yr == ALL ? 'All' : yr);
-	$('#mbl_year').text(yr == ALL ? 'All' : yr).animate({
+	$('#year').text(text);
+	$('#mbl_year').text(text).animate({
 		left: ((yr - BEGIN_YR) * CELL_WIDTH + 10) + "px"
 	}, 15, 'linear');
 
@@ -245,6 +250,9 @@ $("#to_map").click(function() {
 
 /*
  * Toggles between the map and the street view image.
+ *
+ * The parameter 'show' is defined if the window is being resized. This
+ * stops the animation from happening since that would cause seizing of the map.
  */
 $("#street_view_button").click(function(e, show) {
 	var FADE_TIME = 150; // Change to adjust time for street view to show.
@@ -303,11 +311,13 @@ $("#street_view_button").click(function(e, show) {
             var yr = mobile ? $("#mbl_slider").val() : $("#slider").val();
     
     		if (text.css("font-style") == "normal") {
+    			// Filters by event type.
     			$(".icon_text").css("font-style", "normal");
     			text.css("font-style", "oblique");
     			eventQuery(yr, $(this).attr('id'));
     		}
     		else {
+    			// Resets filter.
     			text.css("font-style", "normal");
     			eventQuery(yr);
     		}
@@ -327,7 +337,9 @@ $("#street_view_button").click(function(e, show) {
 
 
 /*
- * Adds functionality to arrow buttons. Switches between markers on map.
+ * Adds functionality to arrow buttons. Switches between markers on map in
+ * a bottom to top fashion. Once the last marker is passed, goes to the next
+ * if there is one.
  */
 (function() {
     $("#right_arrow").click(function() {
@@ -417,31 +429,22 @@ $("#street_view_button").click(function(e, show) {
 		var end = (e[E_END] == "") ? "?" : e[E_END];
 		var timeSpan = (e[E_STRT] == end) ? e[E_STRT] : e[E_STRT] + " - " + end;
 		var ANIMATE_TIME = 150; // Change to adjust time for description to change.
+		var text = '<sup><i>' + timeSpan + "   ::   " + e[E_ADDR] + '</i></sup><br>' + e[E_DESC];
 
 		if (speed.fast) {
 			$("#desc_title").text(e[E_NAME]);
-			$("#desc_body").html('<sup><i>' + timeSpan + '</i></sup><br>' + e[E_DESC]);
-			$("#address").hide(0, function() {
-				$(this).text(e[E_ADDR])
-					.css('bottom', mobile ? "0" : ($(this).height() - 26) + "px")
-					.show();
-			});
+			$("#desc_body").html(text);
 		}
 		else {
 			$("#desc_body").fadeOut(ANIMATE_TIME, function() {
-				$(this).html('<sup><i>' + timeSpan + '</i></sup><br>' + e[E_DESC])
-					.fadeIn(ANIMATE_TIME)
+				$(this).html(text).fadeIn(ANIMATE_TIME)
 			});
 			$("#desc_title").slideUp(ANIMATE_TIME, function() {
 				$(this).text(e[E_NAME]).slideDown(ANIMATE_TIME);
 			});
-			$("#address").fadeOut(ANIMATE_TIME, function() {
-				$(this).text(e[E_ADDR])
-					.css('bottom', mobile ? "0" : ($(this).height() - 26) + "px")
-					.fadeIn(ANIMATE_TIME);
-			});
 		}
 		$("#street_view iframe").attr("src", e[E_STVW] || "");
+		$("#hist_img").attr("src", "images/historical/" + e[E_NAME] + IMG_EXT)
 	};
 
 	
