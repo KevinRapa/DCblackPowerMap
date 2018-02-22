@@ -3,6 +3,11 @@
  * for the right half of the screen.
  */
 
+cite {
+	font-size: 10pt;
+	line-height: 1.3em;
+}
+
 #desc_container {
 	height: 210px;
 	padding: 10px;
@@ -20,17 +25,34 @@
 	height: 1px;
 	width: 100%;
 	margin-top: 5px;
-	margin-bottom: 10px;
 	border: none;
 	background-color: white;
 }
 
 #desc_body {
-	height: 160px;
-	font-size: 12pt;
-	line-height: 1.3em;
+	height: 165px;
 	overflow-y: auto;
+}
+
+#desc_body span, cite {
+	display: block;
+}
+
+#info {
 	white-space: pre-wrap;
+}
+
+#desc {
+	margin: 10px 0;
+	line-height: 1.3em;
+}
+
+#src {
+	padding: 0 30px;
+}
+
+#cptn {
+	margin-top: 10px;
 }
 
 #image_container {

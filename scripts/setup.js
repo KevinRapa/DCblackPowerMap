@@ -22,14 +22,16 @@ var BOUNDS_OPTIONS = {
 // Change if modifying spreadsheet field names.
 var SHEET_NM = "Black Power Events and Organizations";
 var E_STRT = "Start_Year";
-var E_END  = "End_Date";
-var E_ADDR = "Geography_Address ";
+var E_END  = "End_Year";
+var E_ADDR = "Geography_Address";
 var E_DESC = "Description";
 var E_NAME = "Event_Name";
 var E_LAT  = "Latitude";
 var E_LONG = "Longitude";
-var E_STVW = "Street_View_URL";
+var E_STVW = "St_View_URL";
 var E_LBL  = "Label";
+var E_CPTN = "Picture Caption";
+var E_SRC = "Sources";
 
 // Label names
 var INTR = "PA/IS"; // Pan Africanism
@@ -429,22 +431,30 @@ $("#street_view_button").click(function(e, show) {
 		var end = (e[E_END] == "") ? "?" : e[E_END];
 		var timeSpan = (e[E_STRT] == end) ? e[E_STRT] : e[E_STRT] + " - " + end;
 		var ANIMATE_TIME = 150; // Change to adjust time for description to change.
-		var text = '<sup><i>' + timeSpan + "   ::   " + e[E_ADDR] + '</i></sup><br>' + e[E_DESC];
+		var cptn = (e[E_CPTN] == "") ? "" : '<i>Image:</i>   ' + e[E_CPTN];
+
+		$("#street_view iframe").attr("src", e[E_STVW] || "");
+		$("#hist_img").attr("src", "images/historical/" + e[E_NAME] + IMG_EXT);
 
 		if (speed.fast) {
 			$("#desc_title").text(e[E_NAME]);
-			$("#desc_body").html(text);
+			$("#info").text(timeSpan + "   ::   " + e[E_ADDR]);
+			$("#desc").text(e[E_DESC]);
+			$("#src").text(e[E_SRC]);
+			$("#cptn").html(cptn);
 		}
 		else {
 			$("#desc_body").fadeOut(ANIMATE_TIME, function() {
-				$(this).html(text).fadeIn(ANIMATE_TIME)
+				$("#info").text(timeSpan + "   ::   " + e[E_ADDR]);
+				$("#desc").text(e[E_DESC]);
+				$("#src").text(e[E_SRC]);
+				$("#cptn").html(cptn);
+				$(this).fadeIn(ANIMATE_TIME)
 			});
 			$("#desc_title").slideUp(ANIMATE_TIME, function() {
 				$(this).text(e[E_NAME]).slideDown(ANIMATE_TIME);
 			});
 		}
-		$("#street_view iframe").attr("src", e[E_STVW] || "");
-		$("#hist_img").attr("src", "images/historical/" + e[E_NAME] + IMG_EXT)
 	};
 
 	
