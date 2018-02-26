@@ -233,6 +233,8 @@ var changeYear = function(event, year) {
 		left: ((yr - BEGIN_YR) * CELL_WIDTH + 10) + "px"
 	}, 15, 'linear');
 
+	$('.icon_text').css("font-style", "normal"); // Reset icon type filter.
+
 	clearSelected();
 	eventQuery(yr);
 };
