@@ -10,7 +10,7 @@
  * at the top of "scripts/setup.js"
  */
 
-var spreadsheet = 
+var SPREADSHEET = 
 
 // CODE INSIDE HERE vvv
 

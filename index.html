@@ -7,6 +7,7 @@
 		<link rel="stylesheet" href="styles/right_pane_styles.css" />
 		<link rel="stylesheet" href="styles/slider_styles.css" />
 		<link rel="stylesheet" href="leaflet/leaflet.css" />
+		<link rel="stylesheet" href="lightbox/src/css/lightbox.css" />
 		<meta name="description" content="A GIS of historical black power events in Washington D.C.
 			based on original research by staff and students of the University of Maryland, Baltimore County." />
 		<meta name="author" content="Kevin Rapa" />
@@ -14,23 +15,34 @@
 		<meta name="viewport" content="width=670, initial-scale=0.60">
 		<script type="text/javascript" src="scripts/jquery-3.2.1.min.js"></script>
 		<script type="text/javascript" src="leaflet/leaflet.js"></script>
+		<script type="text/javascript" src="lightbox/src/js/lightbox.js"></script>
 	</head>
 	<body>
 		<div id="intro_screen"> <!-- Protects page contents until user hits 'to_map' button -->
 			<div id="intro_box" class="black_box">
-				<h2>Thank you for coming</h2>
+				<h2>THE D.C. BLACK POWER CHRONICLES</h2>
 				<hr />
-				Hello, welcome to this map. This is currently a work in progress. Click the button
-				below to board the knowledge train. *Note- This site may not look optimal on all
-				mobile screens. Note that the images do not correspond with the events yet, this is
-				just for testing.
+				<p>
+					This project is the culmination of many research hours performed by staff and
+					students of the University of Maryland, Baltimore County. Use this tool to explore 
+					the history of African American advancement originating in Washington D.C.
+				</p>
 				<hr />
-				<button id="to_map">TO MAP</button>
+				<ul>
+					<li>Navigate through events using the sliders, buttons, and icons on the map.</li>
+					<li>View the images and descriptions in the other pane.</li>
+					<li>Click the 'To street view' button to see a modern day view of the event site.</li> 
+					<li>You may get a better view of the image by clicking it.</li>
+					<li>Toggle filters by event type using the legend icons.</li>
+				</ul>
+				<hr />
+				<p>Thanks for visiting!</p> 
+				<button id="to_map" class="intro_button">TO MAP</button>
 			</div>
 		</div> <!-- END OF INTRO SCREEN -->
 		<div class="purple_box">
 			<div id="all_content">
-				<div id="title_box">Black History in Washington D.C.</div>
+				<div id="title_box">D.C. BLACK POWER CHRONICLES</div>
 				<table id="featured_content">
 					<tbody>
 						<tr> <!-- All main content. Divides page in half. -->
@@ -109,7 +121,9 @@
 									</div>
 									<div id="image_container" class="black_box"> <!-- Holds historical image -->
 										<button id="street_view_button">To street view</button> <!-- Toggles Street View -->
-										<img id="hist_img" />
+										<a id="img_link" data-lightbox="img">
+											<img id="hist_img" />
+										</a>
 									</div>
 								</div>
 							</td>
@@ -120,8 +134,17 @@
 		</div>
 		<div id="footer_box" class="purple_box">
 			<div class="black_box" id="footer_content_upper">
+				Data compiled and edited by Dr. George Musgrove, Ralph Cyrus, and Luwam Gebreyesus of UMBC.
+				<br>
+				Site design and implementation by Kevin Rapa | Credits also to Prof. Joseph School of UMBC.
+				<button id="to_intro" class="intro_button">See directions</button>
 			</div>
 			<span id="footer_content_lower">
+				Courtesy to: <a href="http://lokeshdhakar.com/projects/lightbox2/" >Lightbox</a>, 
+				<a href="http://leafletjs.com/">Leaflet</a>, 
+				<a href="https://pixlr.com/editor/">Marker helper</a>, 
+				<a href="http://www.bestcssbuttongenerator.com">Button helper</a>, 
+				<a href="http://danielstern.ca/range.css/#/">Slider helper</a>, and Google Maps.
 			</span>
 		</div>
 		<script type="text/javascript" src="scripts/all_data.js"></script>
@@ -146,13 +169,4 @@ http://cliparting.com/wp-content/uploads/2017/01/Dollar-sign-dollar-symbol-clipa
 
 Globe images:
 https://www.shareicon.net/tag/globe?cat=mixed
-
-Slider helper:
-http://danielstern.ca/range.css/#/
-
-Button helper:
-http://www.bestcssbuttongenerator.com
-
-Marker helper:
-https://pixlr.com/editor/
 -->

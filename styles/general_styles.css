@@ -60,40 +60,65 @@ button {
 }
 
 #intro_box {
-	height: 70%;
+	height: 73%;
 	width: 500px;
 	padding: 10px;
 	margin: 0 auto;
 	margin-top: 5%;
 	color: white;
-	line-height: 1.5em;
+	line-height: 1.4em;
 	text-align: center;
-	font-size: 24px;
+	font-size: 21px;
 }
 
-#to_map {
-	padding: 10px 27px;
+#intro_box li {
+	text-align: left;
+}
+
+.intro_button {
 	background-color: rgb(70,70,70);
 	border: none;
 	color: white;
 	box-shadow: 5px 5px 5px rgb(15,15,15);
 	-moz-box-shadow: 5px 5px 5px rgb(15,15,15);
 	-webkit-box-shadow: 5px 5px 5px rgb(15,15,15);
-	font-family: Impact, Arial black, sans-serif;
-	font-size: 24px;
 	font-style: oblique;
-	letter-spacing: 3px;
 }
 
-#to_map:hover {
+.intro_button:hover {
 	background-color: rgb(60,60,60);
 }
 
-#to_map:active {
+.intro_button:active {
     box-shadow:none;
 	position: relative;
+}
+
+#to_map {
+	font-family: Impact, Arial black, sans-serif;
+	padding: 10px 27px;
+	font-size: 24px;
+	letter-spacing: 3px;
+}
+
+#to_map:active {
 	top: 2px;
 	left: 2px;
+}
+
+#to_intro {
+	float: right;
+	position: relative;
+	bottom: 8px;
+	font-family: inherit;
+	font-size: 14px; 
+	letter-spacing: 1px;
+	padding: 5px 10px;
+}
+
+#to_intro:active {
+	bottom: 7px;
+	left: 1px;
 }
 
 #title_box {
@@ -118,16 +143,22 @@ button {
 #footer_box {
 	padding: 10px 0;
 	margin-top: 30px;
+	color: lightgray;
+	font-size: 12px;
+	letter-spacing: 1px;
 }
 
 #footer_content_upper {
-	padding: 15px 15px;
+	padding: 10px 15px;
 	margin: 0 10px;
 	margin-bottom: 6px;
-	color:white;
+	line-height: 20px;
 }
 
 #footer_content_lower {
 	margin-left: 20px;
-	padding-bottom: 5px;
+}
+
+#footer_content_lower a {
+	color: lightblue;
 }

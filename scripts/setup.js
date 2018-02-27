@@ -188,7 +188,7 @@ function eventQuery(year, type) {
 	for (i = 0; i < MARKER_ARR.length; i++) {
 		var marker = MARKER_ARR[i];
 
-		if (! type || spreadsheet[SHEET_NM][marker.EVENT_INDEX][E_LBL] == type) {
+		if (! type || SPREADSHEET[SHEET_NM][marker.EVENT_INDEX][E_LBL] == type) {
     		displayed.push(marker);
     		marker.addTo(myMap);
     		bounds.push(marker.getLatLng());
@@ -249,6 +249,16 @@ $("#to_map").click(function() {
 	$("#intro_box").slideUp();
 	$("#intro_screen").delay(150).fadeOut();
 	$("body").css("overflow", "visible");
+});
+
+
+/*
+ * Restores the intro screen.
+ */
+$("#to_intro").click(function() {
+	$("body").css("overflow", "hidden");
+	$("#intro_screen").fadeIn();
+	$("#intro_box").delay(150).slideDown();
 });
 
 
@@ -429,14 +439,16 @@ $("#street_view_button").click(function(e, show) {
 		selected = this;
 		
 		// Display all the event information.
-		var e = spreadsheet[SHEET_NM][this.EVENT_INDEX];
+		var e = SPREADSHEET[SHEET_NM][this.EVENT_INDEX];
 		var end = (e[E_END] == "") ? "?" : e[E_END];
 		var timeSpan = (e[E_STRT] == end) ? e[E_STRT] : e[E_STRT] + " - " + end;
 		var ANIMATE_TIME = 150; // Change to adjust time for description to change.
 		var cptn = (e[E_CPTN] == "") ? "" : '<i>Image:</i>   ' + e[E_CPTN];
+		var imagePath = "images/historical/" + e[E_NAME] + IMG_EXT;
 
 		$("#street_view iframe").attr("src", e[E_STVW] || "");
-		$("#hist_img").attr("src", "images/historical/" + e[E_NAME] + IMG_EXT);
+		$("#hist_img").attr("src", imagePath)
+		$("#img_link").attr("href", imagePath).attr("data-title", cptn);
 
 		if (speed.fast) {
 			$("#desc_title").text(e[E_NAME]);
@@ -467,8 +479,8 @@ $("#street_view_button").click(function(e, show) {
 	};
 
 	// Populate ALL_MARKERS.
-	for (i = 0; i < spreadsheet[SHEET_NM].length; i++) {
-		var e = spreadsheet[SHEET_NM][i];
+	for (i = 0; i < SPREADSHEET[SHEET_NM].length; i++) {
+		var e = SPREADSHEET[SHEET_NM][i];
 
 		if (e[E_STRT] && e[E_LAT] && e[E_LONG]) {
 			// To add a marker, it must have a start date and a position.
