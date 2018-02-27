@@ -71,13 +71,7 @@ var myMap = L.map('leaflet_map', {
 	zoomDelta: 0.6, // How much map zoom changes.
 	minZoom: 8,     // Map cannot zoom out beyond this.
 	zoomAnimationThreshold: 10, // How high zoom must be for no pan animation to occur.
-	layers: L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png',
-		{
-			attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" \
-			target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; \
-			<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-		}
-	)
+	layers: L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png')
 });
 
 
