@@ -30,14 +30,12 @@
 				<hr />
 				<ul>
 					<li>Navigate through events using the sliders, buttons, and icons on the map.</li>
-					<li>View the images and descriptions in the other pane.</li>
 					<li>Click the 'To street view' button to see a modern day view of the event site.</li> 
 					<li>You may get a better view of the image by clicking it.</li>
 					<li>Toggle filters by event type using the legend icons.</li>
 				</ul>
 				<hr />
-				<p>Thanks for visiting!</p> 
-				<button id="to_map" class="intro_button">TO MAP</button>
+				<p><button id="to_map" class="intro_button">TO MAP</button></p>
 			</div>
 		</div> <!-- END OF INTRO SCREEN -->
 		<div class="purple_box">
@@ -120,10 +118,12 @@
 										</div> <!-- Scroll bar appears if overflow in description -->
 									</div>
 									<div id="image_container" class="black_box"> <!-- Holds historical image -->
-										<button id="street_view_button">To street view</button> <!-- Toggles Street View -->
-										<a id="img_link" data-lightbox="img">
-											<img id="hist_img" />
-										</a>
+										<div> <!-- To align image with above box -->
+											<button id="street_view_button">To street view</button> <!-- Toggles Street View -->
+											<a id="img_link" data-lightbox="img">
+												<img id="hist_img" />
+											</a>
+										</div>
 									</div>
 								</div>
 							</td>
@@ -146,7 +146,7 @@
 				<a href="http://www.bestcssbuttongenerator.com" target="_blank">Button helper</a>, 
 				<a href="http://danielstern.ca/range.css/#/" target="_blank">Slider helper</a>, and Google Maps |
 				Map tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a>
-				&mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>
+				&mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>
 			</span>
 		</div>
 		<script type="text/javascript" src="scripts/all_data.js"></script>

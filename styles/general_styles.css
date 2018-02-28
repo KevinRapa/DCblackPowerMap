@@ -60,11 +60,9 @@ button {
 }
 
 #intro_box {
-	height: 73%;
 	width: 500px;
 	padding: 10px;
-	margin: 0 auto;
-	margin-top: 5%;
+	margin: auto auto;
 	color: white;
 	line-height: 1.4em;
 	text-align: center;
@@ -97,6 +95,7 @@ button {
 #to_map {
 	font-family: Impact, Arial black, sans-serif;
 	padding: 10px 27px;
+	margin: 5px 0;
 	font-size: 24px;
 	letter-spacing: 3px;
 }
