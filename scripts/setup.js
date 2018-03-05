@@ -70,7 +70,6 @@ var myMap = L.map('leaflet_map', {
 	zoomSnap: 0,    // Map zoom must be a multiple of this.
 	zoomDelta: 0.6, // How much map zoom changes.
 	minZoom: 8,     // Map cannot zoom out beyond this.
-	zoomAnimationThreshold: 10, // How high zoom must be for no pan animation to occur.
 	layers: L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png')
 });
 
@@ -116,6 +115,7 @@ $(window).resize(function() {
 			.on("input", function() {
 				displayed[$(this).val()].fire('click');
 			});
+
 		if (displayed.length <= 1) {
 			mbl_mrkr_sldr.hide();
 		}
@@ -177,10 +177,10 @@ function eventQuery(year, type) {
 	selected = null; 	  // Not needed, just for consistency.
 	displayed = [];
 	var bounds = [];      // List of coordinates for map panning.
-	var MARKER_ARR = ALL_MARKERS[year - BEGIN_YR];
+	var NEW_MARKERS = ALL_MARKERS[year - BEGIN_YR];
 
-	for (i = 0; i < MARKER_ARR.length; i++) {
-		var marker = MARKER_ARR[i];
+	for (i = 0; i < NEW_MARKERS.length; i++) {
+		var marker = NEW_MARKERS[i];
 
 		if (! type || SPREADSHEET[SHEET_NM][marker.EVENT_INDEX][E_LBL] == type) {
     		displayed.push(marker);
@@ -247,7 +247,7 @@ $("#to_map").click(function() {
 
 
 /*
- * Restores the intro screen.
+ * Restores the intro screen. Inverse of above function.
  */
 $("#to_intro").click(function() {
 	$("body").css("overflow", "hidden");
@@ -355,8 +355,9 @@ $("#street_view_button").click(function(e, show) {
         var sldr = $("#slider");
         var yr = parseInt(sldr.val());
 
-        while (i < displayed.length && displayed[i] != selected)
+        while (i < displayed.length && displayed[i] != selected) {
             i++;
+        }
 
         if (i < displayed.length - 1) {
         	displayed[i+1].fire('click');
@@ -372,8 +373,9 @@ $("#street_view_button").click(function(e, show) {
         var sldr = $("#slider");
         var yr = parseInt(sldr.val());
        
-        while (i < displayed.length && displayed[i] != selected)
+        while (i < displayed.length && displayed[i] != selected) {
             i++;
+        }
         
         if (i > 0) {
         	displayed[i-1].fire('click');
@@ -440,6 +442,8 @@ $("#street_view_button").click(function(e, show) {
 		var cptn = (e[E_CPTN] == "") ? "" : '<i>Image:</i>   ' + e[E_CPTN];
 		var imagePath = "images/historical/" + e[E_NAME] + IMG_EXT;
 
+		$("#desc_body").scrollTop(0);
+		$("#image_container div").scrollTop(0);
 		$("#street_view iframe").attr("src", e[E_STVW] || "");
 		$("#hist_img").attr("src", imagePath)
 		$("#img_link").attr("href", imagePath).attr("data-title", cptn);

@@ -18,7 +18,7 @@
 		<script type="text/javascript" src="lightbox/src/js/lightbox.js"></script>
 	</head>
 	<body>
-		<div id="intro_screen"> <!-- Protects page contents until user hits 'to_map' button -->
+		<div id="intro_screen"> <!-- INTRO SCREEN. Shields page contents until user hits button -->
 			<div id="intro_box" class="black_box">
 				<h2>THE D.C. BLACK POWER CHRONICLES</h2>
 				<hr />
@@ -38,17 +38,18 @@
 				<p><button id="to_map" class="intro_button">TO MAP</button></p>
 			</div>
 		</div> <!-- END OF INTRO SCREEN -->
+
 		<div class="purple_box">
 			<div id="all_content">
 				<div id="title_box">D.C. BLACK POWER CHRONICLES</div>
 				<table id="featured_content">
 					<tbody>
-						<tr> <!-- All main content. Divides page in half. -->
-							<td class="content_pane" id="left_pane"> <!-- Left half. Contains all map elements. -->
+						<tr>
+							<td class="content_pane" id="left_pane"> <!-- LEFT HALF. Contains all map elements. -->
 								<div id="mbl_holder"> <!-- Holds all main content when window is thin-->
 									<div class="white_box">
 										<div id="map_box" class="black_box">
-											<div id="leaflet_map"></div> <!-- Trade places with street view when button is pressed. -->
+											<div id="leaflet_map"></div>
 											<table id="slider_box" class="black_box fade_group">
 												<tbody>
 													<tr>
@@ -63,7 +64,9 @@
 													</tr>
 												</tbody>
 											</table>
-											<div id="street_view"><iframe></iframe></div> <!-- Hidden when page loads -->
+											<div id="street_view">
+												<iframe></iframe> <!-- Hidden when page loads -->
+											</div>
 										</div>
 									</div>
 									<table id="legend">
@@ -105,7 +108,7 @@
 									<div id="key_box" class="black_box"></div>
 								</div>
 							</td> <!-- END OF LEFT HALF -->
-							<td class="content_pane" id="right_pane"> <!-- Right half. Contains all event details. -->
+							<td class="content_pane" id="right_pane"> <!-- RIGHT HALF. Contains all event details. -->
 								<div class="white_box" id="right_box"> <!-- Moves into #mbl holder when page is thin. -->
 									<div id="desc_container" class="black_box">
 										<div id="desc_title"></div>
@@ -126,13 +129,14 @@
 										</div>
 									</div>
 								</div>
-							</td>
+							</td> <!-- END OF RIGHT HALF -->
 						</tr>
 					</tbody>
-				</table> <!-- END OF RIGHT HALF AND ALL MAIN CONTENT -->
+				</table>
 			</div>
 		</div>
-		<div id="footer_box" class="purple_box">
+
+		<div id="footer_box" class="purple_box"> <!-- FOOTER -->
 			<div class="black_box" id="footer_content_upper">
 				Data compiled and edited by Dr. George Musgrove, Ralph Cyrus, and Luwam Gebreyesus of UMBC.
 				<br>
@@ -148,7 +152,8 @@
 				Map tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a>
 				&mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>
 			</span>
-		</div>
+		</div> <!-- END OF FOOTER -->
+
 		<script type="text/javascript" src="scripts/all_data.js"></script>
 		<script type="text/javascript" src="scripts/setup.js"></script>
 	</body>
