@@ -9,7 +9,7 @@ cite {
 }
 
 #desc_container {
-	height: 210px;
+	height: 230px;
 	padding: 10px;
 	padding-top: 5px;
 	margin-bottom: 5px;
@@ -45,10 +45,6 @@ cite {
 #desc {
 	margin: 10px 0;
 	line-height: 1.3em;
-}
-
-#src {
-	padding: 0 30px;
 }
 
 #cptn {

@@ -7,8 +7,8 @@ var BEGIN_YR = 1961;  // Earliest year an event occurs. Change if adding events!
 var END_YR = 1995;    // Latest year an event occurs. See above.
 var ST_VIEW_UNSELECTED = "To street view";
 var ST_VIEW_SELECTED = "To map";
-var DESKTOP_TTL = "Black History in Washington D.C.";
-var MOBILE_TTL = "D.C. Black History";
+var DESKTOP_TTL = "THE WASHINGTON, D.C. BLACK POWER MAP";
+var MOBILE_TTL = "THE BLACK POWER MAP";
 var PRESENT = "present"; // Word used in spreadsheet to say event is still occurring.
 var IC_PTH = 'images/icons/'; // Path to where icons are.
 var MBL_THRESH = 1200; // Width at which devince is considered 'mobile'.
@@ -42,7 +42,7 @@ var POL = "P/EP";	// Electoral politics
 
 var IMG_EXT = ".jpg"; // File extension for the historical images
 // ---------------------------------------------------------------------
-
+// These probably shouldn't be changed.
 var ALL = END_YR + 1; // '+ 1' there since last index is used to display every marker.
 var NUM_YEARS = END_YR - BEGIN_YR + 1;
 var ALL_MARKERS = new Array(NUM_YEARS + 1); // Indexed by [year] - BEGIN_YR + offset.
@@ -54,6 +54,7 @@ var CELL_WIDTH = (M_SLDR_W - M_SLDR_THMB_W) / NUM_YEARS; // To align mbl_year wi
 var mobile = false;  // If page is in compact mode.
 var selected = null; // The currently selected marker.
 var displayed = [];  // All icons currently being displayed on the map.
+// ---------------------------------------------------------------------
 
 for (i = 0; i < NUM_YEARS + 1; i++) {
 	ALL_MARKERS[i] = []; // Each element holds a list of events that happen in same year.
@@ -95,7 +96,8 @@ $(window).resize(function() {
 			.after($("#right_box").detach())
 			.before('<input type="range" id="mbl_slider" class="fade_group" \
 					min="1961" max="' + ALL + '" value="' + yr + '"/>')
-			.css("margin-bottom", "10px");
+			.css("margin-bottom", "10px")
+			.css("border", "none");
 
 		$("#title_box")
 			.after($("#mbl_holder").detach())
@@ -133,7 +135,7 @@ $(window).resize(function() {
 		}
 
 		$(".purple_box").css("width", MBL_THRESH + "px");
-		$("#legend").css("margin-bottom", "");
+		$("#legend").css("margin-bottom", "").css("border", "5px solid rgb(200,191,176)");
 		$("#slider").val($("#mbl_slider").val());
 		$("#mbl_slider").off('input').detach();
 		$("#mbl_year").detach();
@@ -310,8 +312,8 @@ $("#street_view_button").click(function(e, show) {
 	var clickE = function(e) {
     	var text = $(this).next();
     		
-    	$(this).animate({bottom: "-6px"}, BOUNCE_TIME)
-    		.animate({bottom: "4px"}, BOUNCE_TIME)
+    	$(this).animate({bottom: "-3px"}, BOUNCE_TIME)
+    		.animate({bottom: "3px"}, BOUNCE_TIME)
     		.animate({bottom: "0"}, BOUNCE_TIME);
     			
         if ($("#street_view_button").text() != ST_VIEW_SELECTED) {
@@ -452,14 +454,14 @@ $("#street_view_button").click(function(e, show) {
 			$("#desc_title").text(e[E_NAME]);
 			$("#info").text(timeSpan + "   ::   " + e[E_ADDR]);
 			$("#desc").text(e[E_DESC]);
-			$("#src").text(e[E_SRC]);
+			$("#src").text("Sources: " + e[E_SRC]);
 			$("#cptn").html(cptn);
 		}
 		else {
 			$("#desc_body").fadeOut(ANIMATE_TIME, function() {
 				$("#info").text(timeSpan + "   ::   " + e[E_ADDR]);
 				$("#desc").text(e[E_DESC]);
-				$("#src").text(e[E_SRC]);
+				$("#src").text("Sources: " + e[E_SRC]);
 				$("#cptn").html(cptn);
 				$(this).fadeIn(ANIMATE_TIME)
 			});
@@ -517,7 +519,7 @@ $("#street_view_button").click(function(e, show) {
 	}
 
 
-	// Sort all the marker arrays on latitude. Good for navigating with arrows.
+	// Sort marker arrays by latitude. For navigating with arrows and vertical mobile slider.
 	var compareMarkers = function(a, b) {
 		return a.getLatLng().lat - b.getLatLng().lat;
 	}
