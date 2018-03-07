@@ -253,7 +253,6 @@ $("#slider").on("input", changeYear);
 $("#to_map").click(function() {
 	$("#intro_box").slideUp();
 	$("#intro_screen").delay(150).fadeOut();
-	$("body").css("overflow", "visible");
 });
 
 
@@ -261,7 +260,6 @@ $("#to_map").click(function() {
  * Restores the intro screen. Inverse of above function.
  */
 $("#to_intro").click(function() {
-	$("body").css("overflow", "hidden");
 	$("#intro_screen").fadeIn();
 	$("#intro_box").delay(150).slideDown();
 });
