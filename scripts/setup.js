@@ -97,7 +97,10 @@ $(window).resize(function() {
 			.before('<input type="range" id="mbl_slider" class="fade_group" \
 					min="1961" max="' + ALL + '" value="' + yr + '"/>')
 			.css("margin-bottom", "10px")
-			.css("border", "none");
+			.css("border", "none")
+			.css("box-shadow", "none")
+			.css("-moz-box-shadow", "none")
+			.css("-webkit-box-shadow", "none");
 
 		$("#title_box")
 			.after($("#mbl_holder").detach())
@@ -126,16 +129,22 @@ $(window).resize(function() {
 		$(".purple_box").css("width", "650px");
 	}
 	else if (mobile && $(this).width() >= MBL_THRESH) {
-		// Transforms into desktop mode.
+		// Transforms into desktop mode. Inverse of the above. 
 		mobile = ! mobile;
 		var b = $("#street_view_button");
+		var border = "5px 5px 5px rgb(15,15,15)";
 
 		if(b.text() == ST_VIEW_SELECTED) {
 			b.trigger('click', true);
 		}
 
 		$(".purple_box").css("width", MBL_THRESH + "px");
-		$("#legend").css("margin-bottom", "").css("border", "5px solid rgb(200,191,176)");
+		$("#legend")
+			.css("margin-bottom", "")
+			.css("border", "5px solid rgb(200,191,176)")
+			.css("box-shadow", border)
+			.css("-moz-box-shadow", border)
+			.css("-webkit-box-shadow", border);
 		$("#slider").val($("#mbl_slider").val());
 		$("#mbl_slider").off('input').detach();
 		$("#mbl_year").detach();
