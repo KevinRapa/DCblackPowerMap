@@ -132,7 +132,7 @@ $(window).resize(function() {
 		// Transforms into desktop mode. Inverse of the above. 
 		mobile = ! mobile;
 		var b = $("#street_view_button");
-		var border = "5px 5px 5px rgb(15,15,15)";
+		var property = "5px 5px 5px rgb(15,15,15)";
 
 		if(b.text() == ST_VIEW_SELECTED) {
 			b.trigger('click', true);
@@ -142,9 +142,9 @@ $(window).resize(function() {
 		$("#legend")
 			.css("margin-bottom", "")
 			.css("border", "5px solid rgb(200,191,176)")
-			.css("box-shadow", border)
-			.css("-moz-box-shadow", border)
-			.css("-webkit-box-shadow", border);
+			.css("box-shadow", property)
+			.css("-moz-box-shadow", property)
+			.css("-webkit-box-shadow", property);
 		$("#slider").val($("#mbl_slider").val());
 		$("#mbl_slider").off('input').detach();
 		$("#mbl_year").detach();
