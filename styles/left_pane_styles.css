@@ -37,8 +37,8 @@
 	padding: 6px;
 	z-index: 2;
 	font-style: italic;
+	color: white;
 	font-size: 24px;
-	letter-spacing: 1px;
 	text-shadow: 4px 4px 1px rgb(42,42,42);
 }
 

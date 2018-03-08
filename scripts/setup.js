@@ -5,6 +5,10 @@
 // ------ OPTIONS ------------------------------------------------------
 var BEGIN_YR = 1961;  // Earliest year an event occurs. Change if adding events!
 var END_YR = 1995;    // Latest year an event occurs. See above.
+var LAST_ENTRY = "Sisterspace and Books"; /* Website will not process events after this
+										   * one in all_data.fs. Set to null if all events
+										   * should be processed (That is, all events have
+										   * a proper start date). */
 var ST_VIEW_UNSELECTED = "To street view";
 var ST_VIEW_SELECTED = "To map";
 var DESKTOP_TTL = "THE WASHINGTON, D.C. BLACK POWER MAP";
@@ -23,14 +27,14 @@ var BOUNDS_OPTIONS = {
 var SHEET_NM = "Black Power Events and Organizations";
 var E_STRT = "Start_Year";
 var E_END  = "End_Year";
-var E_ADDR = "Geography_Address";
+var E_ADDR = "Address";
 var E_DESC = "Description";
 var E_NAME = "Event_Name";
 var E_LAT  = "Latitude";
 var E_LONG = "Longitude";
 var E_STVW = "St_View_URL";
 var E_LBL  = "Label";
-var E_CPTN = "Picture Caption";
+var E_CPTN = "Picture_Caption";
 var E_SRC = "Sources";
 
 // Label names
@@ -42,7 +46,7 @@ var POL = "P/EP";	// Electoral politics
 
 var IMG_EXT = ".jpg"; // File extension for the historical images
 // ---------------------------------------------------------------------
-// These probably shouldn't be changed.
+// These probably shouldn't be changed manually.
 var ALL = END_YR + 1; // '+ 1' there since last index is used to display every marker.
 var NUM_YEARS = END_YR - BEGIN_YR + 1;
 var ALL_MARKERS = new Array(NUM_YEARS + 1); // Indexed by [year] - BEGIN_YR + offset.
@@ -109,7 +113,8 @@ $(window).resize(function() {
 		$("#slider_box")
 			.css("visibility", "hidden")
 			.before('<input type="range" id="mbl_marker_slider" class="fade_group" \
-			    	min="0" max="' + (displayed.length - 1) + '" val="0"></input>');
+			    	min="0" max="' + (displayed.length - 1) + 
+			    	'" value="' + displayed.indexOf(selected) + '"></input>');
 
 		$("#mbl_slider")
 			.before('<div id="mbl_year" class="fade_group">' +
@@ -127,6 +132,7 @@ $(window).resize(function() {
 
 		$("#mbl_year").css("left", ((yr - BEGIN_YR) * CELL_WIDTH + 10) + "px"); // Aligns it
 		$(".purple_box").css("width", "650px");
+		$("#intro_box span").text("vertical slider");
 	}
 	else if (mobile && $(this).width() >= MBL_THRESH) {
 		// Transforms into desktop mode. Inverse of the above. 
@@ -138,6 +144,7 @@ $(window).resize(function() {
 			b.trigger('click', true);
 		}
 
+		$("#intro_box span").text("arrow buttons");
 		$(".purple_box").css("width", MBL_THRESH + "px");
 		$("#legend")
 			.css("margin-bottom", "")
@@ -200,7 +207,7 @@ function eventQuery(year, type) {
 	    }
 	}
 
-	if(bounds.length) {
+	if (bounds.length) {
 		myMap.fitBounds(bounds, BOUNDS_OPTIONS);
 		displayed[0].fire('click', {fast: true});
 		displayed[0].closeTooltip();
@@ -360,16 +367,12 @@ $("#street_view_button").click(function(e, show) {
  */
 (function() {
     $("#right_arrow").click(function() {
-        var i = 0;
+        var selectedIndex = displayed.indexOf(selected);
         var sldr = $("#slider");
         var yr = parseInt(sldr.val());
 
-        while (i < displayed.length && displayed[i] != selected) {
-            i++;
-        }
-
-        if (i < displayed.length - 1) {
-        	displayed[i+1].fire('click');
+        if (selectedIndex < displayed.length - 1) {
+        	displayed[selectedIndex+1].fire('click');
         }
         else if (yr < END_YR + 1) {
         	changeYear(null, yr + 1);
@@ -378,16 +381,12 @@ $("#street_view_button").click(function(e, show) {
     });
     
     $("#left_arrow").click(function() {
-        var i = 0;
+        var selectedIndex = displayed.indexOf(selected);
         var sldr = $("#slider");
         var yr = parseInt(sldr.val());
-       
-        while (i < displayed.length && displayed[i] != selected) {
-            i++;
-        }
         
-        if (i > 0) {
-        	displayed[i-1].fire('click');
+        if (selectedIndex > 0) {
+        	displayed[selectedIndex-1].fire('click');
         }
         else if (yr > BEGIN_YR) {
         	changeYear(null, yr - 1);
@@ -522,6 +521,10 @@ $("#street_view_button").click(function(e, show) {
 			}
 
 			ALL_MARKERS[ALL_MARKERS.length-1].push(marker); // All markers are put in final slot.
+		}
+
+		if (LAST_ENTRY && e[E_NAME] == LAST_ENTRY) {
+			break; // Entries after LAST_ENTRY don't have a start. Set to null if all entries do.
 		}
 	}
 

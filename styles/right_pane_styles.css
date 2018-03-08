@@ -68,19 +68,16 @@ cite {
 
 #street_view_button {
 	position: absolute;
-	height: 25px;
+	min-height: 25px;
 	min-width: 140px;
 	padding: 0 10px;
-	border: none;
 	border-radius: 0 15px 15px 15px;
 	box-shadow: 5px 5px 5px rgb(15,15,15);
 	-moz-box-shadow: 5px 5px 5px rgb(15,15,15);
 	-webkit-box-shadow: 5px 5px 5px rgb(15,15,15);
 	font-weight: bold;
-	font-style: oblique;
 	color: rgb(100,79,142);
-	font-size: 14px;
-	letter-spacing: 1px;
+	font-size: 16px;
 }
 
 #street_view_button:hover {
