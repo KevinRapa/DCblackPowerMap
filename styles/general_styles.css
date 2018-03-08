@@ -21,6 +21,10 @@ button {
     -webkit-tap-highlight-color: transparent;
 }
 
+a {
+	color: lightblue;
+}
+
 .purple_box {
 	width: 1200px;
 	margin: auto auto;
@@ -88,6 +92,8 @@ button {
 .intro_button:active {
     box-shadow:none;
 	position: relative;
+	top: 2px;
+	left: 2px;
 }
 
 #to_map {
@@ -98,23 +104,12 @@ button {
 	letter-spacing: 3px;
 }
 
-#to_map:active {
-	top: 2px;
-	left: 2px;
-}
-
 #to_intro {
 	float: right;
 	font-family: inherit;
 	font-size: 14px; 
 	letter-spacing: 1px;
 	padding: 3px 10px;
-	margin: auto auto;
-}
-
-#to_intro:active {
-	bottom: 7px;
-	left: 1px;
 }
 
 #title_box {
@@ -131,9 +126,7 @@ button {
 }
 
 .content_pane {
-	width: 50%;
-	padding-left: 10px;
-	padding-right: 10px;
+	padding: 0 10px;
 }
 
 #footer_box {
@@ -144,12 +137,8 @@ button {
 	letter-spacing: 1px;
 }
 
-#footer_box a {
-	color: lightblue;
-}
-
 #footer_content_upper {
-	padding: 10px 15px;
+	padding: 10px 8px 10px 15px;
 	margin: 0 10px;
 	margin-bottom: 6px;
 	line-height: 20px;
