@@ -7,7 +7,7 @@
 body {
 	background-image: url("../images/ralph_featherstone.jpg");
 	background-attachment: fixed;
-	font-family: Times, serif;
+	font-family: serif;
 	cursor: default;
 }
 
@@ -122,8 +122,8 @@ a {
 }
 
 #title_box {
-	font-family: Impact, Arial black, sans-serif;
 	font-size: 50px;
+	font-weight: bold;
 	text-align: center;
 	text-shadow: 3px 3px 5px rgb(42,42,42);
 }

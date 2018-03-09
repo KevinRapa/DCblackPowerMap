@@ -3,12 +3,9 @@
  */
 
 // ------ OPTIONS ------------------------------------------------------
+
 var BEGIN_YR = 1961;  // Earliest year an event occurs. Change if adding events!
 var END_YR = 1995;    // Latest year an event occurs. See above.
-var LAST_ENTRY = "Sisterspace and Books"; /* Website will not process events after this
-										   * one in all_data.fs. Set to null if all events
-										   * should be processed (That is, all events have
-										   * a proper start date). */
 var ST_VIEW_UNSELECTED = "To street view";
 var ST_VIEW_SELECTED = "To map";
 var DESKTOP_TTL = "THE WASHINGTON, D.C. BLACK POWER MAP";
@@ -22,9 +19,14 @@ var BOUNDS_OPTIONS = {
 	paddingTopLeft: L.point(25,25) // So markers don't appear half off the map.
 };
 
+// Website will not process events after this one in the spreadsheet. Currently,
+// most events after this one have incomplete start dates and other vital information. 
+//Set to null if all events should be processed.
+var LAST_ENTRY = "Sisterspace and Books"; 
+
 // ---------------------------------------------------------------------
+
 // Change if modifying spreadsheet field names.
-var SHEET_NM = "Black Power Events and Organizations";
 var E_STRT = "Start_Year";
 var E_END  = "End_Year";
 var E_ADDR = "Address";
@@ -45,7 +47,9 @@ var EDU = "IS"; 	// Education
 var POL = "P/EP";	// Electoral politics
 
 var IMG_EXT = ".jpg"; // File extension for the historical images
+
 // ---------------------------------------------------------------------
+
 // These probably shouldn't be changed manually.
 var ALL = END_YR + 1; // '+ 1' there since last index is used to display every marker.
 var NUM_YEARS = END_YR - BEGIN_YR + 1;
@@ -58,6 +62,7 @@ var CELL_WIDTH = (M_SLDR_W - M_SLDR_THMB_W) / NUM_YEARS; // To align mbl_year wi
 var mobile = false;  // If page is in compact mode.
 var selected = null; // The currently selected marker.
 var displayed = [];  // All icons currently being displayed on the map.
+
 // ---------------------------------------------------------------------
 
 for (i = 0; i < NUM_YEARS + 1; i++) {
@@ -130,7 +135,8 @@ $(window).resize(function() {
 			mbl_mrkr_sldr.hide();
 		}
 
-		$("#mbl_year").css("left", ((yr - BEGIN_YR) * CELL_WIDTH + 10) + "px"); // Aligns it
+		$("#mbl_year").css("left", 
+			((yr - BEGIN_YR) * CELL_WIDTH + 10) + "px"); // Aligns with slider thumb
 		$(".purple_box").css("width", "650px");
 		$("#intro_box span").text("vertical slider");
 	}
@@ -200,7 +206,7 @@ function eventQuery(year, type) {
 	for (i = 0; i < NEW_MARKERS.length; i++) {
 		var marker = NEW_MARKERS[i];
 
-		if (! type || SPREADSHEET[SHEET_NM][marker.EVENT_INDEX][E_LBL] == type) {
+		if (! type || SPREADSHEET[marker.EVENT_INDEX][E_LBL] == type) {
     		displayed.push(marker);
     		marker.addTo(myMap);
     		bounds.push(marker.getLatLng());
@@ -242,7 +248,7 @@ var changeYear = function(event, year) {
 	
 	$('#year').text(text);
 	$('#mbl_year').text(text).animate({
-		left: ((yr - BEGIN_YR) * CELL_WIDTH + 10) + "px"
+		left: ((yr - BEGIN_YR) * CELL_WIDTH + 10) + "px" // Aligns with mobile slider thumb.
 	}, 15, 'linear');
 
 	$('.icon_text').css("font-style", "normal"); // Reset icon type filter.
@@ -443,7 +449,7 @@ $("#street_view_button").click(function(e, show) {
 		selected = this;
 		
 		// Display all the event information.
-		var e = SPREADSHEET[SHEET_NM][this.EVENT_INDEX];
+		var e = SPREADSHEET[this.EVENT_INDEX];
 		var end = (e[E_END] == "") ? "?" : e[E_END];
 		var timeSpan = (e[E_STRT] == end) ? e[E_STRT] : e[E_STRT] + " - " + end;
 		var ANIMATE_TIME = 150; // Change to adjust time for description to change.
@@ -485,8 +491,8 @@ $("#street_view_button").click(function(e, show) {
 	};
 
 	// Populate ALL_MARKERS.
-	for (i = 0; i < SPREADSHEET[SHEET_NM].length; i++) {
-		var e = SPREADSHEET[SHEET_NM][i];
+	for (i = 0; i < SPREADSHEET.length; i++) {
+		var e = SPREADSHEET[i];
 
 		if (e[E_STRT] && e[E_LAT] && e[E_LONG]) {
 			// To add a marker, it must have a start date and a position.
