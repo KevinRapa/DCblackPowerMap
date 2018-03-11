@@ -113,7 +113,9 @@ $(window).resize(function() {
 
 		$("#title_box")
 			.after($("#mbl_holder").detach())
-			.text(MOBILE_TTL);
+			.text(MOBILE_TTL)
+			.css("font-size", "48px")
+			.css("margin-bottom", "5px");
         
 		$("#slider_box")
 			.css("visibility", "hidden")
@@ -163,7 +165,10 @@ $(window).resize(function() {
 		$("#mbl_year").detach();
 		$("#mbl_marker_slider").detach();
 		$("#slider_box").css("visibility", "visible");
-		$("#title_box").text(DESKTOP_TTL);
+		$("#title_box")
+			.text(DESKTOP_TTL)
+			.css("font-size", "50px")
+			.css("margin-bottom", "0");
 		$("#left_pane").html($("#mbl_holder").detach());
 		$("#right_pane").html($("#right_box").detach());
 	}
