@@ -1,6 +1,14 @@
-/**
- * Author: Kevin Rapa
- */
+/*
+	This script sets up the whole page and assigns listener functions. The 
+	spreadsheet data is kept in a separate file. Code on this page includes:
+ 		1. Listener functions assigned to every button, icon, and slider
+ 		2. Screen resize function
+ 		3. Function for querying icons to add to the map by year aand type
+ 		4. Populates an array with lists of events and assigns each event icon
+ 	   	   with images and an index to pull items from the spreadsheet file.
+ 
+	Author: Kevin Rapa
+*/
 
 // ------ OPTIONS ------------------------------------------------------
 
@@ -397,7 +405,7 @@ $("#street_view_button").click(function(e, show) {
         var yr = parseInt(sldr.val());
         
         if (selectedIndex > 0) {
-        	displayed[selectedIndex-1].fire('click');
+        	displayed[selectedIndex - 1].fire('click');
         }
         else if (yr > BEGIN_YR) {
         	changeYear(null, yr - 1);
@@ -495,7 +503,15 @@ $("#street_view_button").click(function(e, show) {
 		className: 'tooltip'
 	};
 
-	// Populate ALL_MARKERS.
+	/*
+	 * Populate ALL_MARKERS, an array of lists holding event icons.
+	 *
+	 * Each event icon holds:
+	 *		- An index to find event information in the spreadsheet data.
+	 *		- A pair of images, one for the unselected icon and one for selected.
+	 *		- Latitude and longitude coordinates.
+	 *		- A function called when it's clicked to display event information.
+	 */
 	for (i = 0; i < SPREADSHEET.length; i++) {
 		var e = SPREADSHEET[i];
 
@@ -505,22 +521,30 @@ $("#street_view_button").click(function(e, show) {
 			var start = e[E_STRT] - BEGIN_YR;
 
 			switch (e[E_LBL]) {
-				case POL:  marker.ICONS = FISTS;   break;
-				case ART:  marker.ICONS = BRUSHES; break;
-				case BUS:  marker.ICONS = DOLLARS; break;
-				case EDU:  marker.ICONS = SCHOOLS; break;
-				case INTR: marker.ICONS = GLOBES;  break;
-				default:   marker.ICONS = UNKNOWN; break; // No label entered for it.
+				case POL:  
+					marker.ICONS = FISTS;   break;
+				case ART:  
+					marker.ICONS = BRUSHES; break;
+				case BUS:  
+					marker.ICONS = DOLLARS; break;
+				case EDU:  
+					marker.ICONS = SCHOOLS; break;
+				case INTR: 
+					marker.ICONS = GLOBES;  break;
+				default:   
+					marker.ICONS = UNKNOWN; break; // No label entered for it.
 			}
+
 			marker.setIcon(marker.ICONS[0]);
 			marker.EVENT_INDEX = i;
 			marker.on('click', iconFlip);
+			
 			if ($(window).width() >= MBL_THRESH) {
 			    marker.bindTooltip(e[E_NAME], TOOLTIP_OPTIONS); // Tooltip not needed for mobile
 			}
 			
+			// Add this to every year it falls into.
 			if (e[E_END]) {
-				// Add this to every year it falls into.
 				var range = (e[E_END] === PRESENT) ? ALL_MARKERS.length : e[E_END] - e[E_STRT];
 
 				for (j = 0; start + j < ALL_MARKERS.length - 1 && j <= range; j++) {
