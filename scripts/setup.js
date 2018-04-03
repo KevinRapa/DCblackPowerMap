@@ -60,7 +60,7 @@ var ALL_MARKERS = new Array(NUM_YEARS + 1); // Indexed by [year] - BEGIN_YR + of
 
 var NO_ANIMATION = {fast: true}; // Stops animation from happening when event changes.
 var MBL_YEAR_ALIGN_MAGIC = (570 - 80) / NUM_YEARS; // mbl_slider width - thumb width.
-var compactMode = $(window).width() < MBL_THRESH;
+var compactMode = false;
 
 for (i = 0; i < NUM_YEARS + 1; i++) {
 	ALL_MARKERS[i] = []; // Each element holds a list of events that happen in same year.
@@ -218,8 +218,7 @@ function eventQuery(year, type) {
 	if (mbl_mrkr_sldr) {
 		if (MAP.displayed.length > 1) {
 			mbl_mrkr_sldr.val(0).attr('max', MAP.displayed.length - 1).show();
-		}
-		else {
+		} else {
 			mbl_mrkr_sldr.hide();
 		}
 	}
