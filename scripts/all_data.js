@@ -16,7 +16,7 @@
  * I know of myjson.com, but I don't know how reliable it is.
  */
 
-var SPREADSHEET = 
+var JSON_DATA = 
 
 // PASTE CODE INSIDE HERE vvv
 

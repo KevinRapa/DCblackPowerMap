@@ -105,6 +105,7 @@
 }
 
 #year {
+	width: 50px;
 	font-size: 22px;
 	font-style: italic;
 }

@@ -10,103 +10,96 @@
 	Author: Kevin Rapa
 */
 
-// ------ OPTIONS ------------------------------------------------------
+var BEGIN_YR = 1961,
+	END_YR = 1995;
 
-var BEGIN_YR = 1961;  // Earliest year an event occurs. Change if adding events!
-var END_YR = 1995;    // Latest year an event occurs. See above.
-var ST_VIEW_UNSELECTED = "To street view";
-var ST_VIEW_SELECTED = "To map";
-var DESKTOP_TTL = "THE WASHINGTON, D.C. BLACK POWER MAP";
-var MOBILE_TTL = "THE BLACK POWER MAP";
-var PRESENT = "present"; // Word used in spreadsheet to say event is still occurring.
-var IC_PTH = 'images/icons/'; // Path to where icons are.
-var MBL_THRESH = 1200; // Width at which devince is considered 'mobile'.
+var DESKTOP_TTL = "THE WASHINGTON, D.C. BLACK POWER MAP",
+	MOBILE_TTL = "THE BLACK POWER MAP";
+
+var ST_VIEW_UNSEL = "To street view",
+	ST_VIEW_SEL = "To map";
+
+var MBL_THRESH = 1200; // Width at which device is considered 'compactMode'.
+
+// For fitting the markers inside the map so that none are obstructed.
 var BOUNDS_OPTIONS = {
-	maxZoom: 15, // Auto-panning of map can't zoom in past this.
-	paddingBottomRight: L.point(80,80), // So markers don't hide behind slider.
-	paddingTopLeft: L.point(25,25) // So markers don't appear half off the map.
+	maxZoom: 15,
+	paddingBottomRight: L.point(80,80),
+	paddingTopLeft: L.point(25,25)
 };
 
-// Website will not process events after this one in the spreadsheet. Currently,
-// most events after this one have incomplete start dates and other vital information. 
-//Set to null if all events should be processed.
+// Website will not process events after this one in the spreadsheet.
+// Set to null if all events should be processed.
 var LAST_ENTRY = "Sisterspace and Books"; 
 
-// ---------------------------------------------------------------------
-
 // Change if modifying spreadsheet field names.
-var E_STRT = "Start_Year";
-var E_END  = "End_Year";
-var E_ADDR = "Address";
-var E_DESC = "Description";
-var E_NAME = "Event_Name";
-var E_LAT  = "Latitude";
-var E_LONG = "Longitude";
-var E_STVW = "St_View_URL";
-var E_LBL  = "Label";
-var E_CPTN = "Picture_Caption";
-var E_SRC = "Sources";
+var E_STRT = "Start_Year",
+	E_END  = "End_Year",
+	E_ADDR = "Address",
+	E_DESC = "Description",
+	E_NAME = "Event_Name",
+	E_LAT  = "Latitude",
+	E_LONG = "Longitude",
+	E_STVW = "St_View_URL",
+	E_LBL  = "Label",
+	E_CPTN = "Picture_Caption",
+	E_SRC = "Sources";
 
-// Label names
-var INTR = "PA/IS"; // Pan Africanism
-var ART = "BA";		// Black arts
-var BUS = "BB";		// Black business
-var EDU = "IS"; 	// Education
-var POL = "P/EP";	// Electoral politics
-
-var IMG_EXT = ".jpg"; // File extension for the historical images
+// Change if modifying the names of the event types
+var INTR = "PA/IS",
+	ART = "BA",
+	BUS = "BB",
+	EDU = "IS",
+	POL = "P/EP";	
 
 // ---------------------------------------------------------------------
 
-// These probably shouldn't be changed manually.
 var ALL = END_YR + 1; // '+ 1' there since last index is used to display every marker.
 var NUM_YEARS = END_YR - BEGIN_YR + 1;
 var ALL_MARKERS = new Array(NUM_YEARS + 1); // Indexed by [year] - BEGIN_YR + offset.
 
-var M_SLDR_THMB_W = 80; // Mobile slider thumb width.
-var M_SLDR_W = 570;     // Width of the mbl sider.
-var CELL_WIDTH = (M_SLDR_W - M_SLDR_THMB_W) / NUM_YEARS; // To align mbl_year with mbl_slider thumb
-
-var mobile = false;  // If page is in compact mode.
-var selected = null; // The currently selected marker.
-var displayed = [];  // All icons currently being displayed on the map.
-
-// ---------------------------------------------------------------------
+var NO_ANIMATION = {fast: true}; // Stops animation from happening when event changes.
+var MBL_YEAR_ALIGN_MAGIC = (570 - 80) / NUM_YEARS; // mbl_slider width - thumb width.
+var compactMode = $(window).width() < MBL_THRESH;
 
 for (i = 0; i < NUM_YEARS + 1; i++) {
 	ALL_MARKERS[i] = []; // Each element holds a list of events that happen in same year.
 }
 
-$("#street_view").hide(); // Visible when the street_view_button is pressed.
-
-
 /*
- * Adds the tile layer to the map, then adds the map to the page.
+ * Adds the tile layer to the map, then adds the map to the page. Also initializes a few custom attributes
  * TO CHANGE MAP, VISIT https://leaflet-extras.github.io/leaflet-providers/preview/
  */
-var myMap = L.map('leaflet_map', {
-	zoomSnap: 0,    // Map zoom must be a multiple of this.
-	zoomDelta: 0.6, // How much map zoom changes.
-	minZoom: 8,     // Map cannot zoom out beyond this.
+var MAP = L.map('leaflet_map', {
+	zoomSnap: 0,
+	zoomDelta: 0.6,
+	minZoom: 8,
 	layers: L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png')
 });
-
+MAP.displayed = [];  // All icons currently being displayed on the map.
+MAP.selected = null; // The currently selected marker.
+MAP.resetSelected = function() {
+    if (this.selected) {
+    	//Resets currently selected marker to unselected.
+		this.selected.remove().setIcon(this.selected.ICONS[0]).addTo(MAP);
+	}
+}
 
 /*
- * Rearranges page elements when the window gets thinner. Basically moves the
- * right half of the table into the left half, then moves THAT element above
- * the table so that it centers on the page. Also swaps the slider to mobile
+ * Transforms page into mobile view. Basically moves the right half of the page into 
+ * the left half, then centers the new block. Also swaps the slider to compactMode 
  * version. If street view is showing, first resets back to map or else map SEIZES.
  */
 $(window).resize(function() {
-	if (! mobile && $(this).width() < MBL_THRESH) {
+	if (! compactMode && $(this).width() < MBL_THRESH) {
 		// Transforms into compact mode.
-		mobile = ! mobile;
+		compactMode = ! compactMode;
 		var b = $("#street_view_button");
-		var yr = $("#slider").val();
+		var sldr = $("#slider");
+		var yr = sldr.val();
 
-		if (b.text() == ST_VIEW_SELECTED) {
-			b.trigger('click', true); // Prevents map seizing.
+		if (b.text() == ST_VIEW_SEL) {
+			b.trigger('click', NO_ANIMATION); // Prevents map seizing.
 		} 
 
 		$("#legend")
@@ -128,35 +121,38 @@ $(window).resize(function() {
 		$("#slider_box")
 			.css("visibility", "hidden")
 			.before('<input type="range" id="mbl_marker_slider" class="fade_group" \
-			    	min="0" max="' + (displayed.length - 1) + 
-			    	'" value="' + displayed.indexOf(selected) + '"></input>');
+					min="0" max="' + (MAP.displayed.length - 1) + 
+					'" value="' + MAP.displayed.indexOf(MAP.selected) + '"></input>');
 
 		$("#mbl_slider")
-			.before('<div id="mbl_year" class="fade_group">' +
+			.before('<div id="mbl_year" class="fade_group">' + 
 					(yr == ALL ? 'All' : yr) + '</div>')
-			.on('input', changeYear);
+			.on('input', function() {
+				sldr.val($(this).val()).trigger('input');
+			});
         
 		var mbl_mrkr_sldr = $("#mbl_marker_slider")
 			.on("input", function() {
-				displayed[$(this).val()].fire('click');
+				MAP.displayed[$(this).val()].fire('click', NO_ANIMATION);
 			});
 
-		if (displayed.length <= 1) {
+		if (MAP.displayed.length <= 1) {
 			mbl_mrkr_sldr.hide();
 		}
 
 		$("#mbl_year").css("left", 
-			((yr - BEGIN_YR) * CELL_WIDTH + 10) + "px"); // Aligns with slider thumb
+			((yr - BEGIN_YR) * MBL_YEAR_ALIGN_MAGIC + 10) + "px"); // Aligns with slider thumb
 		$(".purple_box").css("width", "650px");
 		$("#intro_box span").text("vertical slider");
 	}
-	else if (mobile && $(this).width() >= MBL_THRESH) {
+	else if (compactMode && $(this).width() >= MBL_THRESH) {
 		// Transforms into desktop mode. Inverse of the above. 
-		mobile = ! mobile;
+		compactMode = ! compactMode;
 		var b = $("#street_view_button");
-		var property = "5px 5px 5px rgb(15,15,15)";
+		var shadow = "5px 5px 5px rgb(15,15,15)";
+		var mblSldr = $("#mbl_slider");
 
-		if(b.text() == ST_VIEW_SELECTED) {
+		if(b.text() == ST_VIEW_SEL) {
 			b.trigger('click', true);
 		}
 
@@ -165,11 +161,11 @@ $(window).resize(function() {
 		$("#legend")
 			.css("margin-bottom", "")
 			.css("border", "5px solid rgb(200,191,176)")
-			.css("box-shadow", property)
-			.css("-moz-box-shadow", property)
-			.css("-webkit-box-shadow", property);
-		$("#slider").val($("#mbl_slider").val());
-		$("#mbl_slider").off('input').detach();
+			.css("box-shadow", shadow)
+			.css("-moz-box-shadow", shadow)
+			.css("-webkit-box-shadow", shadow);
+		$("#slider").val(mblSldr.val());
+		mblSldr.off('input').detach();
 		$("#mbl_year").detach();
 		$("#mbl_marker_slider").detach();
 		$("#slider_box").css("visibility", "visible");
@@ -180,65 +176,48 @@ $(window).resize(function() {
 		$("#left_pane").html($("#mbl_holder").detach());
 		$("#right_pane").html($("#right_box").detach());
 	}
-}).ready(function() {
+});
+
+
+$(window).ready(function() {
+	$("#street_view").hide();
+	eventQuery(BEGIN_YR);
 	$(this).trigger('resize');
 });
 
 
 /*
- * Removes the currently selected marker.
- * 'replace' can be anything. If replace is not null, the unselected version of the marker 
- * will be added back to the map . This only happens currently when the user clicks another 
- * marker in the current year. Otherwise, marker stays invisble (Like when the event types 
- * are being filtered).
- */
-function clearSelected(replace) {
-    if (selected) {
-		selected.remove();
-		selected.setIcon(selected.ICONS[0]);
-		replace ? selected.addTo(myMap) : selected = null;
-	}
-}
-
-
-/*
- * Removes each marker from the map, then populates the map with all events
- * that fall in [year]. If type is defined, also checks that the event is
- * same type. Fits bounds of the map around the points.
+ * Removes each marker from the map, then populates the map with all events that 
+ * fall in [year]. If [type] is defined, also checks that the event is same type.
  */
 function eventQuery(year, type) {
-	for (i = 0; i < displayed.length; i++) {
-		displayed[i].remove();
-	}
-
-	selected = null; 	  // Not needed, just for consistency.
-	displayed = [];
-	var bounds = [];      // List of coordinates for map panning.
+	var bounds = []; // List of coordinates for map panning.
 	var NEW_MARKERS = ALL_MARKERS[year - BEGIN_YR];
-
-	for (i = 0; i < NEW_MARKERS.length; i++) {
-		var marker = NEW_MARKERS[i];
-
-		if (! type || SPREADSHEET[marker.EVENT_INDEX][E_LBL] == type) {
-    		displayed.push(marker);
-    		marker.addTo(myMap);
-    		bounds.push(marker.getLatLng());
-	    }
-	}
-
-	if (bounds.length) {
-		myMap.fitBounds(bounds, BOUNDS_OPTIONS);
-		displayed[0].fire('click', {fast: true});
-		displayed[0].closeTooltip();
-	}
-
 	var mbl_mrkr_sldr = $('#mbl_marker_slider');
 
+	MAP.resetSelected();
+	MAP.displayed.forEach(function(marker) {
+		marker.remove();
+	});
+	MAP.selected = null;
+	MAP.displayed = [];
+
+	NEW_MARKERS.forEach(function(marker) {
+		if (! type || JSON_DATA[marker.EVENT_INDEX][E_LBL] == type) {
+    		MAP.displayed.push(marker);
+    		marker.addTo(MAP);
+    		bounds.push(marker.getLatLng());
+	    }
+	});
+
+	if (bounds.length) {
+		MAP.fitBounds(bounds, BOUNDS_OPTIONS);
+		MAP.displayed[0].fire('click', NO_ANIMATION).closeTooltip();
+	}
+
 	if (mbl_mrkr_sldr) {
-		if (displayed.length > 1) {
-			mbl_mrkr_sldr.val(0);
-			mbl_mrkr_sldr.attr('max', displayed.length - 1);
-			mbl_mrkr_sldr.show();
+		if (MAP.displayed.length > 1) {
+			mbl_mrkr_sldr.val(0).attr('max', MAP.displayed.length - 1).show();
 		}
 		else {
 			mbl_mrkr_sldr.hide();
@@ -248,43 +227,29 @@ function eventQuery(year, type) {
 
 
 /*
- * Fires when a slider changes OR when an arrow button is pressed while the last or
- * first marker in a year is selected. Changes year text and switches up markers.
- *
- * The parameter 'year' is assigned a value only if this is called by an arrow button.
- * The sliders do not explicitly pass any arguments since the slider's value is used for
- * the year instead.
+ * Changes year text and switches up markers.
  */
-var changeYear = function(event, year) {
-	var yr = year ? year : $(this).val();
+$("#slider").on("input", function() {
+	var yr = $(this).val();
 	var text = yr == ALL ? 'All' : yr
 	
 	$('#year').text(text);
 	$('#mbl_year').text(text).animate({
-		left: ((yr - BEGIN_YR) * CELL_WIDTH + 10) + "px" // Aligns with mobile slider thumb.
+		left: ((yr - BEGIN_YR) * MBL_YEAR_ALIGN_MAGIC + 10) + "px" // Aligns with mobile slider thumb.
 	}, 15, 'linear');
-
 	$('.icon_text').css("font-style", "normal"); // Reset icon type filter.
 
-	clearSelected();
 	eventQuery(yr);
-};
-
-$("#slider").on("input", changeYear);
+});
 
 
 /*
- * Removes the intro screen.
+ * Buttons that remove and restore the intro screen.
  */
 $("#to_map").click(function() {
 	$("#intro_box").slideUp();
 	$("#intro_screen").delay(150).fadeOut();
 });
-
-
-/*
- * Restores the intro screen. Inverse of above function.
- */
 $("#to_intro").click(function() {
 	$("#intro_screen").fadeIn();
 	$("#intro_box").delay(150).slideDown();
@@ -293,31 +258,29 @@ $("#to_intro").click(function() {
 
 /*
  * Toggles between the map and the street view image.
- *
- * The parameter 'show' is defined if the window is being resized. This
- * stops the animation from happening since that would cause seizing of the map.
+ * If speed == null, then an animation happens. Otherwise, speed == NO_ANIMATION.
+ * The animation can can the map to seize if it happens while going to compact mode.
  */
-$("#street_view_button").click(function(e, show) {
-	var FADE_TIME = 150; // Change to adjust time for street view to show.
+$("#street_view_button").click(function(e, fast) {
+	var FADE_TIME = 150;
 	var btn = $(this);
 
-	if (btn.text() === ST_VIEW_UNSELECTED) {
-		btn.text(ST_VIEW_SELECTED);
-		$(".fade_group").fadeOut(FADE_TIME); // mbl_slider, mbl_year, slider_box, mbl_marker_slider
+	if (btn.text() == ST_VIEW_UNSEL) {
+		btn.text(ST_VIEW_SEL);
+		$(".fade_group").fadeOut(FADE_TIME);
 		$("#leaflet_map").fadeOut(FADE_TIME, function() {
-			if (btn.text() === ST_VIEW_SELECTED) {
+			if (btn.text() == ST_VIEW_SEL) {
 				// 'If' needed since clicking the button quickly will mess things up.
 				$("#street_view").fadeIn(FADE_TIME);
 			}
 		});
 	}
 	else {
-		btn.text(ST_VIEW_UNSELECTED);
+		btn.text(ST_VIEW_UNSEL);
 
-		if (show) {
-			// Animation causes seizing when screen resizes.
+		if (fast) {
 			$("#street_view").hide(0, function() {
-				if (btn.text() === ST_VIEW_UNSELECTED) {
+				if (btn.text() == ST_VIEW_UNSEL) {
 					$("#leaflet_map").show();
 					$(".fade_group").show();
 				}
@@ -325,7 +288,7 @@ $("#street_view_button").click(function(e, show) {
 		}
 		else {
 			$("#street_view").fadeOut(FADE_TIME, function() {
-				if (btn.text() === ST_VIEW_UNSELECTED) {
+				if (btn.text() == ST_VIEW_UNSEL) {
 					$("#leaflet_map").fadeIn(FADE_TIME);
 					$(".fade_group").fadeIn(FADE_TIME);
 				}
@@ -340,29 +303,27 @@ $("#street_view_button").click(function(e, show) {
  * Clicking them filters markers by event type.
  */
 (function() {
-	var BOUNCE_TIME = 90; // Change to adjust button animation speed.
+	var BOUNCE_TIME = 90;
 	
 	var clickE = function(e) {
-    	var text = $(this).next();
+    	var btn = $(this),
+    		text = btn.next(),
+    		year = parseInt($("#year").text()) || ALL;
     		
-    	$(this).animate({bottom: "-3px"}, BOUNCE_TIME)
-    		.animate({bottom: "3px"}, BOUNCE_TIME)
-    		.animate({bottom: "0"}, BOUNCE_TIME);
+    	["-3px", "3px", "0"].forEach(function(offset) {
+    		btn.animate({bottom: offset}, BOUNCE_TIME);
+    	})
     			
-        if ($("#street_view_button").text() != ST_VIEW_SELECTED) {
-            clearSelected();
-            var yr = mobile ? $("#mbl_slider").val() : $("#slider").val();
-    
+        if ($("#street_view_button").text() != ST_VIEW_SEL) {
+    		// Filters by event type, else reset the filter
     		if (text.css("font-style") == "normal") {
-    			// Filters by event type.
     			$(".icon_text").css("font-style", "normal");
     			text.css("font-style", "oblique");
-    			eventQuery(yr, $(this).attr('id'));
+    			eventQuery(year, $(this).attr('id'));
     		}
     		else {
-    			// Resets filter.
     			text.css("font-style", "normal");
-    			eventQuery(yr);
+    			eventQuery(year);
     		}
 	    }
 	};
@@ -380,99 +341,77 @@ $("#street_view_button").click(function(e, show) {
 
 
 /*
- * Adds functionality to arrow buttons. Switches between markers on map in
- * a bottom to top fashion. Once the last marker is passed, goes to the next
- * if there is one.
+ * Adds functionality to arrow buttons. Switches between markers on map in a bottom 
+ * to top fashion. Once the last marker is passed, goes to the next if there is one.
  */
-(function() {
-    $("#right_arrow").click(function() {
-        var selectedIndex = displayed.indexOf(selected);
-        var sldr = $("#slider");
-        var yr = parseInt(sldr.val());
+$("#right_arrow").click(function() {
+    var selectedIndex = MAP.displayed.indexOf(MAP.selected);
+    var sldr = $("#slider");
+    var yr = parseInt(sldr.val());
 
-        if (selectedIndex < displayed.length - 1) {
-        	displayed[selectedIndex+1].fire('click');
-        }
-        else if (yr < END_YR + 1) {
-        	changeYear(null, yr + 1);
-        	sldr.val(yr + 1);
-        }
-    });
+    if (selectedIndex < MAP.displayed.length - 1) {
+    	MAP.displayed[selectedIndex+1].fire('click');
+    }
+    else if (yr < END_YR + 1) {
+    	sldr.val(yr + 1).trigger('input');
+    }
+});
+$("#left_arrow").click(function() {
+    var selectedIndex = MAP.displayed.indexOf(MAP.selected);
+    var sldr = $("#slider");
+    var yr = parseInt(sldr.val());
     
-    $("#left_arrow").click(function() {
-        var selectedIndex = displayed.indexOf(selected);
-        var sldr = $("#slider");
-        var yr = parseInt(sldr.val());
-        
-        if (selectedIndex > 0) {
-        	displayed[selectedIndex - 1].fire('click');
-        }
-        else if (yr > BEGIN_YR) {
-        	changeYear(null, yr - 1);
-        	sldr.val(yr - 1);
-        	displayed[displayed.length - 1].fire('click');
-        }
-    });
-})();
+    if (selectedIndex > 0) {
+    	MAP.displayed[selectedIndex - 1].fire('click');
+    }
+    else if (yr > BEGIN_YR) {
+    	sldr.val(yr - 1).trigger('input');
+    	MAP.displayed[MAP.displayed.length - 1].fire('click');
+    }
+});
  
 
 /*
- * Load markers and display first year.
+ * Load markers and displays first year when page loads.
  */
 (function() {
-	var FISTS = [
-		L.icon({iconUrl: IC_PTH + 'fst_un.png'}), // Unselected icon.
-		L.icon({iconUrl: IC_PTH + 'fst_sel.png'}) // Selected icon.
-	];
-	var BRUSHES = [
-		L.icon({iconUrl: IC_PTH + 'brsh_un.png'}),
-		L.icon({iconUrl: IC_PTH + 'brsh_sel.png'})
-	];
-	var DOLLARS = [
-		L.icon({iconUrl: IC_PTH + 'dllr_un.png'}),
-	    L.icon({iconUrl: IC_PTH + 'dllr_sel.png'})
-	];
-	var GLOBES = [
-		L.icon({iconUrl: IC_PTH + 'glb_un.png'}),
-	    L.icon({iconUrl: IC_PTH + 'glb_sel.png'})
-	];
-	var SCHOOLS = [
-		L.icon({iconUrl: IC_PTH + 'schl_un.png'}),
-		L.icon({iconUrl: IC_PTH + 'schl_sel.png'})
-	];
-	var UNKNOWN = [
-		L.icon({iconUrl: IC_PTH + 'unkn_un.png'}),
-		L.icon({iconUrl: IC_PTH + 'unkn_sel.png'})
-	];
+	var UNSEL = '_un.png', SEL = '_sel.png', PTH = 'images/icons/';
+	var FST = 'fst', BRSH = 'brsh', DLLR = 'dllr', GLB = 'glb', SCHL = 'schl', UNKN = 'unkn';
+	var ICONS = {}; // Holds a pair of each icon type: [unselected, selected]
+	var TOOLTIP_OPTIONS = {
+		opacity: 0.8,
+		offset: L.point(12,10),
+		className: 'tooltip'
+	};
+
+	[FST, BRSH, DLLR, GLB, SCHL, UNKN].forEach(function(ic) {
+		ICONS[ic] = [L.icon({iconUrl: PTH + ic + UNSEL}), L.icon({iconUrl: PTH + ic + SEL})];
+	});
 
 	/*
 	 * Deselects currently selected marker, then selects this one.
-	 * Fast is false if event is caused from the slider moving.
-	 * This is bound to each marker.
+	 * [speed] == NO_ANIMATION if this is called when the year changes.
+	 * Called whenever a marker is clicked.
 	 */
-	var iconFlip = function(speed) {
-		if (selected == this) return; // User clicked the same one twice.
+	var ICON_FLIP = function(speed) {
+		if (MAP.selected == this) return; // User clicked the same one twice.
 
-		clearSelected('replace');
-
-		// Changes icon.
-		this.remove();
-		this.setIcon(this.ICONS[1]);
-		this.addTo(myMap);
-		selected = this;
+		// Change currently selected icon.
+		MAP.resetSelected();
+		this.remove().setIcon(this.ICONS[1]).addTo(MAP);
+		MAP.selected = this;
 		
 		// Display all the event information.
-		var e = SPREADSHEET[this.EVENT_INDEX];
-		var end = (e[E_END] == "") ? "?" : e[E_END];
+		var e = JSON_DATA[this.EVENT_INDEX];
+		var end = e[E_END] || "?";
 		var timeSpan = (e[E_STRT] == end) ? e[E_STRT] : e[E_STRT] + " - " + end;
-		var ANIMATE_TIME = 150; // Change to adjust time for description to change.
-		var cptn = (e[E_CPTN] == "") ? "" : '<i>Image:</i>   ' + e[E_CPTN];
-		var imagePath = "images/historical/" + e[E_NAME] + IMG_EXT;
+		var cptn = e[E_CPTN] ? '<i>Image:</i>   ' + e[E_CPTN] : "";
+		var imagePath = "images/historical/" + e[E_NAME] + ".jpg";
 
 		$("#desc_body").scrollTop(0);
 		$("#image_container div").scrollTop(0);
 		$("#street_view iframe").attr("src", e[E_STVW] || "");
-		$("#hist_img").attr("src", imagePath)
+		$("#hist_img").attr("src", imagePath);
 		$("#img_link").attr("href", imagePath).attr("data-title", cptn);
 
 		if (speed.fast) {
@@ -483,12 +422,14 @@ $("#street_view_button").click(function(e, show) {
 			$("#cptn").html(cptn);
 		}
 		else {
+			var ANIMATE_TIME = 150;
+
 			$("#desc_body").fadeOut(ANIMATE_TIME, function() {
 				$("#info").text(timeSpan + "   ::   " + e[E_ADDR]);
 				$("#desc").text(e[E_DESC]);
 				$("#src").text("Sources: " + e[E_SRC]);
 				$("#cptn").html(cptn);
-				$(this).fadeIn(ANIMATE_TIME)
+				$(this).fadeIn(ANIMATE_TIME);
 			});
 			$("#desc_title").slideUp(ANIMATE_TIME, function() {
 				$(this).text(e[E_NAME]).slideDown(ANIMATE_TIME);
@@ -496,82 +437,65 @@ $("#street_view_button").click(function(e, show) {
 		}
 	};
 
-	
-	var TOOLTIP_OPTIONS = {
-		opacity: 0.8,
-		offset: L.point(12,10),
-		className: 'tooltip'
-	};
-
-	/*
-	 * Populate ALL_MARKERS, an array of lists holding event icons.
-	 *
-	 * Each event icon holds:
-	 *		- An index to find event information in the spreadsheet data.
-	 *		- A pair of images, one for the unselected icon and one for selected.
-	 *		- Latitude and longitude coordinates.
-	 *		- A function called when it's clicked to display event information.
-	 */
-	for (i = 0; i < SPREADSHEET.length; i++) {
-		var e = SPREADSHEET[i];
+	// Populate ALL_MARKERS, an array of lists holding event icons.
+	for (var i = 0, l = JSON_DATA.length; i < l; i++) {
+		var e = JSON_DATA[i];
 
 		if (e[E_STRT] && e[E_LAT] && e[E_LONG]) {
 			// To add a marker, it must have a start date and a position.
 			var marker = L.marker([e[E_LAT], e[E_LONG]]);
-			var start = e[E_STRT] - BEGIN_YR;
 
 			switch (e[E_LBL]) {
-				case POL:  
-					marker.ICONS = FISTS;   break;
-				case ART:  
-					marker.ICONS = BRUSHES; break;
-				case BUS:  
-					marker.ICONS = DOLLARS; break;
-				case EDU:  
-					marker.ICONS = SCHOOLS; break;
-				case INTR: 
-					marker.ICONS = GLOBES;  break;
-				default:   
-					marker.ICONS = UNKNOWN; break; // No label entered for it.
+			case POL:  
+				marker.ICONS = ICONS[FST];  break;
+			case ART:  
+				marker.ICONS = ICONS[BRSH]; break;
+			case BUS:  
+				marker.ICONS = ICONS[DLLR]; break;
+			case EDU:  
+				marker.ICONS = ICONS[SCHL]; break;
+			case INTR: 
+				marker.ICONS = ICONS[GLB];  break;
+			default:   
+				marker.ICONS = ICONS[UNKN]; // No label entered for it.
 			}
 
-			marker.setIcon(marker.ICONS[0]);
-			marker.EVENT_INDEX = i;
-			marker.on('click', iconFlip);
+			marker.setIcon(marker.ICONS[0]); // Assign a pair of images [unselected, selected] to each icon.
+			marker.on('click', ICON_FLIP);	 
+			marker.EVENT_INDEX = i; 		 // An index to find event information in the spreadsheet data.
 			
-			if ($(window).width() >= MBL_THRESH) {
-			    marker.bindTooltip(e[E_NAME], TOOLTIP_OPTIONS); // Tooltip not needed for mobile
+			if (! compactMode) {
+			    marker.bindTooltip(e[E_NAME], TOOLTIP_OPTIONS);
 			}
 			
-			// Add this to every year it falls into.
-			if (e[E_END]) {
-				var range = (e[E_END] === PRESENT) ? ALL_MARKERS.length : e[E_END] - e[E_STRT];
+			(function() {
+				// Add this to every year it falls into.
+				var timeSpan = (function() {
+					if (e[E_END] == 'present') {
+						return ALL_MARKERS.length;
+					} else if (parseInt(e[E_END])) {
+						return e[E_END] - e[E_STRT]
+					} else {
+						return 0;
+					}
+				})();
 
-				for (j = 0; start + j < ALL_MARKERS.length - 1 && j <= range; j++) {
-					ALL_MARKERS[start + j].push(marker);
+				for (var j = e[E_STRT] - BEGIN_YR; j < NUM_YEARS && j <= timeSpan; j++) {
+					ALL_MARKERS[j].push(marker);
 				}
-			}
-			else {
-				ALL_MARKERS[start].push(marker);
-			}
 
-			ALL_MARKERS[ALL_MARKERS.length-1].push(marker); // All markers are put in final slot.
+				ALL_MARKERS[NUM_YEARS].push(marker); // All markers are put in final slot.
+			})();
 		}
 
 		if (LAST_ENTRY && e[E_NAME] == LAST_ENTRY) {
-			break; // Entries after LAST_ENTRY don't have a start. Set to null if all entries do.
+			break; // Entries after LAST_ENTRY are mostly incomplete.
 		}
 	}
-
-
-	// Sort marker arrays by latitude. For navigating with arrows and vertical mobile slider.
-	var compareMarkers = function(a, b) {
-		return a.getLatLng().lat - b.getLatLng().lat;
-	}
-
-	for (i = 0; i < ALL_MARKERS.length; i++) {
-		ALL_MARKERS[i].sort(compareMarkers);
-	}
-
-	eventQuery(BEGIN_YR);
+	
+	ALL_MARKERS.forEach(function(year) {
+		year.sort(function(a, b) {
+			return a.getLatLng().lat - b.getLatLng().lat; // Sort markers by latitude for easier navigation.
+		});
+	});
 })();
