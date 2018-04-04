@@ -37,10 +37,6 @@ cite {
 	display: block;
 }
 
-#info {
-	white-space: pre-wrap;
-}
-
 #desc {
 	margin: 10px 0;
 	line-height: 1.3em;

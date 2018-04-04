@@ -35,7 +35,6 @@ var LAST_ENTRY = "Sisterspace and Books";
 // Change if modifying spreadsheet field names.
 var E_STRT = "Start_Year",
 	E_END  = "End_Year",
-	E_ADDR = "Address",
 	E_DESC = "Description",
 	E_NAME = "Event_Name",
 	E_LAT  = "Latitude",
@@ -408,8 +407,6 @@ $("#left_arrow").click(function() {
 		
 		// Display all the event information.
 		var e = JSON_DATA[this.EVENT_INDEX];
-		var end = e[E_END] || "?";
-		var timeSpan = (e[E_STRT] == end) ? e[E_STRT] : e[E_STRT] + " - " + end;
 		var cptn = e[E_CPTN] ? '<i>Image:</i>   ' + e[E_CPTN] : "";
 		var imagePath = "images/historical/" + e[E_NAME] + '.jpg';
 
@@ -431,7 +428,6 @@ $("#left_arrow").click(function() {
 
 		if (e.fast) {
 			$("#desc_title").text(e[E_NAME]);
-			$("#info").text(timeSpan + "   ::   " + e[E_ADDR]);
 			$("#desc").text(e[E_DESC]);
 			$("#src").text("Sources: " + e[E_SRC]);
 			$("#cptn").html(cptn);
@@ -440,7 +436,6 @@ $("#left_arrow").click(function() {
 			var ANIMATE_TIME = 150;
 
 			$("#desc_body").fadeOut(ANIMATE_TIME, function() {
-				$("#info").text(timeSpan + "   ::   " + e[E_ADDR]);
 				$("#desc").text(e[E_DESC]);
 				$("#src").text("Sources: " + e[E_SRC]);
 				$("#cptn").html(cptn);
