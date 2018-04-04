@@ -542,10 +542,13 @@ $("#left_arrow").click(function() {
 				}
 			})();
 			var filePath = PTH + name + IC_EXT;
+			var img = $("#hist_img");
 
-			$("#hist_img")
-				.css("height", "99%")
-				.attr("src", filePath);
+			// Conditional is to help prevent image stuttering when switching events.
+			if (img.attr("src") != filePath) {
+				img.css("height", "99%")
+				   .attr("src", filePath);
+			}
 			$("#img_link")
 				.attr("href", filePath)
 				.attr("data-title", "This event does not have an image yet. \
