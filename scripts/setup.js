@@ -371,28 +371,34 @@ $("#left_arrow").click(function() {
  
 
 /*
- * Load markers and displays first year when page loads.
+ * Creates all the markers and displays first year when page loads.
  */
 (function() {
-	var UNSEL = '_un.png', SEL = '_sel.png', PTH = 'images/icons/';
-	var FST = 'fst', BRSH = 'brsh', DLLR = 'dllr', GLB = 'glb', SCHL = 'schl', UNKN = 'unkn';
-	var ICONS = {}; // Holds a pair of each icon type: [unselected, selected]
+	var PTH = 'images/icons/', 
+		IC_EXT = '.png';
+
+	// Icon file name postfixes and extension type.
+	var UNSEL = '_un' + IC_EXT, 
+		SEL = '_sel' + IC_EXT;
+
+	// Marker image file base names
+	var FST = 'fst', 
+		BRSH = 'brsh', 
+		DLLR = 'dllr', 
+		GLB = 'glb', 
+		SCHL = 'schl', 
+		UNKN = 'unkn';
+
 	var TOOLTIP_OPTIONS = {
 		opacity: 0.8,
 		offset: L.point(12,10),
 		className: 'tooltip'
 	};
 
-	[FST, BRSH, DLLR, GLB, SCHL, UNKN].forEach(function(ic) {
-		ICONS[ic] = [L.icon({iconUrl: PTH + ic + UNSEL}), L.icon({iconUrl: PTH + ic + SEL})];
-	});
 
-	/*
-	 * Deselects currently selected marker, then selects this one.
-	 * [speed] == NO_ANIMATION if this is called when the year changes.
-	 * Called whenever a marker is clicked.
-	 */
-	var ICON_FLIP = function(speed) {
+	// Deselects currently selected marker, then selects this one.
+	// [e] contains the attribute of NO_ANIMATION if it was passed.
+	var ICON_FLIP = function(e) {
 		if (MAP.selected == this) return; // User clicked the same one twice.
 
 		// Change currently selected icon.
@@ -405,15 +411,27 @@ $("#left_arrow").click(function() {
 		var end = e[E_END] || "?";
 		var timeSpan = (e[E_STRT] == end) ? e[E_STRT] : e[E_STRT] + " - " + end;
 		var cptn = e[E_CPTN] ? '<i>Image:</i>   ' + e[E_CPTN] : "";
-		var imagePath = "images/historical/" + e[E_NAME] + ".jpg";
+		var imagePath = "images/historical/" + e[E_NAME] + '.jpg';
+		var img = $("#hist_img");
 
 		$("#desc_body").scrollTop(0);
 		$("#image_container div").scrollTop(0);
-		$("#street_view iframe").attr("src", e[E_STVW] || "");
-		$("#hist_img").attr("src", imagePath);
-		$("#img_link").attr("href", imagePath).attr("data-title", cptn);
 
-		if (speed.fast) {
+		// Display the modern day view or show an entire view of DC if there isn't one.
+		$("#street_view iframe").attr("src", e[E_STVW] 
+			|| "https://www.google.com/maps/embed?pb=!1m13!1m11!1m3!1d61129.\
+				78181151857!2d-77.00592450217232!3d38.89345203863472!2m2!1f0\
+				!2f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sen!2sus!4v1522802214611");
+		$("#img_link")
+			.attr("href", imagePath)
+			.attr("data-title", cptn);
+		img.attr("src", imagePath);
+
+		// Prevents image stuttering when using the arrow keys 
+		// to move between successive events with no image.
+		(img.attr("height") == "99%") && img.css("height", "");
+
+		if (e.fast) {
 			$("#desc_title").text(e[E_NAME]);
 			$("#info").text(timeSpan + "   ::   " + e[E_ADDR]);
 			$("#desc").text(e[E_DESC]);
@@ -436,6 +454,32 @@ $("#left_arrow").click(function() {
 		}
 	};
 
+	// Returns a pair of icons for use by a marker to switch between selected and unselected.
+	var getIconPair = (function() {
+		var PAIRS = {};
+
+		[FST, BRSH, DLLR, GLB, SCHL, UNKN].forEach(function(ic) {
+			PAIRS[ic] = [L.icon({iconUrl: PTH + ic + UNSEL}), L.icon({iconUrl: PTH + ic + SEL})];
+		});
+
+		return function(eventType) {
+			switch (eventType) {
+			case POL:  
+				return PAIRS[FST];
+			case ART:  
+				return PAIRS[BRSH];
+			case BUS:  
+				return PAIRS[DLLR];
+			case EDU:  
+				return PAIRS[SCHL];
+			case INTR: 
+				return PAIRS[GLB];
+			default:   
+				return PAIRS[UNKN]; // No label entered for it.
+			}
+		};
+	})();
+
 	// Populate ALL_MARKERS, an array of lists holding event icons.
 	for (var i = 0, l = JSON_DATA.length; i < l; i++) {
 		var e = JSON_DATA[i];
@@ -444,21 +488,7 @@ $("#left_arrow").click(function() {
 			// To add a marker, it must have a start date and a position.
 			var marker = L.marker([e[E_LAT], e[E_LONG]]);
 
-			switch (e[E_LBL]) {
-			case POL:  
-				marker.ICONS = ICONS[FST];  break;
-			case ART:  
-				marker.ICONS = ICONS[BRSH]; break;
-			case BUS:  
-				marker.ICONS = ICONS[DLLR]; break;
-			case EDU:  
-				marker.ICONS = ICONS[SCHL]; break;
-			case INTR: 
-				marker.ICONS = ICONS[GLB];  break;
-			default:   
-				marker.ICONS = ICONS[UNKN]; // No label entered for it.
-			}
-
+			marker.ICONS = getIconPair(e[E_LBL]);
 			marker.setIcon(marker.ICONS[0]); // Assign a pair of images [unselected, selected] to each icon.
 			marker.on('click', ICON_FLIP);	 
 			marker.EVENT_INDEX = i; 		 // An index to find event information in the spreadsheet data.
@@ -492,6 +522,41 @@ $("#left_arrow").click(function() {
 		}
 	}
 	
+	// If a historical image fails to load, load a standard image.
+	window.addEventListener('error', function(err) {
+		if (err.srcElement.id == "hist_img") {
+			var name = (function() {
+				var type = JSON_DATA[MAP.selected.EVENT_INDEX][E_LBL];
+
+				switch(type) {
+				case INTR:
+					return GLB;
+				case ART:
+					return BRSH;
+				case EDU:
+					return SCHL;
+				case BUS:
+					return DLLR;
+				case POL:
+					return FST;
+				default:
+					return UNKN; 
+				}
+			})();
+			var filePath = PTH + name + IC_EXT;
+
+			$("#hist_img")
+				.css("height", "99%")
+				.attr("src", filePath);
+			$("#img_link")
+				.attr("href", filePath)
+				.attr("data-title", "This event does not have an image yet. \
+						Contributions of any kind are welcome. If you have an \
+						image to contribute, please email George Derek \
+						Musgrove at gmusgr1@umbc.edu.");
+		}
+	}, true);
+
 	ALL_MARKERS.forEach(function(year) {
 		year.sort(function(a, b) {
 			return a.getLatLng().lat - b.getLatLng().lat; // Sort markers by latitude for easier navigation.
