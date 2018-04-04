@@ -412,7 +412,6 @@ $("#left_arrow").click(function() {
 		var timeSpan = (e[E_STRT] == end) ? e[E_STRT] : e[E_STRT] + " - " + end;
 		var cptn = e[E_CPTN] ? '<i>Image:</i>   ' + e[E_CPTN] : "";
 		var imagePath = "images/historical/" + e[E_NAME] + '.jpg';
-		var img = $("#hist_img");
 
 		$("#desc_body").scrollTop(0);
 		$("#image_container div").scrollTop(0);
@@ -425,11 +424,9 @@ $("#left_arrow").click(function() {
 		$("#img_link")
 			.attr("href", imagePath)
 			.attr("data-title", cptn);
-		img.attr("src", imagePath);
-
-		// Prevents image stuttering when using the arrow keys 
-		// to move between successive events with no image.
-		(img.attr("height") == "99%") && img.css("height", "");
+		$("#hist_img")
+			.attr("src", imagePath)
+			.css("height", "");
 
 		if (e.fast) {
 			$("#desc_title").text(e[E_NAME]);
