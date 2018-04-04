@@ -425,8 +425,9 @@ $("#left_arrow").click(function() {
 			.attr("href", imagePath)
 			.attr("data-title", cptn);
 		$("#hist_img")
-			.attr("src", imagePath)
-			.css("height", "");
+			.attr("src", "") // Remove image before displaying new one to prevent stuttering.
+			.css("height", "")
+			.attr("src", imagePath);
 
 		if (e.fast) {
 			$("#desc_title").text(e[E_NAME]);
