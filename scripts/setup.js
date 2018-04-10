@@ -13,13 +13,8 @@
 var BEGIN_YR = 1961,
 	END_YR = 1995;
 
-var DESKTOP_TTL = "THE WASHINGTON, D.C. BLACK POWER MAP",
-	MOBILE_TTL = "THE BLACK POWER MAP";
-
 var ST_VIEW_UNSEL = "To street view",
 	ST_VIEW_SEL = "To map";
-
-var MBL_THRESH = 1200; // Width at which device is considered 'compactMode'.
 
 // For fitting the markers inside the map so that none are obstructed.
 var BOUNDS_OPTIONS = {
@@ -27,10 +22,6 @@ var BOUNDS_OPTIONS = {
 	paddingBottomRight: L.point(80,80),
 	paddingTopLeft: L.point(25,25)
 };
-
-// Website will not process events after this one in the spreadsheet.
-// Set to null if all events should be processed.
-var LAST_ENTRY = "Sisterspace and Books"; 
 
 // Change if modifying spreadsheet field names.
 var E_STRT = "Start_Year",
@@ -51,9 +42,7 @@ var INTR = "PA/IS",
 	EDU = "IS",
 	POL = "P/EP";	
 
-// ---------------------------------------------------------------------
-
-var ALL = END_YR + 1; // '+ 1' there since last index is used to display every marker.
+var ALL = END_YR + 1; // '+ 1' since last index is used to display all markers.
 var NUM_YEARS = END_YR - BEGIN_YR + 1;
 var ALL_MARKERS = new Array(NUM_YEARS + 1); // Indexed by [year] - BEGIN_YR + offset.
 
@@ -61,7 +50,7 @@ var NO_ANIMATION = {fast: true}; // Stops animation from happening when event ch
 var MBL_YEAR_ALIGN_MAGIC = (570 - 80) / NUM_YEARS; // mbl_slider width - thumb width.
 var compactMode = false;
 
-for (i = 0; i < NUM_YEARS + 1; i++) {
+for (var i = 0; i < NUM_YEARS + 1; i++) {
 	ALL_MARKERS[i] = []; // Each element holds a list of events that happen in same year.
 }
 
@@ -80,9 +69,51 @@ MAP.selected = null; // The currently selected marker.
 MAP.resetSelected = function() {
     if (this.selected) {
     	//Resets currently selected marker to unselected.
-		this.selected.remove().setIcon(this.selected.ICONS[0]).addTo(MAP);
+		this.selected
+			.remove()
+			.setIcon(this.selected.ICONS[0])
+			.addTo(MAP);
 	}
 }
+
+/*
+ * Removes each marker from the map, then populates the map with all events that 
+ * fall in [year]. If [type] is defined, also checks that the event is same type.
+ */
+function eventQuery(year, type) {
+	var bounds = []; // List of coordinates for map panning.
+	var NEW_MARKERS = ALL_MARKERS[year - BEGIN_YR];
+	var mbl_mrkr_sldr = $('#mbl_marker_slider');
+
+	MAP.resetSelected();
+	MAP.displayed.forEach(function(marker) {
+		marker.remove();
+	});
+	MAP.selected = null;
+	MAP.displayed = [];
+
+	NEW_MARKERS.forEach(function(marker) {
+		if (! type || JSON_DATA[marker.EVENT_INDEX][E_LBL] == type) {
+    		MAP.displayed.push(marker);
+    		marker.addTo(MAP);
+    		bounds.push(marker.getLatLng());
+	    }
+	});
+
+	if (bounds.length) {
+		MAP.fitBounds(bounds, BOUNDS_OPTIONS);
+		MAP.displayed[0].fire('click', NO_ANIMATION).closeTooltip();
+	}
+
+	if (mbl_mrkr_sldr) {
+		if (MAP.displayed.length > 1) {
+			mbl_mrkr_sldr.val(0).attr('max', MAP.displayed.length - 1).show();
+		} else {
+			mbl_mrkr_sldr.hide();
+		}
+	}
+};
+
 
 /*
  * Transforms page into mobile view. Basically moves the right half of the page into 
@@ -90,6 +121,8 @@ MAP.resetSelected = function() {
  * version. If street view is showing, first resets back to map or else map SEIZES.
  */
 $(window).resize(function() {
+	var MBL_THRESH = 1200; // Width at which device is considered 'compactMode'.
+
 	if (! compactMode && $(this).width() < MBL_THRESH) {
 		// Transforms into compact mode.
 		compactMode = ! compactMode;
@@ -113,7 +146,7 @@ $(window).resize(function() {
 
 		$("#title_box")
 			.after($("#mbl_holder").detach())
-			.text(MOBILE_TTL)
+			.text("THE BLACK POWER MAP")
 			.css("font-size", "48px")
 			.css("margin-bottom", "5px");
         
@@ -164,12 +197,14 @@ $(window).resize(function() {
 			.css("-moz-box-shadow", shadow)
 			.css("-webkit-box-shadow", shadow);
 		$("#slider").val(mblSldr.val());
-		mblSldr.off('input').detach();
+		mblSldr
+			.off('input')
+			.detach();
 		$("#mbl_year").detach();
 		$("#mbl_marker_slider").detach();
 		$("#slider_box").css("visibility", "visible");
 		$("#title_box")
-			.text(DESKTOP_TTL)
+			.text("THE WASHINGTON, D.C. BLACK POWER MAP")
 			.css("font-size", "50px")
 			.css("margin-bottom", "0");
 		$("#left_pane").html($("#mbl_holder").detach());
@@ -183,45 +218,6 @@ $(window).ready(function() {
 	eventQuery(BEGIN_YR);
 	$(this).trigger('resize');
 });
-
-
-/*
- * Removes each marker from the map, then populates the map with all events that 
- * fall in [year]. If [type] is defined, also checks that the event is same type.
- */
-function eventQuery(year, type) {
-	var bounds = []; // List of coordinates for map panning.
-	var NEW_MARKERS = ALL_MARKERS[year - BEGIN_YR];
-	var mbl_mrkr_sldr = $('#mbl_marker_slider');
-
-	MAP.resetSelected();
-	MAP.displayed.forEach(function(marker) {
-		marker.remove();
-	});
-	MAP.selected = null;
-	MAP.displayed = [];
-
-	NEW_MARKERS.forEach(function(marker) {
-		if (! type || JSON_DATA[marker.EVENT_INDEX][E_LBL] == type) {
-    		MAP.displayed.push(marker);
-    		marker.addTo(MAP);
-    		bounds.push(marker.getLatLng());
-	    }
-	});
-
-	if (bounds.length) {
-		MAP.fitBounds(bounds, BOUNDS_OPTIONS);
-		MAP.displayed[0].fire('click', NO_ANIMATION).closeTooltip();
-	}
-
-	if (mbl_mrkr_sldr) {
-		if (MAP.displayed.length > 1) {
-			mbl_mrkr_sldr.val(0).attr('max', MAP.displayed.length - 1).show();
-		} else {
-			mbl_mrkr_sldr.hide();
-		}
-	}
-};
 
 
 /*
@@ -348,7 +344,7 @@ $("#right_arrow").click(function() {
     var yr = parseInt(sldr.val());
 
     if (selectedIndex < MAP.displayed.length - 1) {
-    	MAP.displayed[selectedIndex+1].fire('click');
+    	MAP.displayed[selectedIndex + 1].fire('click');
     }
     else if (yr < END_YR + 1) {
     	sldr.val(yr + 1).trigger('input');
@@ -375,6 +371,10 @@ $("#left_arrow").click(function() {
 (function() {
 	var PTH = 'images/icons/', 
 		IC_EXT = '.png';
+
+	// Website will not process events after this one in the spreadsheet.
+	// Set to null if all events should be processed.
+	var LAST_ENTRY = "Sisterspace and Books"; 
 
 	// Icon file name postfixes and extension type.
 	var UNSEL = '_un' + IC_EXT, 
@@ -480,6 +480,7 @@ $("#left_arrow").click(function() {
 		if (e[E_STRT] && e[E_LAT] && e[E_LONG]) {
 			// To add a marker, it must have a start date and a position.
 			var marker = L.marker([e[E_LAT], e[E_LONG]]);
+			var timeSpan = 0;
 
 			marker.ICONS = getIconPair(e[E_LBL]);
 			marker.setIcon(marker.ICONS[0]); // Assign a pair of images [unselected, selected] to each icon.
@@ -490,24 +491,19 @@ $("#left_arrow").click(function() {
 			    marker.bindTooltip(e[E_NAME], TOOLTIP_OPTIONS);
 			}
 			
-			(function() {
-				// Add this to every year it falls into.
-				var timeSpan = (function() {
-					if (e[E_END] == 'present') {
-						return ALL_MARKERS.length;
-					} else if (parseInt(e[E_END])) {
-						return e[E_END] - e[E_STRT]
-					} else {
-						return 0;
-					}
-				})();
+			if (e[E_END] == 'present') {
+				timeSpan = ALL_MARKERS.length;
+			} 
+			else if (parseInt(e[E_END])) {
+				timeSpan = e[E_END] - e[E_STRT]
+			}
 
-				for (var j = e[E_STRT] - BEGIN_YR; j < NUM_YEARS && j <= timeSpan; j++) {
-					ALL_MARKERS[j].push(marker);
-				}
+			// Add this to every year it falls into.
+			for (var j = e[E_STRT] - BEGIN_YR; j < NUM_YEARS && j <= timeSpan; j++) {
+				ALL_MARKERS[j].push(marker);
+			}
 
-				ALL_MARKERS[NUM_YEARS].push(marker); // All markers are put in final slot.
-			})();
+			ALL_MARKERS[NUM_YEARS].push(marker); // All markers are put in final slot.
 		}
 
 		if (LAST_ENTRY && e[E_NAME] == LAST_ENTRY) {
@@ -517,7 +513,7 @@ $("#left_arrow").click(function() {
 	
 	// If a historical image fails to load, load a standard image.
 	window.addEventListener('error', function(err) {
-		if (err.srcElement.id == "hist_img") {
+		if (err.target.id == "hist_img") {
 			var name = (function() {
 				var type = JSON_DATA[MAP.selected.EVENT_INDEX][E_LBL];
 
