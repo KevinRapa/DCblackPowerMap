@@ -41,16 +41,11 @@ a {
 }
 
 .white_box {
-	box-shadow: 5px 5px 5px rgb(15,15,15);
-	-moz-box-shadow: 5px 5px 5px rgb(15,15,15);
-	-webkit-box-shadow: 5px 5px 5px rgb(15,15,15);
 	background-color: rgb(200,191,176);
 	padding: 5px;
 }
 
 #all_content {
-	height: 100%;
-	width: 98%;
 	padding-top: 10px;
 	padding-bottom: 25px;
 	margin: 1% 1%;
@@ -122,10 +117,21 @@ a {
 }
 
 #title_box {
-	font-size: 50px;
 	font-weight: bold;
 	text-align: center;
 	text-shadow: 3px 3px 5px rgb(42,42,42);
+}
+
+/* Title styles for normal mode. */
+.def_title {
+	font-size: 50px;
+	margin-bottom: 0;
+}
+
+/* Title styles for compact mode. */
+.mbl_title {
+	font-size: 48px;
+	margin-bottom: 5px;
 }
 
 #featured_content {

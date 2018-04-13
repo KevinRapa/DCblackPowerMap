@@ -13,9 +13,6 @@
 var BEGIN_YR = 1961,
 	END_YR = 1995;
 
-var ST_VIEW_UNSEL = "To street view",
-	ST_VIEW_SEL = "To map";
-
 // For fitting the markers inside the map so that none are obstructed.
 var BOUNDS_OPTIONS = {
 	maxZoom: 15,
@@ -33,14 +30,7 @@ var E_STRT = "Start_Year",
 	E_STVW = "St_View_URL",
 	E_LBL  = "Label",
 	E_CPTN = "Picture_Caption",
-	E_SRC = "Sources";
-
-// Change if modifying the names of the event types
-var INTR = "PA/IS",
-	ART = "BA",
-	BUS = "BB",
-	EDU = "IS",
-	POL = "P/EP";	
+	E_SRC = "Sources";	
 
 var ALL = END_YR + 1; // '+ 1' since last index is used to display all markers.
 var NUM_YEARS = END_YR - BEGIN_YR + 1;
@@ -50,7 +40,7 @@ var NO_ANIMATION = {fast: true}; // Stops animation from happening when event ch
 var MBL_YEAR_ALIGN_MAGIC = (570 - 80) / NUM_YEARS; // mbl_slider width - thumb width.
 var compactMode = false;
 
-for (var i = 0; i < NUM_YEARS + 1; i++) {
+for (var i = 0, len = ALL_MARKERS.length; i < len; i++) {
 	ALL_MARKERS[i] = []; // Each element holds a list of events that happen in same year.
 }
 
@@ -81,35 +71,43 @@ MAP.resetSelected = function() {
  * fall in [year]. If [type] is defined, also checks that the event is same type.
  */
 function eventQuery(year, type) {
-	var bounds = []; // List of coordinates for map panning.
-	var NEW_MARKERS = ALL_MARKERS[year - BEGIN_YR];
-	var mbl_mrkr_sldr = $('#mbl_marker_slider');
+	var bounds = [];
+	var mrkrSldr = $('#mbl_marker_slider');
 
+	// Reset map
 	MAP.resetSelected();
-	MAP.displayed.forEach(function(marker) {
+	for (var marker of MAP.displayed) {
 		marker.remove();
-	});
+	}
 	MAP.selected = null;
 	MAP.displayed = [];
 
-	NEW_MARKERS.forEach(function(marker) {
+	// Add the new markers
+	for (var marker of ALL_MARKERS[year - BEGIN_YR]) {
 		if (! type || JSON_DATA[marker.EVENT_INDEX][E_LBL] == type) {
     		MAP.displayed.push(marker);
     		marker.addTo(MAP);
     		bounds.push(marker.getLatLng());
 	    }
-	});
-
-	if (bounds.length) {
-		MAP.fitBounds(bounds, BOUNDS_OPTIONS);
-		MAP.displayed[0].fire('click', NO_ANIMATION).closeTooltip();
 	}
 
-	if (mbl_mrkr_sldr) {
+	// Fit the view to the scope of the markers
+	if (bounds.length) {
+		MAP.fitBounds(bounds, BOUNDS_OPTIONS);
+		MAP.displayed[0]
+			.fire('click', NO_ANIMATION)
+			.closeTooltip();
+	}
+
+	// Display slider for markers if mobile mode and >1 markers.
+	if (mrkrSldr) {
 		if (MAP.displayed.length > 1) {
-			mbl_mrkr_sldr.val(0).attr('max', MAP.displayed.length - 1).show();
+			mrkrSldr
+				.val(0)
+				.attr('max', MAP.displayed.length - 1)
+				.show();
 		} else {
-			mbl_mrkr_sldr.hide();
+			mrkrSldr.hide();
 		}
 	}
 };
@@ -121,94 +119,76 @@ function eventQuery(year, type) {
  * version. If street view is showing, first resets back to map or else map SEIZES.
  */
 $(window).resize(function() {
-	var MBL_THRESH = 1200; // Width at which device is considered 'compactMode'.
+	var narrowEnough = $(this).width() < 1200; // 1200 is also used again in this function.
 
-	if (! compactMode && $(this).width() < MBL_THRESH) {
+	if (! compactMode && narrowEnough) {
 		// Transforms into compact mode.
 		compactMode = ! compactMode;
-		var b = $("#street_view_button");
 		var sldr = $("#slider");
-		var yr = sldr.val();
+		var yr = parseInt(sldr.val());
+		var holder = $("#mbl_holder");
 
-		if (b.text() == ST_VIEW_SEL) {
-			b.trigger('click', NO_ANIMATION); // Prevents map seizing.
+		if (holder.find("#street_view").css('display') != 'none') {
+			$("#street_view_button").trigger('click', NO_ANIMATION); // Prevents map seizing.
 		} 
 
-		$("#legend")
+		holder.detach();
+		holder.find("#legend")
+			.attr("class", "mbl_legend")
 			.after($("#right_box").detach())
-			.before('<input type="range" id="mbl_slider" class="fade_group" \
-					min="1961" max="' + ALL + '" value="' + yr + '"/>')
-			.css("margin-bottom", "10px")
-			.css("border", "none")
-			.css("box-shadow", "none")
-			.css("-moz-box-shadow", "none")
-			.css("-webkit-box-shadow", "none");
-
-		$("#title_box")
-			.after($("#mbl_holder").detach())
-			.text("THE BLACK POWER MAP")
-			.css("font-size", "48px")
-			.css("margin-bottom", "5px");
-        
-		$("#slider_box")
-			.css("visibility", "hidden")
-			.before('<input type="range" id="mbl_marker_slider" class="fade_group" \
-					min="0" max="' + (MAP.displayed.length - 1) + 
-					'" value="' + MAP.displayed.indexOf(MAP.selected) + '"></input>');
-
-		$("#mbl_slider")
-			.before('<div id="mbl_year" class="fade_group">' + 
-					(yr == ALL ? 'All' : yr) + '</div>')
-			.on('input', function() {
+			.before('<div id="mbl_year" class="fade_group mobile">' + (yr == ALL ? 'All' : yr) +
+					'</div><input type="range" id="mbl_slider" class="fade_group mobile" min="1961" max="' 
+					+ ALL + '" value="' + yr + '"/>')
+			.prev("#mbl_slider").on('input', function() {
 				sldr.val($(this).val()).trigger('input');
-			});
-        
-		var mbl_mrkr_sldr = $("#mbl_marker_slider")
-			.on("input", function() {
+			})
+			.siblings("#mbl_year").css("left", 
+				((yr - BEGIN_YR) * MBL_YEAR_ALIGN_MAGIC + 10) + "px"); // Align with slider thumb
+			
+		holder.find("#slider_box")
+			.hide()
+			.before('<input type="range" id="mbl_marker_slider" class="fade_group mobile" min="0" max="' 
+				+ (MAP.displayed.length - 1) + '" value="' + MAP.displayed.indexOf(MAP.selected) 
+				+ '"></input>')
+			.prev("#mbl_marker_slider").on("input", function() {
 				MAP.displayed[$(this).val()].fire('click', NO_ANIMATION);
 			});
 
+		$("#title_box")
+			.after(holder)
+			.attr("class", "mbl_title")
+			.text("THE BLACK POWER MAP");
+
 		if (MAP.displayed.length <= 1) {
-			mbl_mrkr_sldr.hide();
+			holder.find("#mbl_marker_slider").hide();
 		}
 
-		$("#mbl_year").css("left", 
-			((yr - BEGIN_YR) * MBL_YEAR_ALIGN_MAGIC + 10) + "px"); // Aligns with slider thumb
 		$(".purple_box").css("width", "650px");
 		$("#intro_box span").text("vertical slider");
-	}
-	else if (compactMode && $(this).width() >= MBL_THRESH) {
+
+	} else if (compactMode && ! narrowEnough) {
 		// Transforms into desktop mode. Inverse of the above. 
 		compactMode = ! compactMode;
-		var b = $("#street_view_button");
-		var shadow = "5px 5px 5px rgb(15,15,15)";
-		var mblSldr = $("#mbl_slider");
+		var holder = $("#mbl_holder");
 
-		if(b.text() == ST_VIEW_SEL) {
-			b.trigger('click', true);
+		if (holder.find("#street_view").css('display') != 'none') {
+			$("#street_view_button").trigger('click', true);
 		}
 
-		$("#intro_box span").text("arrow buttons");
-		$(".purple_box").css("width", MBL_THRESH + "px");
-		$("#legend")
-			.css("margin-bottom", "")
-			.css("border", "5px solid rgb(200,191,176)")
-			.css("box-shadow", shadow)
-			.css("-moz-box-shadow", shadow)
-			.css("-webkit-box-shadow", shadow);
-		$("#slider").val(mblSldr.val());
-		mblSldr
-			.off('input')
-			.detach();
-		$("#mbl_year").detach();
-		$("#mbl_marker_slider").detach();
-		$("#slider_box").css("visibility", "visible");
+		holder.detach();
+		holder.find("#legend").attr("class", "def_legend");
+		holder.find("#slider").val(holder.find("#mbl_slider").val());
+		holder.find(".mobile").remove();
+		holder.find("#slider_box").show();
+
 		$("#title_box")
 			.text("THE WASHINGTON, D.C. BLACK POWER MAP")
-			.css("font-size", "50px")
-			.css("margin-bottom", "0");
-		$("#left_pane").html($("#mbl_holder").detach());
-		$("#right_pane").html($("#right_box").detach());
+			.attr("class", "def_title");
+
+		$("#intro_box span").text("arrow buttons");
+		$(".purple_box").css("width", "1200px");	
+		$("#right_pane").html(holder.find("#right_box"));
+		$("#left_pane").html(holder);
 	}
 });
 
@@ -225,7 +205,7 @@ $(window).ready(function() {
  */
 $("#slider").on("input", function() {
 	var yr = $(this).val();
-	var text = yr == ALL ? 'All' : yr
+	var text = (yr == ALL) ? 'All' : yr
 	
 	$('#year').text(text);
 	$('#mbl_year').text(text).animate({
@@ -257,32 +237,30 @@ $("#to_intro").click(function() {
  */
 $("#street_view_button").click(function(e, fast) {
 	var FADE_TIME = 150;
-	var btn = $(this);
+	var stView = $('#street_view');
 
-	if (btn.text() == ST_VIEW_UNSEL) {
-		btn.text(ST_VIEW_SEL);
+	if (stView.css('display') == 'none') {
+		$(this).text("To map");
 		$(".fade_group").fadeOut(FADE_TIME);
 		$("#leaflet_map").fadeOut(FADE_TIME, function() {
-			if (btn.text() == ST_VIEW_SEL) {
+			if (stView.css('display') == 'none') {
 				// 'If' needed since clicking the button quickly will mess things up.
-				$("#street_view").fadeIn(FADE_TIME);
+				stView.fadeIn(FADE_TIME);
 			}
 		});
-	}
-	else {
-		btn.text(ST_VIEW_UNSEL);
+	} else {
+		$(this).text("To street view");
 
 		if (fast) {
-			$("#street_view").hide(0, function() {
-				if (btn.text() == ST_VIEW_UNSEL) {
+			stView.hide(0, function() {
+				if (stView.css('display') == 'none') {
 					$("#leaflet_map").show();
 					$(".fade_group").show();
 				}
 			});
-		}
-		else {
-			$("#street_view").fadeOut(FADE_TIME, function() {
-				if (btn.text() == ST_VIEW_UNSEL) {
+		} else {
+			stView.fadeOut(FADE_TIME, function() {
+				if (stView.css('display') == 'none') {
 					$("#leaflet_map").fadeIn(FADE_TIME);
 					$(".fade_group").fadeIn(FADE_TIME);
 				}
@@ -299,38 +277,35 @@ $("#street_view_button").click(function(e, fast) {
 (function() {
 	var BOUNCE_TIME = 90;
 	
-	var clickE = function(e) {
+	var click = function(e) {
     	var btn = $(this),
     		text = btn.next(),
     		year = parseInt($("#year").text()) || ALL;
     		
-    	["-3px", "3px", "0"].forEach(function(offset) {
+    	for (var offset of ["-3px", "3px", "0"]) {
     		btn.animate({bottom: offset}, BOUNCE_TIME);
-    	})
+    	}
     			
-        if ($("#street_view_button").text() != ST_VIEW_SEL) {
+        if ($("#street_view").css('display') == 'none') {
     		// Filters by event type, else reset the filter
     		if (text.css("font-style") == "normal") {
     			$(".icon_text").css("font-style", "normal");
     			text.css("font-style", "oblique");
     			eventQuery(year, $(this).attr('id'));
-    		}
-    		else {
+    		} else {
     			text.css("font-style", "normal");
     			eventQuery(year);
     		}
 	    }
 	};
-
-	var hvrInE = function() {
+	var hvrIn = function() {
 		$(this).animate({bottom: "4px"}, BOUNCE_TIME);
 	};
-
-	var hvrOutE = function() {
+	var hvrOut = function() {
 		$(this).animate({bottom: "0"}, BOUNCE_TIME);
 	};
 
-	$(".icon_button").click(clickE).hover(hvrInE, hvrOutE);
+	$(".icon_button").click(click).hover(hvrIn, hvrOut);
 })();
 
 
@@ -345,8 +320,7 @@ $("#right_arrow").click(function() {
 
     if (selectedIndex < MAP.displayed.length - 1) {
     	MAP.displayed[selectedIndex + 1].fire('click');
-    }
-    else if (yr < END_YR + 1) {
+    } else if (yr < END_YR + 1) {
     	sldr.val(yr + 1).trigger('input');
     }
 });
@@ -357,8 +331,7 @@ $("#left_arrow").click(function() {
     
     if (selectedIndex > 0) {
     	MAP.displayed[selectedIndex - 1].fire('click');
-    }
-    else if (yr > BEGIN_YR) {
+    } else if (yr > BEGIN_YR) {
     	sldr.val(yr - 1).trigger('input');
     	MAP.displayed[MAP.displayed.length - 1].fire('click');
     }
@@ -388,6 +361,13 @@ $("#left_arrow").click(function() {
 		SCHL = 'schl', 
 		UNKN = 'unkn';
 
+	// Change if modifying the names of the event types
+	var INTR = "PA/IS",
+		ART = "BA",
+		BUS = "BB",
+		EDU = "IS",
+		POL = "P/EP";
+
 	var TOOLTIP_OPTIONS = {
 		opacity: 0.8,
 		offset: L.point(12,10),
@@ -398,7 +378,9 @@ $("#left_arrow").click(function() {
 	// Deselects currently selected marker, then selects this one.
 	// [e] contains the attribute of NO_ANIMATION if it was passed.
 	var ICON_FLIP = function(e) {
-		if (MAP.selected == this) return; // User clicked the same one twice.
+		if (MAP.selected == this) {
+			return; // User clicked the same one twice.
+		}
 
 		// Change currently selected icon.
 		MAP.resetSelected();
@@ -411,18 +393,18 @@ $("#left_arrow").click(function() {
 		var imagePath = "images/historical/" + e[E_NAME] + '.jpg';
 
 		$("#desc_body").scrollTop(0);
-		$("#image_container div").scrollTop(0);
+		$("#image_holder div").scrollTop(0);
 
 		// Display the modern day view or show an entire view of DC if there isn't one.
 		$("#street_view iframe").attr("src", e[E_STVW] 
-			|| "https://www.google.com/maps/embed?pb=!1m13!1m11!1m3!1d61129.\
-				78181151857!2d-77.00592450217232!3d38.89345203863472!2m2!1f0\
-				!2f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sen!2sus!4v1522802214611");
+			|| "https://www.google.com/maps/embed?pb=!1m13!1m11!1m3!1d61129." +
+			   "78181151857!2d-77.00592450217232!3d38.89345203863472!2m2!1f0" +
+			   "!2f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sen!2sus!4v1522802214611");
 		$("#img_link")
 			.attr("href", imagePath)
 			.attr("data-title", cptn);
 		$("#hist_img")
-			.attr("src", "") // Remove image before displaying new one to prevent stuttering.
+			.attr("src", "")
 			.css("height", "")
 			.attr("src", imagePath);
 
@@ -431,8 +413,7 @@ $("#left_arrow").click(function() {
 			$("#desc").text(e[E_DESC]);
 			$("#src").text("Sources: " + e[E_SRC]);
 			$("#cptn").html(cptn);
-		}
-		else {
+		} else {
 			var ANIMATE_TIME = 150;
 
 			$("#desc_body").fadeOut(ANIMATE_TIME, function() {
@@ -445,15 +426,19 @@ $("#left_arrow").click(function() {
 				$(this).text(e[E_NAME]).slideDown(ANIMATE_TIME);
 			});
 		}
+
+		if (compactMode) {
+			$("#mbl_marker_slider").val(MAP.displayed.indexOf(this));
+		}
 	};
 
 	// Returns a pair of icons for use by a marker to switch between selected and unselected.
 	var getIconPair = (function() {
 		var PAIRS = {};
 
-		[FST, BRSH, DLLR, GLB, SCHL, UNKN].forEach(function(ic) {
+		for (var ic of [FST, BRSH, DLLR, GLB, SCHL, UNKN]) {
 			PAIRS[ic] = [L.icon({iconUrl: PTH + ic + UNSEL}), L.icon({iconUrl: PTH + ic + SEL})];
-		});
+		}
 
 		return function(eventType) {
 			switch (eventType) {
@@ -493,8 +478,7 @@ $("#left_arrow").click(function() {
 			
 			if (e[E_END] == 'present') {
 				timeSpan = ALL_MARKERS.length;
-			} 
-			else if (parseInt(e[E_END])) {
+			} else if (parseInt(e[E_END])) {
 				timeSpan = e[E_END] - e[E_STRT]
 			}
 
@@ -542,16 +526,20 @@ $("#left_arrow").click(function() {
 			}
 			$("#img_link")
 				.attr("href", filePath)
-				.attr("data-title", "This event does not have an image yet. \
-						Contributions of any kind are welcome. If you have an \
-						image to contribute, please email George Derek \
-						Musgrove at gmusgr1@umbc.edu.");
+				.attr("data-title", "This event does not have an image yet. " +
+						"Contributions of any kind are welcome. If you have an " +
+						"image to contribute, please email George Derek " +
+						"Musgrove at gmusgr1@umbc.edu.");
 		}
 	}, true);
 
-	ALL_MARKERS.forEach(function(year) {
-		year.sort(function(a, b) {
-			return a.getLatLng().lat - b.getLatLng().lat; // Sort markers by latitude for easier navigation.
-		});
-	});
+	// Sort the markers in each year by latitude for intuitive navigation.
+	(function() {
+		var byLat = function(m1, m2) {
+			return m1.getLatLng().lat - m2.getLatLng().lat;
+		};
+		for (var year of ALL_MARKERS) {
+			year.sort(byLat);
+		}
+	})();
 })();
