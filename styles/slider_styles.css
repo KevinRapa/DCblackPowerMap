@@ -22,8 +22,6 @@ input[type='range']::-webkit-slider-thumb {
   height: 7px;
   width: 310px;
   margin: 0 10px;
-  position: relative;
-  bottom: 1px;
 }
 
 #slider::-webkit-slider-runnable-track {

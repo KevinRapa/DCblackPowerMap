@@ -37,7 +37,6 @@
 	padding: 6px;
 	z-index: 2;
 	font-style: italic;
-	color: white;
 	font-size: 24px;
 	text-shadow: 4px 4px 1px rgb(42,42,42);
 }
@@ -154,9 +153,8 @@
 }
 
 .icon_text {
-	float: left;
 	position: relative;
-	left: 3px;
+	left: 5px;
 	top: 7px;
 	font-size: 17px;
 	text-shadow: 4px 4px 1px rgb(42,42,42);
