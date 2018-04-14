@@ -1,25 +1,3 @@
-/********************************************************************
- * Use the Google exptension "Export Sheet Data" to export the sheet
- * as a .json file (Ok, not technically JSON in it's current form - an array of json objects.)
- *
- * MAKE SURE TO CHECK THE BOXES "Unwrap single row sheets" AND "Export contents as array"
- * IN THE GOOGLE SHEETS EXTENSION!
- *
- * The resulting text should begin with a '[' and each event will be wrapped in '{}'
- * Compare with the existing text here to make sure format is correct. It should be
- * correct if the two boxes were checked.
- *
- * The web page will break if field names are changed. To properly change, make sure 
- * to modify the options at the top of "scripts/setup.js"
- *
- * It wouldn't be a bad idea to find a place to host the JSON online.
- * I know of myjson.com, but I don't know how reliable it is.
- */
-
-var JSON_DATA = 
-
-// PASTE CODE INSIDE HERE vvv
-
 [
   {
     "Event_Name": "Malcolm X speaks at Uline Arena",
@@ -2782,7 +2760,3 @@ var JSON_DATA =
     "Picture_Caption": ""
   }
 ]
-
-// PASTE CODE INSIDE HERE ^^^
-
-;
