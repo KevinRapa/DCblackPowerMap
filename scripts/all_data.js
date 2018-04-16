@@ -1,5 +1,5 @@
-{
-"DATA" : [
+var JSON_DATA = 
+   [
       {
         "Event_Name": "Malcolm X speaks at Uline Arena",
         "Start_Year": 1961,
@@ -2761,4 +2761,3 @@
         "Picture_Caption": ""
       }
     ]
-}
