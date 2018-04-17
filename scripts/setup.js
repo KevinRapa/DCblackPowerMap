@@ -13,7 +13,7 @@
 		3. The only box that should be selected is 'Export sheet arrays' under the 'JSON' section
 		4. Click export and copy all the text in the link.
 		5. Go to the page that the data is being held. Right now it is:
-			https://github.com/KevinRapa/KevinRapa.github.io/edit/master/scripts/all_data.js
+			https://github.com/KevinRapa/KevinRapa.github.io/edit/master/scripts/all_data.json
 		6. Click edit. It looks like a little pencil icon at the top-right of the data.
 		7. Replace all the data by pasting the new copied data.
 		8. Click 'Commit changes' at the bottom.
@@ -299,20 +299,16 @@ $("#street_view_button").click(function(e, fast) {
 	else {
 		$(this).text("To street view");
 
-		if (fast) {
+		if (fast && stView.css('display') == 'none') {
 			stView.hide(0, function() {
-				if (stView.css('display') == 'none') {
-					$("#leaflet_map").show();
-					$(".fade_group").show();
-				}
+				$("#leaflet_map").show();
+				$(".fade_group").show();
 			});
 		} 
-		else {
+		else if (stView.css('display') == 'none') {
 			stView.fadeOut(FADE_TIME, function() {
-				if (stView.css('display') == 'none') {
-					$("#leaflet_map").fadeIn(FADE_TIME);
-					$(".fade_group").fadeIn(FADE_TIME);
-				}
+				$("#leaflet_map").fadeIn(FADE_TIME);
+				$(".fade_group").fadeIn(FADE_TIME);
 			});
 		}
 	}
@@ -346,7 +342,7 @@ $(".arrow").click(function() {
  */
 (function() {
 	// Raw URL of the JSON and its title.
-	var DATA_URL = 'https://raw.githubusercontent.com/KevinRapa/KevinRapa.github.io/master/scripts/all_data.js',
+	var DATA_URL = 'https://raw.githubusercontent.com/KevinRapa/KevinRapa.github.io/master/scripts/all_data.json',
 		DATA_TTL = "Black Power Events and Organizations";
 
 	// Caption used in pop-up window when there's no historical image.
