@@ -161,7 +161,8 @@ $(window).resize(function() {
 				((yr - BEGIN_YR) * MBL_YEAR_ALIGN_MAGIC + 10) + "px"); // Align with slider thumb
 			
 		holder.find("#slider_box")
-			.css('right', '-9999px')
+			.hide()
+			.attr("class", "black_box")
 			.before('<input type="range" id="mbl_marker_slider" class="fade_group mobile" min="0" max="' 
 				+ (LF_MAP.displayed.length - 1) + '" value="' + LF_MAP.displayed.indexOf(LF_MAP.selected) 
 				+ '"></input>')
@@ -195,8 +196,10 @@ $(window).resize(function() {
 		holder.find("#legend").attr("class", "def_legend");
 		holder.find("#slider").val(holder.find("#mbl_slider").val());
 		holder.find(".mobile").remove();
-		holder.find("#slider_box").css('right', '0');
 		holder.find("#street_view_button").attr("class", "def_street_view_button");
+		holder.find("#slider_box")
+			.attr("class", "black_box fade_group")
+			.show();
 
 		$("#title_box")
 			.text("THE WASHINGTON, D.C. BLACK POWER MAP")
