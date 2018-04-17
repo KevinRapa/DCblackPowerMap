@@ -21,6 +21,10 @@
 	z-index: 1;
 }
 
+#street_view {
+	display: none;
+}
+
 #street_view iframe {
 	height: 500px;
 	width: 550px;
