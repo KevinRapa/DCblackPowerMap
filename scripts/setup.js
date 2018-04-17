@@ -42,7 +42,7 @@ window.compactMode = false;
  * Sets up the map and adds it to the page.
  * To get new map tiles, visit https://leaflet-extras.github.io/leaflet-providers/preview/
  */
-var LF_MAP= (function() {
+var LF_MAP = (function() {
 	var map = L.map('leaflet_map', {
 		zoomSnap: 0,
 		zoomDelta: 0.6,
@@ -299,16 +299,20 @@ $("#street_view_button").click(function(e, fast) {
 	else {
 		$(this).text("To street view");
 
-		if (fast && stView.css('display') == 'none') {
+		if (fast) {
 			stView.hide(0, function() {
-				$("#leaflet_map").show();
-				$(".fade_group").show();
+				if (stView.css('display') == 'none') {
+					$("#leaflet_map").show();
+					$(".fade_group").show();
+				}
 			});
 		} 
-		else if (stView.css('display') == 'none') {
+		else {
 			stView.fadeOut(FADE_TIME, function() {
-				$("#leaflet_map").fadeIn(FADE_TIME);
-				$(".fade_group").fadeIn(FADE_TIME);
+				if (stView.css('display') == 'none') {
+					$("#leaflet_map").fadeIn(FADE_TIME);
+					$(".fade_group").fadeIn(FADE_TIME);
+				}
 			});
 		}
 	}
