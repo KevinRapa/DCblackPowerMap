@@ -150,10 +150,10 @@ var LF_MAP = (function() {
     var toCompactMode = function(holder) {
         holder.find("#legend")
             .attr("class", "mbl_legend")
-            .after($("#right_box").detach())
+            .after($("#right_box").detach());
         holder.find("#slider_box")
             .hide()
-            .attr("class", "black_box")
+            .attr("class", "black_box");
         holder.find("#mbl_marker_slider")
             .attr("max", LF_MAP.displayed.length - 1)
             .val(LF_MAP.displayed.indexOf(LF_MAP.selected));
@@ -162,7 +162,7 @@ var LF_MAP = (function() {
             .after(holder)
             .attr("class", "mbl_title")
             .text("THE BLACK POWER MAP");
-        $("#street_view_button").attr("class", "mbl_street_view_button")
+        $("#street_view_button").attr("class", "mbl_street_view_button");
         $(".purple_box").css("width", "650px");
         $("#intro_box span").text("vertical slider");
 
@@ -204,7 +204,7 @@ var LF_MAP = (function() {
 // Changes year text and switches up markers. 
 $("#slider").on("input", function() { 
     var yr = $(this).val();
-    var text = (yr == ALL) ? 'All' : yr
+    var text = (yr == ALL) ? 'All' : yr;
     
     $('#year').text(text);
     $('#mbl_year').text(text).animate({
@@ -341,7 +341,7 @@ $("#street_view_button").click(function(e, fast) {
 
     // Image used when no street view data is present.
     var ST_VIEW_ABSENT = "https://www.google.com/maps/embed?pb=!1m13!1m11!1m3!1d61129.78181151857!2d-77.0059245021" + 
-                        "7232!3d38.89345203863472!2m2!1f0!2f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sen!2sus!4v1522802214611"
+                        "7232!3d38.89345203863472!2m2!1f0!2f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sen!2sus!4v1522802214611";
 
     // Filepath and extension for the icons
     var IC_PTH = 'images/icons/', 
@@ -481,7 +481,7 @@ $("#street_view_button").click(function(e, fast) {
                     timeSpan = LF_MAP.ALL_MARKERS.length;
                 } 
                 else if (parseInt(e[E_END])) {
-                    timeSpan = e[E_END] - e[E_STRT]
+                    timeSpan = e[E_END] - e[E_STRT];
                 }
 
                 // Add this to every year it falls into.
