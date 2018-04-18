@@ -60,15 +60,12 @@ var LF_MAP = (function() {
 	map.selected = null; // The currently selected marker.
 
 	// A list of lists, each holding events falling within the same year. Events may appear more than once.
-	map.ALL_MARKERS = (function() {
-		var arr = new Array(NUM_YEARS + 1); // Indexed by year - BEGIN_YR + j.
+	// Indexed by year - BEGIN_YR + offset.
+	map.ALL_MARKERS = new Array(NUM_YEARS + 1); 
 
-		for (var i = 0, len = arr.length; i < len; i++) {
-			arr[i] = [];
-		}	
-
-		return arr;
-	})();
+	for (var i = 0, len = map.ALL_MARKERS.length; i < len; i++) {
+		map.ALL_MARKERS[i] = [];
+	}	
 
 	//Resets currently selected marker to unselected.
 	map.resetSelected = function() {
@@ -328,22 +325,25 @@ $("#street_view_button").click(function(e, fast) {
  * Adds functionality to arrow buttons. Switches between markers on map in a bottom 
  * to top fashion. Once the last marker is passed, goes to the next/previous if there is one.
  */
-$(".arrow").click(function() {
-    var i = LF_MAP.displayed.indexOf(LF_MAP.selected);
-    var yr = parseInt($("#slider").val());
-    var delta = ($(this).attr("id") == "left_arrow") ? -1 : 1;
+ (function() {
+ 	var switchEvent = function() {
+	    var i = LF_MAP.displayed.indexOf(LF_MAP.selected);
+	    var yr = parseInt($("#slider").val());
+	    var delta = ($(this).attr("id") == "left_arrow") ? -1 : 1;
 
-    if ((delta < 0 && i > 0) || (delta > 0 && i < LF_MAP.displayed.length - 1)) {
-    	LF_MAP.displayed[i + delta].fire('click');
-    } 
-    else if ((delta < 0 && yr > BEGIN_YR) || (delta > 0 && yr < END_YR + 1)) {
-    	$("#slider").val(yr + delta).trigger('input');
+	    if ((delta < 0 && i > 0) || (delta > 0 && i < LF_MAP.displayed.length - 1)) {
+	    	LF_MAP.displayed[i + delta].fire('click');
+	    } 
+	    else if ((delta < 0 && yr > BEGIN_YR) || (delta > 0 && yr < END_YR + 1)) {
+	    	$("#slider").val(yr + delta).trigger('input');
 
-    	if (delta < 0) {
-    		LF_MAP.displayed[LF_MAP.displayed.length - 1].fire('click');
-    	}
-    }
-});
+	    	if (delta < 0) {
+	    		LF_MAP.displayed[LF_MAP.displayed.length - 1].fire('click');
+	    	}
+	    }
+	}
+ 	$(".arrow").click(switchEvent);
+ })();
 
 
 /*
@@ -353,10 +353,6 @@ $(".arrow").click(function() {
 	// Raw URL of the JSON and its title.
 	var DATA_URL = 'https://raw.githubusercontent.com/KevinRapa/KevinRapa.github.io/master/scripts/all_data.json',
 		DATA_TTL = "Black Power Events and Organizations";
-
-	// Caption used in pop-up window when there's no historical image.
-	var NO_IMG_CAPTION = "This event does not have an image yet. Contributions of any kind are welcome. If you have an " +
-						"image to contribute, please email George Derek Musgrove at gmusgr1@umbc.edu."
 
 	// Image used when no street view data is present.
 	var ST_VIEW_ABSENT = "https://www.google.com/maps/embed?pb=!1m13!1m11!1m3!1d61129.78181151857!2d-77.0059245021" + 
@@ -371,11 +367,6 @@ $(".arrow").click(function() {
 		DLLR = 'dllr', 		GLB = 'glb', 
 		SCHL = 'schl',		UNKN = 'unkn';
 
-	// Change if modifying the names of the event types
-	var INTR = "PA/IS", 	ART = "BA",
-		BUS = "BB", 		EDU = "IS",
-		POL = "P/EP";
-
 	// Change if modifying spreadsheet field names.
 	var E_STRT = "Start_Year", 			E_END  = "End_Year",
 		E_DESC = "Description", 		E_NAME = "Event_Name",
@@ -383,6 +374,23 @@ $(".arrow").click(function() {
 		E_STVW = "St_View_URL",			E_LBL  = "Label",
 		E_CPTN = "Picture_Caption",		E_SRC = "Sources";
 
+	// Translates an event type to the name of the icon that represents it.
+	var getIconName = function(eventType) {
+		switch(eventType) {
+			case "PA/IS":
+				return GLB;
+			case "BA":
+				return BRSH;
+			case "IS":
+				return SCHL;
+			case "BB":
+				return DLLR;
+			case "P/EP":
+				return FST;
+			default:
+				return UNKN; 
+		}
+	};
 
 	// Gets the JSON for the data and uses it in [callback]. 
 	var requestData = function(callback) {
@@ -391,8 +399,6 @@ $(".arrow").click(function() {
 		json.fail(function(data) {
 			$("#desc_body").scrollTop(0);
 			$("#image_holder div").scrollTop(0);
-
-			// Display some error info.
 			$("#street_view iframe").attr("src", ST_VIEW_ABSENT);
 			$("#img_link").attr("href", "");
 			$("#hist_img")
@@ -403,7 +409,7 @@ $(".arrow").click(function() {
 			$("#src").text("");
 			$("#cptn").html("");
 		});
-	}
+	};
 
 	requestData(function(data) {
 		var TOOLTIP_OPTIONS = {
@@ -425,8 +431,8 @@ $(".arrow").click(function() {
 
 				var index = this.EVENT_INDEX;
 
-				requestData(function(d) {
-					var e = d[DATA_TTL][index];
+				requestData(function(_data) {
+					var e = _data[DATA_TTL][index];
 					var cptn = e[E_CPTN] ? '<i>Image:</i>   ' + e[E_CPTN] : "";
 					var imagePath = "images/historical/" + e[E_NAME] + '.jpg';
 
@@ -463,7 +469,7 @@ $(".arrow").click(function() {
 				$("#desc_body").scrollTop(0);
 				$("#image_holder div").scrollTop(0);
 			}
-		}
+		};
 
 		// Returns a pair of icons for use by a marker to switch between selected and unselected.
 		var getIconPair = (function() {
@@ -477,20 +483,7 @@ $(".arrow").click(function() {
 			}
 
 			return function(eventType) {
-				switch (eventType) {
-				case POL:  
-					return pairs[FST];
-				case ART:  
-					return pairs[BRSH];
-				case BUS:  
-					return pairs[DLLR];
-				case EDU:  
-					return pairs[SCHL];
-				case INTR: 
-					return pairs[GLB];
-				default:   
-					return pairs[UNKN]; // No label entered for it.
-				}
+				return pairs[getIconName(eventType)];
 			};
 		})();
 
@@ -503,9 +496,9 @@ $(".arrow").click(function() {
 				var marker = L.marker([e[E_LAT], e[E_LONG]]);
 				var timeSpan = 0;
 
-				marker.ICONS = getIconPair(e[E_LBL]); // Assign a pair of images [unselected, selected] to each icon.
+				marker.ICONS = getIconPair(e[E_LBL]);
 				marker.EVENT_INDEX = i; // An index to find the event in the spreadsheet.
-				marker.TYPE = e[E_LBL];
+				marker.TYPE = e[E_LBL]; // Caches type so that no data request is needed in eventQuery().
 				marker.setIcon(marker.ICONS[0]); 
 				marker.on('click', switchEvent);	 
 				marker.bindTooltip(e[E_NAME], TOOLTIP_OPTIONS);
@@ -550,25 +543,8 @@ $(".arrow").click(function() {
 							"image to contribute, please email George Derek Musgrove at gmusgr1@umbc.edu.";
 
 		if (err.target.id == "hist_img") {
-			$.getJSON(DATA_URL).done(function(data) {
-				var name = (function() {
-					var event = data[DATA_TTL][LF_MAP.selected.EVENT_INDEX];
-
-					switch(event[E_LBL]) {
-					case INTR:
-						return GLB;
-					case ART:
-						return BRSH;
-					case EDU:
-						return SCHL;
-					case BUS:
-						return DLLR;
-					case POL:
-						return FST;
-					default:
-						return UNKN; 
-					}
-				})();
+			requestData(function(data) {
+				var name = getIconName(data[DATA_TTL][LF_MAP.selected.EVENT_INDEX][E_LBL]);
 				var filePath = IC_PTH + name + IC_EXT;
 				var img = $("#hist_img");
 
