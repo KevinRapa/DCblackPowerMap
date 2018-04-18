@@ -116,7 +116,7 @@
 #legend {
 	height: 119px;
 	background-color: transparent;
-	background-color: rgba(42,42,42,0.4);
+	background-color: rgba(42,42,42,0.5);
 	border-top: none;
 }
 
@@ -133,11 +133,11 @@
 
 /* Legend styles for compact mode. */
 .mbl_legend {
-	margin-bottom: 10px;
 	border: none;
-	box-shadow: none;
-	-moz-box-shadow: none;
-	-webkit-box-shadow: none;
+	border-radius: 40px 40px 0 0;
+	box-shadow: 5px 7px 10px rgb(15,15,15);
+	-moz-box-shadow: 5px 7px 10px rgb(15,15,15);
+	-webkit-box-shadow: 5px 7px 10px rgb(15,15,15);
 }
 
 .icon_panel {
