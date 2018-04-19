@@ -1,8 +1,8 @@
 /*
-    This script sets up snf handles the page. Includes:
+    This script sets up and handles the page. Includes:
          1. Listener functions assigned to every button, icon, and slider
          2. Screen resize function
-         3. Function for querying icons to add to the map by year aand type
+         3. Function for querying icons to add to the map by year and type
          4. Populates an array with lists of events and assigns each event icon
                with images and an index to pull items from the spreadsheet file.
  
@@ -27,11 +27,7 @@
     extensions, etc.
 
     This will only process and add elements to the map if they have a valid start year,
-    latitude, and longitude. In addition, because there are a large amount of incomplete
-    elements near the end, the site will only process events up to a certain one. This
-    is held in a local variable LAST_ENTRY near the bottom. If all/more events should be
-    processed because more have been completed, update this variable to the new event name,
-    or set it to 'null' if all events should be processed.
+    latitude, and longitude.
 
     Author: Kevin Rapa
     Email:  kevjrapa@gmail.com
@@ -44,7 +40,7 @@ var NUM_YEARS = END_YR - BEGIN_YR + 1;
 var NO_ANIMATION = {fast: true}; // Stops animation from happening when event changes.
 var MBL_YEAR_ALIGN_MAGIC = (570 - 80) / NUM_YEARS; // mbl_slider width - thumb width.
 
-window.compactMode = false;
+window.compact = false;
 
 /*
  * Sets up the map and adds it to the page.
@@ -115,8 +111,8 @@ var LF_MAP = (function() {
         }
 
         // Display slider for markers if mobile mode and >1 markers.
-        if (window.compactMode) {
-            if (this.displayed.length) {
+        if (window.compact) {
+            if (this.displayed.length > 1) {
                 $('#mbl_marker_slider')
                     .val(0)
                     .attr('max', this.displayed.length - 1)
@@ -134,12 +130,12 @@ var LF_MAP = (function() {
 
 /*
  * Transforms page into mobile view. Basically moves the right half of the page into 
- * the left half, then centers the new block. Also swaps the slider to compactMode 
+ * the left half, then centers the new block. Also swaps the slider to compact 
  * version. If street view is showing, first resets back to map or else map SEIZES.
  */
 (function() {
     var initTransform = function() {
-        this.compactMode = ! this.compactMode;
+        this.compact = ! this.compact;
 
         if ($("#street_view").css('display') != 'none') {
             $("#street_view_button").trigger('click', NO_ANIMATION); // Prevents map seizing.
@@ -169,7 +165,7 @@ var LF_MAP = (function() {
         $(".purple_box").css("width", "650px");
         $("#intro_box span").text("vertical slider");
 
-        (LF_MAP.displayed.length <= 1) && holder.find("#mbl_marker_slider").hide();
+        (LF_MAP.displayed.length > 1) || holder.find("#mbl_marker_slider").hide();
     }
 
     var toRegularMode = function(holder) {
@@ -177,7 +173,7 @@ var LF_MAP = (function() {
             .attr("class", "mobile")
             .hide();
         holder.find("#legend")
-            .css("border-radius", 0)
+            .css("border-radius", "0")
             .attr("class", "def_legend");
         holder.find("#street_view_button").attr("class", "def_street_view_button");
         holder.find("#slider_box")
@@ -195,10 +191,10 @@ var LF_MAP = (function() {
     $(window).resize(function() {
         var narrowEnough = $(this).width() < 1200; // 1200 is also used again at the bottom of the function.
 
-        if (! this.compactMode && narrowEnough) {
+        if (! this.compact && narrowEnough) {
             toCompactMode(initTransform());
         } 
-        else if (this.compactMode && ! narrowEnough) {
+        else if (this.compact && ! narrowEnough) {
             toRegularMode(initTransform());
         }
     }).ready(function() {
@@ -208,7 +204,9 @@ var LF_MAP = (function() {
 })();
 
 
-// Changes year text and switches up markers. 
+/*
+ * Adds functionality to sliders. 
+ */
 $("#slider").on("input", function() { 
     var yr = $(this).val();
     var text = (yr == ALL) ? 'All' : yr;
@@ -223,18 +221,18 @@ $("#slider").on("input", function() {
     LF_MAP.eventQuery(yr);
 });
 
-
 $("#mbl_slider").on("input", function() {
     $("#slider").val($(this).val()).trigger('input');
 });
-
 
 $("#mbl_marker_slider").on("input", function() {
     LF_MAP.displayed[$(this).val()].fire('click', NO_ANIMATION);
 });
 
 
-// Animates legend icons when interacted with. Clicking them filters markers by event type.
+/*
+ * Animates legend icons when interacted with. Clicking them filters markers by event type.
+ */
 (function() {
     var BOUNCE_TIME = 90;
     
@@ -271,7 +269,7 @@ $("#mbl_marker_slider").on("input", function() {
 })();
 
 
-/*
+/* 
  * Buttons that remove and restore the intro screen.
  */
 $("#to_map").click(function() {
@@ -300,23 +298,19 @@ $("#street_view_button").click(function(e, fast) {
         $("#leaflet_map").fadeOut(fadeTime, function() {
             // 'If' needed since clicking the button quickly will mess things up.
             (stView.css('display') == 'none') && stView.fadeIn(fadeTime);
-            window.compactMode && $("#legend").css("border-radius", "0");
+            window.compact && $("#legend").css("border-radius", "0");
         });
-
-        
     } 
     else {
         $(this).text("To street view"); // To map mode.
 
         stView.fadeOut(fadeTime, function() {
             if (stView.css('display') == 'none') {
-                window.compactMode && $("#legend").css("border-radius", "40px 40px 0 0");
+                window.compact && $("#legend").css("border-radius", "40px 40px 0 0");
                 $("#leaflet_map").fadeIn(fadeTime);
                 $(".fade_group").fadeIn(fadeTime);
             }
         });
-
-
     }
 });
 
@@ -344,7 +338,7 @@ $("#street_view_button").click(function(e, fast) {
 })();
 
 
-/*
+/* 
  * Creates all the markers and displays first year when page loads.
  */
 (function() {
@@ -416,13 +410,9 @@ $("#street_view_button").click(function(e, fast) {
             className: 'tooltip'
         };
 
-        // Website will not process events after this one. Set to null if all events should be processed.
-        var LAST_ENTRY = "Sisterspace and Books"; 
-
         // Gets the new event and updates all the info on the screen.
         var switchEvent = function(event) {
             if (this != LF_MAP.selected) {
-                // Change currently selected icon.
                 LF_MAP.setSelected(this);
                 this.remove().setIcon(this.ICONS[1]).addTo(LF_MAP);
 
@@ -474,41 +464,65 @@ $("#street_view_button").click(function(e, fast) {
             };
         })();
 
+        // Depending on an event's time span, it can appear in multiple years.
+        var getTimeSpan = function(startYr, endYr) {
+            if (endYr == 'present') {
+                return LF_MAP.ALL_MARKERS.length;
+            } 
+            else if (parseInt(endYr)) {
+                return endYr - startYr;
+            }
+            else {
+                return 0;
+            }
+        }
+
+        // Determines if the properties necessary to display a marker are valid for an event.
+        var validateEvent = function(name, startYr, endYr, lat, long) {
+            if (typeof startYr != "number" || startYr < BEGIN_YR || startYr > END_YR) {
+                console.log("Invalid start year in '" + name + ".'\n\t'" + startYr + "'' not valid");
+                return false;
+            }
+            else if (typeof lat != "number" || typeof long != "number" || !lat || !long) {
+                console.log("In '" + name + ".'\n\t(" + lat + ", " + long + ") is invalid.");
+                return false;
+            }
+            else if (typeof endYr == "number" && endYr < startYr) {
+                console.log("Invalid end year in '" + name + ".'\n\t" + endYr + " below start year.");
+                return false;
+            }
+            return true;
+        }
+
         // Populate ALL_MARKERS, an array of lists holding event icons.
-        for (var i = 0, l = data[DATA_TTL].length; i < l; i++) {
+        var numSuccess = i = 0;
+
+        for (var l = data[DATA_TTL].length; i < l; i++) {
             var e = data[DATA_TTL][i];
 
-            if (e[E_STRT] && e[E_LAT] && e[E_LONG]) {
-                // To add a marker, it must have a start date and a position.
+            // To add a marker, it must have a start date and a position.
+            if (validateEvent(e[E_NAME], e[E_STRT], e[E_END], e[E_LAT], e[E_LONG])) {
                 var marker = L.marker([e[E_LAT], e[E_LONG]]);
-                var timeSpan = 0;
+                var span = getTimeSpan(e[E_STRT], e[E_END]);
 
                 marker.ICONS = getIconPair(e[E_LBL]);
-                marker.EVENT_INDEX = i; // An index to find the event in the spreadsheet.
+                marker.EVENT_INDEX = i; // Index to find the event in the spreadsheet.
                 marker.TYPE = e[E_LBL]; // Caches type so that no data request is needed in eventQuery().
                 marker.setIcon(marker.ICONS[0]); 
                 marker.on('click', switchEvent);     
                 marker.bindTooltip(e[E_NAME], TOOLTIP_OPTIONS);
                 
-                if (e[E_END] == 'present') {
-                    timeSpan = LF_MAP.ALL_MARKERS.length;
-                } 
-                else if (parseInt(e[E_END])) {
-                    timeSpan = e[E_END] - e[E_STRT];
-                }
-
                 // Add this to every year it falls into.
-                for (var start = e[E_STRT] - BEGIN_YR, j = 0; j <= timeSpan && start + j < NUM_YEARS; j++) {
+                for (var start = e[E_STRT] - BEGIN_YR, j = 0; j <= span && start + j < NUM_YEARS; j++) {
                     LF_MAP.ALL_MARKERS[start + j].push(marker);
                 }
 
                 LF_MAP.ALL_MARKERS[NUM_YEARS].push(marker); // All markers are put in final slot.
-            }
-
-            if (LAST_ENTRY && e[E_NAME] == LAST_ENTRY) { 
-            	break; // Entries after LAST_ENTRY are mostly incomplete.
+                numSuccess++;
             }
         }
+
+        console.log(numSuccess + " events out of " + i + " were successfully processed.");
 
         // Sort the markers in each year by latitude for intuitive navigation.
         (function() {
