@@ -134,7 +134,6 @@
 /* Legend styles for compact mode. */
 .mbl_legend {
 	border: none;
-	border-radius: 40px 40px 0 0;
 	box-shadow: 5px 7px 10px rgb(15,15,15);
 	-moz-box-shadow: 5px 7px 10px rgb(15,15,15);
 	-webkit-box-shadow: 5px 7px 10px rgb(15,15,15);

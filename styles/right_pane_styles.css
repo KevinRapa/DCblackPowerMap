@@ -79,8 +79,9 @@ cite {
 }
 
 .mbl_street_view_button {
-	height: 40px;
-	border-radius: 0 20px 20px 20px;
+	height: 50px;
+	width: 160px;
+	border-radius: 0 25px 25px 25px;
 	font-size: 18px;
 }
 

@@ -149,6 +149,7 @@ var LF_MAP = (function() {
 
     var toCompactMode = function(holder) {
         holder.find("#legend")
+            .css("border-radius", "40px 40px 0 0")
             .attr("class", "mbl_legend")
             .after($("#right_box").detach());
         holder.find("#slider_box")
@@ -171,7 +172,9 @@ var LF_MAP = (function() {
 
      var toRegularMode = function(holder) {
         holder.find(".mobile").hide();
-        holder.find("#legend").attr("class", "def_legend");
+        holder.find("#legend")
+            .css("border-radius", 0)
+            .attr("class", "def_legend");
         holder.find("#street_view_button").attr("class", "def_street_view_button");
         holder.find("#slider_box")
             .attr("class", "black_box fade_group")
@@ -293,17 +296,23 @@ $("#street_view_button").click(function(e, fast) {
         $("#leaflet_map").fadeOut(fadeTime, function() {
             // 'If' needed since clicking the button quickly will mess things up.
             (stView.css('display') == 'none') && stView.fadeIn(fadeTime);
+            window.compactMode && $("#legend").css("border-radius", "0");
         });
+
+        
     } 
     else {
         $(this).text("To street view"); // To map mode.
 
         stView.fadeOut(fadeTime, function() {
             if (stView.css('display') == 'none') {
+                window.compactMode && $("#legend").css("border-radius", "40px 40px 0 0");
                 $("#leaflet_map").fadeIn(fadeTime);
                 $(".fade_group").fadeIn(fadeTime);
             }
         });
+
+
     }
 });
 
