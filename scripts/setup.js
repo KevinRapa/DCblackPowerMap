@@ -170,9 +170,9 @@ var LF_MAP = (function() {
         $("#intro_box span").text("vertical slider");
 
         (LF_MAP.displayed.length <= 1) && holder.find("#mbl_marker_slider").hide();
-     }
+    }
 
-     var toRegularMode = function(holder) {
+    var toRegularMode = function(holder) {
         holder.find(".mobile")
             .attr("class", "mobile")
             .hide();
@@ -190,7 +190,7 @@ var LF_MAP = (function() {
         $(".purple_box").css("width", "1200px");    
         $("#right_pane").html(holder.find("#right_box"));
         $("#left_pane").html(holder);
-     }
+    }
 
     $(window).resize(function() {
         var narrowEnough = $(this).width() < 1200; // 1200 is also used again at the bottom of the function.
