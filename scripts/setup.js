@@ -158,7 +158,9 @@ var LF_MAP = (function() {
         holder.find("#mbl_marker_slider")
             .attr("max", LF_MAP.displayed.length - 1)
             .val(LF_MAP.displayed.indexOf(LF_MAP.selected));
-        holder.find(".mobile").show();
+        holder.find(".mobile")
+            .attr("class", "fade_group mobile")
+            .show();
         $("#title_box")
             .after(holder)
             .attr("class", "mbl_title")
@@ -171,7 +173,9 @@ var LF_MAP = (function() {
      }
 
      var toRegularMode = function(holder) {
-        holder.find(".mobile").hide();
+        holder.find(".mobile")
+            .attr("class", "mobile")
+            .hide();
         holder.find("#legend")
             .css("border-radius", 0)
             .attr("class", "def_legend");
