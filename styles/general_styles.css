@@ -142,6 +142,7 @@ a {
 }
 
 .content_pane {
+	width: 50%;
 	padding: 0 10px;
 }
 
