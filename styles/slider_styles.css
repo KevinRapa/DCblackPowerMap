@@ -167,57 +167,57 @@ input[type='range']::-webkit-slider-thumb {
 
 #mbl_marker_slider {
   width: 470px;
-  height: 20px;
+  height: 26px;
   float: right;
   position: relative;
-  left: 210px;
+  left: 205px;
   bottom: 270px;
-  border-radius: 10px;
+  border-radius: 15px;
   transform: rotate(270deg);
   z-index: 2;
 }
 
 #mbl_marker_slider::-webkit-slider-runnable-track {
-  height: 20px;
+  height: 26px;
   background: rgb(140,140,140);
-  border-radius: 10px;
+  border-radius: 13px;
   box-shadow: -3px 3px 3px #0f0f0f;
 }
 
 #mbl_marker_slider::-webkit-slider-thumb {
-  height: 35px;
-  width: 55px;
-  margin-top: -7px;
+  height: 50px;
+  width: 50px;
+  margin-top: -12px;
   background: #2a2a2a;
-  border-radius: 16px;
+  border-radius: 25px;
 }
 
 #mbl_marker_slider::-moz-range-track {
-  height: 20px;
+  height: 26px;
   background: rgb(140,140,140);
   margin-top: 5px;
-  border-radius: 10px;
+  border-radius: 13px;
   box-shadow: -3px 3px 3px #0f0f0f;
 }
 
 #mbl_marker_slider::-moz-range-thumb {
-  height: 35px;
-  width: 55px;
-  border-radius: 8px;
-  margin-top: -7px;
+  height: 50px;
+  width: 50px;
+  border-radius: 25px;
+  margin-top: -11px;
   background: #2a2a2a;
   border: none;
 }
 
 #mbl_marker_slider::-ms-track {
   width: 470px;
-  height: 20px;
+  height: 26px;
 }
 
 #mbl_marker_slider::-ms-thumb {
-  height: 35px;
-  width: 55px;
-  border-radius: 0;
+  height: 50px;
+  width: 50px;
+  border-radius: 25px;
   margin-top: 0;
   background: #2a2a2a;
 }

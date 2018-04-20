@@ -152,13 +152,13 @@ a {
 	color: lightgray;
 	font-size: 12px;
 	letter-spacing: 1px;
+	line-height: 20px;
 }
 
 #footer_content_upper {
 	padding: 10px 8px 10px 15px;
 	margin: 0 10px;
 	margin-bottom: 6px;
-	line-height: 20px;
 }
 
 #footer_content_lower {
