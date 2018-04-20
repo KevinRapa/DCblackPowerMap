@@ -219,6 +219,7 @@ var LF_MAP = (function() {
             toRegularMode(initTransform());
         }
     }).ready(function() {
+        $(".mobile").hide();
         $(this).trigger('resize');
     });
 })();
@@ -388,9 +389,9 @@ $('#street_view_button').click(function(e, fast) {
         CAPT = 'Picture_Caption',  SRC = 'Sources';
 
      // Gets the JSON for the data and uses it in callback.
-    var requestData = function(callback, eventIndex) {
+    var requestData = function(callback, args) {
         $.getJSON(NS.DATA_URL).done(function(spreadsheet) {
-            callback(spreadsheet, eventIndex);
+            callback(spreadsheet, args);
         }).fail(function(data) {
             $('#desc_body').scrollTop(0);
             $('#image_holder div').scrollTop(0);
@@ -407,11 +408,11 @@ $('#street_view_button').click(function(e, fast) {
     };
 
     // Updates the event info on the screen. Called when icon is clicked.
-    var updateInfo = function(data, index) {
-        var e = data[NS.DATA_TTL][index];
+    var updateInfo = function(data, args) {
+        var e = data[NS.DATA_TTL][args.index];
         var cptn = e[CAPT] ? '<i>Image:</i>   ' + e[CAPT] : '';
         var imagePath = 'images/historical/' + e[NAME] + '.jpg';
-        var animateTime = event.fast ? 0 : 150;
+        var animateTime = args.fast ? 0 : 150;
 
         $('#street_view iframe').attr('src', e[STVW] || ST_VIEW_ABSENT);
         $('#img_link')
@@ -440,7 +441,12 @@ $('#street_view_button').click(function(e, fast) {
         if (this != LF_MAP.selected) {
             LF_MAP.setSelected(this);
             this.remove().setIcon(this.ICONS[1]).addTo(LF_MAP);
-            requestData(updateInfo,this.EVENT_INDEX);
+            for (var e in event) {
+            }
+            requestData(updateInfo, {
+                index: this.EVENT_INDEX,
+                fast: event.fast || null
+            });
         }
     };
 

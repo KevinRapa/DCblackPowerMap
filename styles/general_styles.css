@@ -47,10 +47,6 @@ a {
 	-webkit-box-shadow: 5px 5px 5px rgb(15,15,15);
 }
 
-.mobile, #street_view {
-	display: none;
-}
-
 #all_content {
 	padding-top: 10px;
 	padding-bottom: 25px;
