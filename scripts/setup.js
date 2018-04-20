@@ -176,6 +176,7 @@ var LF_MAP = (function() {
         holder.find('.mobile')
             .attr('class', 'fade_group mobile')
             .show();
+        $('body').css('font-family', 'arial');
         $('#title_box')
             .after(holder)
             .attr('class', 'mbl_title')
@@ -198,6 +199,7 @@ var LF_MAP = (function() {
         holder.find('#slider_box')
             .attr('class', 'black_box fade_group')
             .show();
+        $("body").css('font-family', 'serif');
         $('#title_box')
             .text(NS.DEF_TTL)
             .attr('class', 'def_title');
@@ -217,7 +219,6 @@ var LF_MAP = (function() {
             toRegularMode(initTransform());
         }
     }).ready(function() {
-        $('.mobile').hide();
         $(this).trigger('resize');
     });
 })();

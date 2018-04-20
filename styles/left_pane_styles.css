@@ -9,9 +9,12 @@
 	color: white;
 }
 
-#map_box {
+#map_box, #street_view iframe {
 	height: 500px;
 	width: 550px;
+}
+
+#map_box {
 	padding: 5px;
 }
 
@@ -21,13 +24,7 @@
 	z-index: 1;
 }
 
-#street_view {
-	display: none;
-}
-
 #street_view iframe {
-	height: 500px;
-	width: 550px;
 	border: none;
 }
 
@@ -146,7 +143,6 @@
 .icon_button {
 	position: relative;
 	background: none;
-	border: none;
 }
 
 .icon {
