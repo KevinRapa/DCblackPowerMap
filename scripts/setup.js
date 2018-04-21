@@ -46,6 +46,7 @@ var NS = (function(beginYr, endYR) {
         NUM_YRS: numYrs,
         NO_ANIMATION: {fast: true},       // Argument for stopping animation.
         ALIGN_MAGIC: (570 - 80) / numYrs, // Aligns mbl_year. (mbl_slider width - thumb width). It just works.
+        IMG_CONTAINER_HEIGHT: 370,        // Used to align images vertically in #hist_img
 
         MBL_TTL: 'THE BLACK POWER MAP',
         DEF_TTL: $('#title_box').text(),
@@ -261,22 +262,24 @@ $('#mbl_marker_slider').on('input', function() {
         var btn = $(this),
             text = btn.next(),
             year = parseInt($('#year').text()) || NS.END_YR + 1;
-            
+
         for (var offset of ['-3px', '3px', '0']) {
             btn.animate({bottom: offset}, BOUNCE_TIME);
         }
                 
-        if ($('#street_view').css('display') == 'none') {
-            // Filters by event type, else reset the filter
-            if (text.css('font-style') == 'normal') {
-                $('.icon_text').css('font-style', 'normal');
-                text.css('font-style', 'oblique');
-                LF_MAP.eventQuery(year, $(this).attr('id'));
-            } 
-            else {
-                text.css('font-style', 'normal');
-                LF_MAP.eventQuery(year);
-            }
+        if ($('#street_view').css('display') != 'none') {
+            $('#street_view_button').trigger('click');
+        }
+        
+        // Filters by event type, else reset the filter
+        if (text.css('font-style') == 'normal') {
+            $('.icon_text').css('font-style', 'normal');
+            text.css('font-style', 'oblique');
+            LF_MAP.eventQuery(year, $(this).attr('id'));
+        } 
+        else {
+            text.css('font-style', 'normal');
+            LF_MAP.eventQuery(year);
         }
     };
     var hvrIn = function() {
@@ -333,6 +336,19 @@ $('#street_view_button').click(function(e, fast) {
             }
         });
     }
+});
+
+
+/*
+ * Aligns a historical image vertically (if too short) when it is loaded.
+ */
+$('#hist_img').on('load', function(year) {
+    var diff = NS.IMG_CONTAINER_HEIGHT - $(this).height();
+
+    $(this)
+        .css('top', (diff <= 0 ? 0 : diff / 2) + 'px')
+        .delay(200)
+        .fadeTo(0, 1);
 });
 
 
@@ -410,30 +426,38 @@ $('#street_view_button').click(function(e, fast) {
     // Updates the event info on the screen. Called when icon is clicked.
     var updateInfo = function(data, args) {
         var e = data[NS.DATA_TTL][args.index];
-        var cptn = e[CAPT] ? '<i>Image:</i>   ' + e[CAPT] : '';
-        var imagePath = 'images/historical/' + e[NAME] + '.jpg';
-        var animateTime = args.fast ? 0 : 150;
+        var eTitle = $('#desc_title');
 
-        $('#street_view iframe').attr('src', e[STVW] || ST_VIEW_ABSENT);
-        $('#img_link')
-            .attr('href', imagePath)
-            .attr('data-title', cptn);
-        $('#hist_img')
-            .attr('src', '')
-            .css('height', '')
-            .attr('src', imagePath);
-        $('#desc_body').fadeOut(animateTime, function() {
-            $('#desc').text(e[DESC]);
-            $('#src').text('Sources: ' + e[SRC]);
-            $('#cptn').html(cptn);
-            $(this).fadeIn(animateTime);
-        });
-        $('#desc_title').slideUp(animateTime, function() {
-            $(this).text(e[NAME]).slideDown(animateTime);
-        });
+        if (e[NAME] != eTitle.text()) {
+            var cptn = e[CAPT] ? '<i>Image:</i>   ' + e[CAPT] : '';
+            var imagePath = 'images/historical/' + e[NAME] + '.jpg';
+            var animateTime = args.fast ? 0 : 100;
 
-        $('#desc_body').scrollTop(0);
-        $('#image_holder div').scrollTop(0);
+            $('#street_view iframe').attr('src', e[STVW] || ST_VIEW_ABSENT);
+            $('#img_link')
+                .attr('href', imagePath)
+                .attr('data-title', cptn);
+            $('#hist_img').fadeTo(0, 0, function() {
+                $(this)
+                    .css('height', '')
+                    .attr('src', imagePath);
+            });
+            $('#desc_body').fadeOut(animateTime, function() {
+                var desc = $(this);
+                desc.find('#desc').text(e[DESC])
+                desc.find('#src').text('Sources: ' + e[SRC])
+                desc.find('#cptn').html(cptn)
+                desc.fadeIn(animateTime)
+                desc.scrollTop(0);
+            });
+            eTitle.slideUp(animateTime, function() {
+                $(this)
+                    .text(e[NAME])
+                    .slideDown(animateTime);
+            });
+
+            $('#image_holder div').scrollTop(0);
+        }
     };
 
     // Gets the new event and displays it.
@@ -441,8 +465,6 @@ $('#street_view_button').click(function(e, fast) {
         if (this != LF_MAP.selected) {
             LF_MAP.setSelected(this);
             this.remove().setIcon(this.ICONS[1]).addTo(LF_MAP);
-            for (var e in event) {
-            }
             requestData(updateInfo, {
                 index: this.EVENT_INDEX,
                 fast: event.fast || null
@@ -487,13 +509,10 @@ $('#street_view_button').click(function(e, fast) {
     var handleNoImage = function(data) {
         var name = getIconByType(data[NS.DATA_TTL][LF_MAP.selected.EVENT_INDEX][LBL]);
         var filePath = IC_PTH + name + IC_EXT;
-        var img = $('#hist_img');
 
-        // Conditional is to help prevent image stuttering when switching events.
-        if (img.attr('src') != filePath) {
-            img.css('height', '99%')
-               .attr('src', filePath);
-        }
+        $('#hist_img')
+            .css('height', '96%')
+            .attr('src', filePath);
         $('#img_link')
             .attr('href', filePath)
             .attr('data-title', NO_IMG_CAPTION);

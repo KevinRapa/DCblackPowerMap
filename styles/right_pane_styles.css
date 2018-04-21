@@ -59,6 +59,7 @@ cite {
 
 #hist_img {
 	width: 100%;
+	position: relative;
 }
 
 #street_view_button {
@@ -71,6 +72,7 @@ cite {
 	-webkit-box-shadow: 5px 5px 5px rgb(15,15,15);
 	font-weight: bold;
 	color: rgb(100,79,142);
+	z-index: 1;
 }
 
 .def_street_view_button {
