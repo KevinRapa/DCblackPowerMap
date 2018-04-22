@@ -49,7 +49,7 @@ var NS = (function(beginYr, endYR) {
         IMG_CONTAINER_HEIGHT: 370,        // Used to align images vertically in #hist_img
 
         MBL_TTL: 'THE BLACK POWER MAP',
-        DEF_TTL: $('#title_box').text(),
+        DEF_TTL: $('#title_box').text(),  // The website's title.
         DATA_URL: 'https://raw.githubusercontent.com/KevinRapa/KevinRapa.github.io/master/scripts/all_data.json',
         DATA_TTL: 'Black Power Events and Organizations',
 
@@ -345,8 +345,8 @@ $('#street_view_button').click(function(e, fast) {
 $('#hist_img').on('load', function(year) {
     var diff = NS.IMG_CONTAINER_HEIGHT - $(this).height();
 
-    $(this)
-        .css('top', (diff <= 0 ? 0 : diff / 2) + 'px')
+    $(this).css('top', (diff <= 0 ? 0 : diff / 2) + 'px')
+    $('#image_container div')
         .delay(200)
         .fadeTo(0, 1);
 });
@@ -437,8 +437,8 @@ $('#hist_img').on('load', function(year) {
             $('#img_link')
                 .attr('href', imagePath)
                 .attr('data-title', cptn);
-            $('#hist_img').fadeTo(0, 0, function() {
-                $(this)
+            $('#image_container div').fadeTo(0, 0, function() {
+                $(this).find('#hist_img')
                     .css('height', '')
                     .attr('src', imagePath);
             });

@@ -47,12 +47,13 @@ cite {
 }
 
 #image_container {
-	padding: 5px;
+	height: 360px;
+	padding: 10px;
 }
 
 #image_container div {
-	height: 370px;
-	width: 98%;
+	height: 100%;
+	width: 100%;
 	margin: auto auto;
 	overflow-y: auto;
 }
@@ -66,7 +67,7 @@ cite {
 	position: absolute;
 	min-height: 25px;
 	min-width: 140px;
-	padding: 0 10px;
+	margin: -3px;
 	box-shadow: 5px 5px 5px rgb(15,15,15);
 	-moz-box-shadow: 5px 5px 5px rgb(15,15,15);
 	-webkit-box-shadow: 5px 5px 5px rgb(15,15,15);
@@ -89,9 +90,9 @@ cite {
 
 #street_view_button:hover {
 	color: rgb(255, 240, 232);
-	background-color: rgb(46,46,46);
 }
 
 #street_view_button:active {
-	color: rgb(100,79,142);
+	box-shadow: none;
+	margin: 0;
 }

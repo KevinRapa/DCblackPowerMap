@@ -95,12 +95,12 @@ a {
 	-webkit-box-shadow: 5px 5px 5px rgb(15,15,15);
 }
 
-.intro_button:hover {
+.intro_button:hover, #street_view_button:hover {
 	background-color: rgb(60,60,60);
 }
 
 .intro_button:active {
-    box-shadow: none;
+	box-shadow: none;
 	position: relative;
 	top: 2px;
 	left: 2px;
