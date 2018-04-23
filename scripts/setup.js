@@ -346,9 +346,7 @@ $('#hist_img').on('load', function(year) {
     var diff = NS.IMG_CONTAINER_HEIGHT - $(this).height();
 
     $(this).css('top', (diff <= 0 ? 0 : diff / 2) + 'px')
-    $('#image_container div')
-        .delay(200)
-        .fadeTo(0, 1);
+    $('#image_container div').fadeTo(0, 1);
 });
 
 
