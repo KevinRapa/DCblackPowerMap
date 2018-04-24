@@ -55,7 +55,7 @@ var NS = (function() {
 
         MBL_TTL: 'THE BLACK POWER MAP',
         DEF_TTL: $('#title_box').text(),  // The website's title.
-        DATA_URL: 'https://raw.githubusercontent.com/KevinRapa/KevinRapa.github.io/master/scripts/all_data.json',
+        DATA_URL: 'https://raw.githubusercontent.com/KevinRapa/KevinRapa.github.io/master/all_data.json',
         DATA_TTL: 'Black Power Events and Organizations',
 
         MAP_OPTIONS: {
