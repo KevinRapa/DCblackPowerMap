@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>D.C. Map</title>
-    <link rel="stylesheet" href="styles/general_styles.css" />
-    <link rel="stylesheet" href="styles/left_pane_styles.css" />
-    <link rel="stylesheet" href="styles/right_pane_styles.css" />
-    <link rel="stylesheet" href="styles/slider_styles.css" />
-    <link rel="stylesheet" href="leaflet/leaflet.css" />
-    <link rel="stylesheet" href="lightbox/src/css/lightbox.css" />
-    <meta name="description" content="A GIS of historical black power events in Washington D.C.
-      based on original research by staff and students of the University of Maryland, Baltimore County." />
-    <meta name="author" content="Kevin Rapa" />
-    <meta name="viewport" content="width=670, initial-scale=0.60">
-    <script type="text/javascript" src="scripts/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript" src="leaflet/leaflet.js"></script>
-    <script type="text/javascript" src="lightbox/src/js/lightbox.js"></script>
+    <title>The Black Power Map</title>
+    <link rel='stylesheet' href='styles/general_styles.css' />
+    <link rel='stylesheet' href='styles/left_pane_styles.css' />
+    <link rel='stylesheet' href='styles/right_pane_styles.css' />
+    <link rel='stylesheet' href='styles/slider_styles.css' />
+    <link rel='stylesheet' href='leaflet/leaflet.css' />
+    <link rel='stylesheet' href='lightbox/src/css/lightbox.css' />
+    <meta name='description' content='A GIS of historical black power events in Washington D.C.
+      based on original research by staff and students of the University of Maryland, Baltimore County.' />
+    <meta name='author' content='Kevin Rapa' />
+    <meta name='viewport' content='width=670, initial-scale=0.60'> <!-- This could be tweaked better. I don't know how. -->
+    <script type='text/javascript' src='scripts/jquery-3.2.1.min.js'></script>
+    <script type='text/javascript' src='leaflet/leaflet.js'></script>
+    <script type='text/javascript' src='lightbox/src/js/lightbox.js'></script>
   </head>
   <body>
-    <div id="intro_screen"> <!-- INTRO SCREEN. Shields page contents until user hits button -->
-      <div id="intro_box" class="black_box">
+    <div id='intro_screen'> <!-- INTRO SCREEN. Shields page contents until user hits button -->
+      <div id='intro_box' class='black_box'>
         <h2>THE WASHINGTON, D.C. BLACK POWER MAP</h2>
         <p>
           The D.C. Black Power Map is an effort by the SNCC Legacy Project's Black Power
@@ -27,7 +27,7 @@
           and Marteze Gaines (Morehouse College) to document the Black Power movement in
           the nation's capital between the years of 1966 and 1995 through a web-based map.
         </p>
-        <hr /><button id="to_map" class="intro_button">TO MAP</button><hr />
+        <hr /><button id='to_map' class='intro_button'>TO MAP</button><hr />
         <p>
           To navigate the map, use the time slider to move between years. Click on icons
           or navigate with the <span>arrow buttons</span> to see which events 
@@ -37,94 +37,95 @@
         </p>
       </div>
     </div> <!-- END OF INTRO SCREEN -->
-    <div class="purple_box">
-      <div id="all_content">
-        <div id="title_box" class="def_title">THE WASHINGTON, D.C. BLACK POWER MAP</div>
-        <table id="featured_content">
+    <div class='purple_box'>
+      <div id='all_content'>
+        <div id='title_box' class='def_title'>THE WASHINGTON, D.C. BLACK POWER MAP</div>
+        <table id='featured_content'>
           <tbody>
             <tr>
-              <td class="content_pane" id="left_pane"> <!-- LEFT HALF. Contains all map elements. -->
-                <div id="mbl_holder"> <!-- Holds all main content when window is thin-->
-                  <div class="white_box">
-                    <div id="map_box" class="black_box">
-                      <div id="leaflet_map"></div>
-                      <input type="range" id="mbl_marker_slider" class="mobile" min="0" max="0" value="0"></input>
-                      <table id="slider_box" class="black_box fade_group"> 
-                            <!-- Things in class 'fade_group' appear and disappear when street view button is pressed. -->
+              <td class='content_pane' id='left_pane'> <!-- LEFT HALF. Contains all map elements. -->
+                <div id='mbl_holder'> <!-- Holds all main content when window is thin-->
+                  <div class='white_box'>
+                    <div id='map_box' class='black_box'>
+                      <div id='leaflet_map'></div>
+                      <input type='range' id='mbl_marker_slider' class='mobile' min='0' max='0' value='0'></input>
+                      <table id='slider_box' class='black_box fade_group'> 
+                        <!-- Things in class 'fade_group' toggle visibility when street view button is pressed. -->
                         <tbody>
                           <tr>
                             <td>
-                              <input id="slider" class="black_box" type="range" min="1961" max="1996" value="1961" />
+                              <input id='slider' class='black_box' type='range' min='1961' max='1966' value='1961' />
                             </td>
-                            <td id="year">1961</td>
-                            <td id="arrows">
-                              <button id="left_arrow" class="arrow"></button>
-                              <button id="right_arrow" class="arrow"></button>
+                            <td id='year'>1961</td>
+                            <td id='arrows'>
+                              <button id='left_arrow' class='arrow'></button>
+                              <button id='right_arrow' class='arrow'></button>
                             </td>
                           </tr>
                         </tbody>
                       </table>
-                      <div id="street_view">
+                      <div id='street_view'>
                         <iframe></iframe> <!-- Hidden when page loads -->
                       </div>
                     </div>
                   </div>
-                  <div id="mbl_year" class="mobile">1961</div>
-                  <input type="range" id="mbl_slider" class="mobile" min="1961" max="1996" value="1961" />
-                  <table id="legend" class="def_legend">
+                  <div id='mbl_year' class='mobile'>1961</div>
+                    <!-- Things in the 'mobile' class are only visible in compact mode. -->
+                  <input type='range' id='mbl_slider' class='mobile' min='1961' max='1996' value='1961' />
+                  <table id='legend' class='def_legend'>
                     <tbody>
                       <tr>
-                        <td class="icon_panel">
-                          <button id="P/EP" class="icon_button">
-                            <img src="images/icons/fst.png" class="icon" />
+                        <td class='icon_panel'>
+                          <button id='P/EP' class='icon_button'>
+                            <img src='images/icons/fst.png' class='icon' />
                           </button>
-                          <span class="icon_text">Political</span>
+                          <span class='icon_text'>Political</span>
                         </td>
-                        <td class="icon_panel">
-                          <button id="BA" class="icon_button">
-                            <img src="images/icons/brsh.png" class="icon" />
+                        <td class='icon_panel'>
+                          <button id='BA' class='icon_button'>
+                            <img src='images/icons/brsh.png' class='icon' />
                           </button>
-                          <span class="icon_text">Artistic</span>
+                          <span class='icon_text'>Artistic</span>
                         </td>
-                        <td class="icon_panel">
-                          <button id="BB" class="icon_button">
-                            <img src="images/icons/dllr.png" class="icon" />
+                        <td class='icon_panel'>
+                          <button id='BB' class='icon_button'>
+                            <img src='images/icons/dllr.png' class='icon' />
                           </button>
-                          <span class="icon_text">Business</span>
+                          <span class='icon_text'>Business</span>
                         </td>
-                        <td class="icon_panel">
-                          <button id="IS" class="icon_button">
-                            <img src="images/icons/schl.png" class="icon" />
+                        <td class='icon_panel'>
+                          <button id='IS' class='icon_button'>
+                            <img src='images/icons/schl.png' class='icon' />
                           </button>
-                          <span class="icon_text">Educational</span>
+                          <span class='icon_text'>Educational</span>
                         </td>
-                        <td class="icon_panel">
-                          <button id="PA/IS" class="icon_button">
-                            <img src="images/icons/glb.png" class="icon" />
+                        <td class='icon_panel'>
+                          <button id='PA/IS' class='icon_button'>
+                            <img src='images/icons/glb.png' class='icon' />
                           </button>
-                          <span class="icon_text">Pan-African</span>
+                          <span class='icon_text'>Pan-African</span>
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
               </td> <!-- END OF LEFT HALF -->
-              <td class="content_pane" id="right_pane"> <!-- RIGHT HALF. Contains all event details. -->
-                <div class="white_box" id="right_box"> <!-- Moves into #mbl holder when page is thin. -->
-                  <div id="desc_container" class="black_box">
-                    <div id="desc_title"></div>
+              <td class='content_pane' id='right_pane'> <!-- RIGHT HALF. Contains all event details. -->
+                <div class='white_box' id='right_box'> <!-- Moves into #mbl_holder when page is thin. -->
+                  <div id='desc_container' class='black_box'>
+                    <div id='desc_title'></div>
                     <hr />
-                    <div id="desc_body">
-                      <span id="desc"></span>
-                      <cite id="src"></cite>
-                      <span id="cptn"></span>
+                    <div id='desc_body'>
+                      <span id='desc'></span>
+                      <cite id='src'></cite>
+                      <span id='cptn'></span>
                     </div> <!-- Scroll bar appears if overflow in description -->
                   </div>
-                  <div id="image_container" class="black_box"> <!-- Holds historical image -->
-                    <button id="street_view_button" class="def_street_view_button">To street view</button>
+                  <div id='image_container' class='black_box'> <!-- Holds historical image -->
+                    <button id='street_view_button' class='def_street_view_button'>To street view</button>
                     <div> <!-- Need another div to align correctly -->
-                      <a id="img_link" data-lightbox="img">
-                        <img id="hist_img" />
+                      <a id='img_link' data-lightbox='img'>
+                        <img id='hist_img' />
                       </a>
                     </div>
                   </div>
@@ -135,49 +136,37 @@
         </table>
       </div>
     </div>
-    <div id="footer_box" class="purple_box">
-      <div class="black_box" id="footer_content_upper">
+    <div id='footer_box' class='purple_box'>
+      <div class='black_box' id='footer_content_upper'>
         Site design and implementation by Kevin Rapa | Credits also to Professor Joseph Scool of UMBC |
         Data compiled and edited by the Legacy Project's Black Power Chronicles, UMBC Professor
         George Derek Musgrove, and student volunteers Luwam Gebreyesus and Ralph Cyrus (UMBC), Donelle
         Boose (American University), and Marteze Gaines (Morehouse College). 
-        <br>
+        <br />
         To suggest corrections, additions, or provide other feedback, please email George Derek
-        Musgrove at <a href="gmusgr1@umbc.edu">gmusgr1@umbc.edu</a>.
-        <button id="to_intro" class="intro_button">See directions</button>
+        Musgrove at <a href='gmusgr1@umbc.edu'>gmusgr1@umbc.edu</a>.
+        <button id='to_intro' class='intro_button'>See directions</button>
       </div>
-      <div id="footer_content_lower">
-        Courtesy to <a href="http://lokeshdhakar.com/projects/lightbox2/" >Lightbox</a>, 
-        <a href="http://leafletjs.com/" target="_blank">Leaflet</a>, 
-        <a href="https://pixlr.com/editor/" target="_blank">Marker helper</a>, 
-        <a href="http://www.bestcssbuttongenerator.com" target="_blank">Button helper</a>, 
-        <a href="http://danielstern.ca/range.css/#/" target="_blank">Slider helper</a>, and Google Maps |
-        Map tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a>
-        &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>
+      <div id='footer_content_lower'>
+        Courtesy to <a href='http://lokeshdhakar.com/projects/lightbox2/' >Lightbox</a>, 
+        <a href='http://leafletjs.com/' target='_blank'>Leaflet</a>, 
+        <a href='https://pixlr.com/editor/' target='_blank'>Marker helper</a>, 
+        <a href='http://www.bestcssbuttongenerator.com' target='_blank'>Button helper</a>, 
+        <a href='http://danielstern.ca/range.css/#/' target='_blank'>Slider helper</a>, and Google Maps |
+        Map tiles courtesy of <a href='http://openstreetmap.se/' target='_blank'>OpenStreetMap Sweden</a>
+        &mdash; Map data &copy; <a href='http://www.openstreetmap.org/copyright' target='_blank'>OpenStreetMap</a>
       </div>
     </div>
-    <script type="text/javascript" src="scripts/setup.js"></script>
+    <script type='text/javascript' src='scripts/setup.js'></script>
   </body>
 </html>
 
 <!--
 Sources:
-
-Brush icon:
-http://www.freeiconspng.com/img/9020
-
-Fist icons:
-https://pixabay.com/p-1294353/?no_redirect
-
-School images:
-http://www.freeiconspng.com/img/14052
-
-Dollar images:
-http://cliparting.com/wp-content/uploads/2017/01/Dollar-sign-dollar-symbol-clipart-kid.png
-
-Globe images:
-https://www.shareicon.net/tag/globe?cat=mixed
-
-Question mark images:
-http://deathbattle.wikia.com/wiki/File:Question_mark.png
+Brush icon: http://www.freeiconspng.com/img/9020
+Fist icons: https://pixabay.com/p-1294353/?no_redirect
+School icon: http://www.freeiconspng.com/img/14052
+Dollar icon: http://cliparting.com/wp-content/uploads/2017/01/Dollar-sign-dollar-symbol-clipart-kid.png
+Globe icon: https://www.shareicon.net/tag/globe?cat=mixed
+Question mark icon: http://deathbattle.wikia.com/wiki/File:Question_mark.png
 -->

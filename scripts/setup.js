@@ -29,6 +29,9 @@
     This will only process and add elements to the map if they have a valid start year,
     latitude, and longitude.
 
+    To change the end year (when the slider stops), change the max value in the #slider element
+    in index.html.
+
     Author: Kevin Rapa
     Email:  kevjrapa@gmail.com
 */
@@ -37,12 +40,14 @@
 window.compact = false;
 
 // Namespace with options that may change.
-var NS = (function(beginYr, endYR) {
-    var numYrs = endYR - beginYr + 1; // last index is for displaying all markers.
+var NS = (function() {
+    var beginYr = 1961;
+    var endYr = parseInt($('#slider').attr('max') - 1);
+    var numYrs = endYr - beginYr + 1; // last index is for displaying all markers.
 
     return {
         BEGIN_YR: beginYr,
-        END_YR: endYR,
+        END_YR: endYr,
         NUM_YRS: numYrs,
         NO_ANIMATION: {fast: true},       // Argument for stopping animation.
         ALIGN_MAGIC: (570 - 80) / numYrs, // Aligns mbl_year. (mbl_slider width - thumb width). It just works.
@@ -54,15 +59,15 @@ var NS = (function(beginYr, endYR) {
         DATA_TTL: 'Black Power Events and Organizations',
 
         MAP_OPTIONS: {
-            zoomSnap: 0,
-            zoomDelta: 0.6,
-            minZoom: 8,
-            layers: L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png')
+            zoomSnap: 0,    // If 0, zoom won't snap.
+            zoomDelta: 0.6, // Zoom will be a multiple of this.
+            minZoom: 8,     // Users can't zoom out beyond this.
+            layers: L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png') // Map style
         },
         MAP_AUTOPAN_OPTIONS: {
-            maxZoom: 15,
-            paddingBottomRight: L.point(80,80),
-            paddingTopLeft: L.point(25,25)
+            maxZoom: 15,                        // Map won't autopan beyond this.
+            paddingBottomRight: L.point(80,80), // Buffer on edge of map.
+            paddingTopLeft: L.point(25,25)      // Buffer on edge of map.
         },
         TOOLTIP_OPTIONS: {
             opacity: 0.8,
@@ -70,28 +75,30 @@ var NS = (function(beginYr, endYR) {
             className: 'tooltip'
         }
     };
-})(1961, parseInt($('#slider').attr('max') - 1));
+})();
 
 
-/*
+/**
  * Sets up the map and adds it to the page.
  * To get new map tiles, visit https://leaflet-extras.github.io/leaflet-providers/preview/
  */
 var LF_MAP = (function() {
     var map = L.map('leaflet_map', NS.MAP_OPTIONS);
 
-    map.displayed = [];  // All icons currently being displayed on the map.
+    map.displayed = [];  // All icons currently on the map.
     map.selected = null; // The currently selected marker.
 
-    // A list of lists, each holding events falling within the same year. Events may appear more than once.
-    // Indexed by year - BEGIN_YR + offset.
+    // A list of lists. Each list is one year and holds markers for events in that year.
     map.ALL_MARKERS = new Array(NS.NUM_YRS + 1); 
 
     for (var i = 0, len = map.ALL_MARKERS.length; i < len; i++) {
         map.ALL_MARKERS[i] = [];
     }    
 
-    // Resets currently selected marker to unselected and selects [newMarker]
+    /**
+     * Resets currently selected marker to unselected and selects the new marker.
+     * @param {Object} newMarker - The new marker to select.
+     */
     map.setSelected = function(newMarker) {
         if (this.selected) {
             this.selected
@@ -102,7 +109,11 @@ var LF_MAP = (function() {
         this.selected = newMarker;
     };
     
-    // Switches up all markers on the map based on the year and type (If type is defined).
+    /**
+     * Switches up all markers on the map based on the year and type (If type is defined).
+     * @param {Number} year - The year we want all the markers to be.
+     * @param {String} type - Optional. The event type we want all the markers to be.
+     */
     map.eventQuery = function(year, type) {
         var bounds = [];
 
@@ -148,21 +159,27 @@ var LF_MAP = (function() {
 })();
 
 
-/*
- * Transforms page into mobile view. Basically moves the right half of the page into 
- * the left half, then centers the new block. Also swaps the slider to compact 
- * version. If street view is showing, first resets back to map or else map SEIZES.
+/**
+ * Sets up listener for switching the page between desktop and mobile mode.
  */
 (function() {
+    /**
+     * Importantly, this turns off street view if it's on since the Leaflet map will 'break'
+     * it isn't. Also, this detaches the mobile holder to be used in the other 2 functions.
+     */ 
     var initTransform = function() {
         this.compact = ! this.compact;
 
         if ($('#street_view').css('display') != 'none') {
-            $('#street_view_button').trigger('click', NS.NO_ANIMATION); // Prevents map seizing.
+            $('#street_view_button').trigger('click', NS.NO_ANIMATION);
         } 
         return $('#mbl_holder').detach();
     }
 
+    /**
+     * Converts webpage to more mobile-friendly mode.
+     * @param {Object} holder - #mbl_holder HTML element. Holds each element that migrates.
+     */
     var toCompactMode = function(holder) {
         holder.find('#legend')
             .css('border-radius', '40px 40px 0 0')
@@ -189,6 +206,10 @@ var LF_MAP = (function() {
         (LF_MAP.displayed.length > 1) || holder.find('#mbl_marker_slider').hide();
     }
 
+    /**
+     * Converts webpage to desktop-friendly mode.
+     * @param {Object} holder - #mbl_holder HTML element. Holds each element that migrates.
+     */
     var toRegularMode = function(holder) {
         holder.find('.mobile')
             .attr('class', 'mobile')
@@ -211,7 +232,7 @@ var LF_MAP = (function() {
     }
 
     $(window).resize(function() {
-        var narrowEnough = $(this).width() < 1200; // 1200 is also used again at the bottom of the function.
+        var narrowEnough = $(this).width() < 1200;
 
         if (! this.compact && narrowEnough) {
             toCompactMode(initTransform());
@@ -219,14 +240,17 @@ var LF_MAP = (function() {
         else if (this.compact && ! narrowEnough) {
             toRegularMode(initTransform());
         }
-    }).ready(function() {
-        $(".mobile").hide();
-        $(this).trigger('resize');
     });
 })();
 
 
-/*
+$(window).ready(function() {
+    $(".mobile").hide();
+    $(this).trigger('resize');
+});
+
+
+/**
  * Adds functionality to sliders. 
  */
 $('#slider').on('input', function() { 
@@ -252,48 +276,45 @@ $('#mbl_marker_slider').on('input', function() {
 });
 
 
-/*
- * Animates legend icons when interacted with. Clicking them filters markers by event type.
+/**
+ * Animates legend icons when interacted with. They filter markers by event type.
  */
 (function() {
-    var BOUNCE_TIME = 90;
-    
-    var click = function(e) {
-        var btn = $(this),
-            text = btn.next(),
+    var click = function() {
+        var iconLbl = $(this).next(),
             year = parseInt($('#year').text()) || NS.END_YR + 1;
 
         for (var offset of ['-3px', '3px', '0']) {
-            btn.animate({bottom: offset}, BOUNCE_TIME);
+            $(this).animate({bottom: offset}, 90);
         }
                 
         if ($('#street_view').css('display') != 'none') {
             $('#street_view_button').trigger('click');
         }
         
-        // Filters by event type, else reset the filter
-        if (text.css('font-style') == 'normal') {
+        // Toggles between filtering and resetting the filter. 
+        if (iconLbl.css('font-style') == 'normal') {
             $('.icon_text').css('font-style', 'normal');
-            text.css('font-style', 'oblique');
+            iconLbl.css('font-style', 'oblique');
             LF_MAP.eventQuery(year, $(this).attr('id'));
         } 
         else {
-            text.css('font-style', 'normal');
+            iconLbl.css('font-style', 'normal');
             LF_MAP.eventQuery(year);
         }
     };
     var hvrIn = function() {
-        $(this).animate({bottom: '4px'}, BOUNCE_TIME);
+        $(this).animate({bottom: '4px'}, 90);
     };
     var hvrOut = function() {
-        $(this).animate({bottom: '0'}, BOUNCE_TIME);
+        $(this).animate({bottom: '0'}, 90);
     };
 
     $('.icon_button').click(click).hover(hvrIn, hvrOut);
 })();
 
 
-/* 
+/**
  * Buttons that remove and restore the intro screen.
  */
 $('#to_map').click(function() {
@@ -306,7 +327,7 @@ $('#to_intro').click(function() {
 });
 
 
-/*
+/**
  * Toggles between the map and the street view image.
  * If speed == null, then an animation happens. Otherwise, speed == NO_ANIMATION.
  * The animation can can the map to seize if it happens while going to compact mode.
@@ -320,7 +341,7 @@ $('#street_view_button').click(function(e, fast) {
 
         $('.fade_group').fadeOut(fadeTime);
         $('#leaflet_map').fadeOut(fadeTime, function() {
-            // 'If' needed since clicking the button quickly will mess things up.
+            // 'If' needed since clicking the button rapidly makes a bug.
             (stView.css('display') == 'none') && stView.fadeIn(fadeTime);
             window.compact && $('#legend').css('border-radius', '0');
         });
@@ -339,7 +360,7 @@ $('#street_view_button').click(function(e, fast) {
 });
 
 
-/*
+/**
  * Aligns a historical image vertically (if too short) when it is loaded.
  */
 $('#hist_img').on('load', function(year) {
@@ -350,7 +371,7 @@ $('#hist_img').on('load', function(year) {
 });
 
 
-/*
+/**
  * Adds functionality to arrow buttons. Switches between markers on map in a bottom 
  * to top fashion. Once the last marker is passed, goes to the next/previous if there is one.
  */
@@ -361,7 +382,7 @@ $('#hist_img').on('load', function(year) {
         var delta = ($(this).attr('id') == 'left_arrow') ? -1 : 1;
 
         if ((delta < 0 && marker > 0) || (delta > 0 && marker < LF_MAP.displayed.length - 1)) {
-            LF_MAP.displayed[marker + delta].fire('click');  // Move to next/prev marker
+            LF_MAP.displayed[marker + delta].fire('click'); // Move to next/prev marker
         } 
         else if ((delta < 0 && yr > NS.BEGIN_YR) || (delta > 0 && yr < NS.END_YR + 1)) {
             $('#slider').val(yr + delta).trigger('input'); // Move to next/prev year.
@@ -370,13 +391,14 @@ $('#hist_img').on('load', function(year) {
                 LF_MAP.displayed[LF_MAP.displayed.length - 1].fire('click');
             }
         }
-    }
+    };
     $('.arrow').click(switchEvent);
 })();
 
 
-/* 
+/**
  * Creates all the markers and displays first year when page loads.
+ * Also adds some event listeners to the window.
  */
 (function() {
     // Image used when no street view data is present.
@@ -384,16 +406,15 @@ $('#hist_img').on('load', function(year) {
                         '7232!3d38.89345203863472!2m2!1f0!2f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sen!2sus!4v1522802214611';
 
     var NO_IMG_CAPTION = 'This event does not have an image yet. Contributions of any kind are welcome. If you have an ' +
-                            'image to contribute, please email George Derek Musgrove at gmusgr1@umbc.edu.';
+                        'image to contribute, please email George Derek Musgrove at gmusgr1@umbc.edu.';
 
     // Filepath and extension for the icons
     var IC_PTH = 'images/icons/', 
         IC_EXT = '.png';
 
     // Marker image file base names
-    var FST = 'fst',    BRSH = 'brsh', 
-        DLLR = 'dllr',  GLB = 'glb', 
-        SCHL = 'schl',  UNKN = 'unkn';
+    var FST = 'fst',  BRSH = 'brsh',  DLLR = 'dllr',  
+        GLB = 'glb',  SCHL = 'schl',  UNKN = 'unkn';
 
     // Change if modifying spreadsheet field names.
     var STRT = 'Start_Year',       END  = 'End_Year',
@@ -402,7 +423,11 @@ $('#hist_img').on('load', function(year) {
         STVW = 'St_View_URL',      LBL  = 'Label',
         CAPT = 'Picture_Caption',  SRC = 'Sources';
 
-     // Gets the JSON for the data and uses it in callback.
+    /**
+     * Requests the JSON data from wherever it resides, currently on Github.
+     * @param {Function} callback - function in which the data is used (It is called).
+     * @param {Object} args - Object holder arguments to pass into the callback.
+     */
     var requestData = function(callback, args) {
         $.getJSON(NS.DATA_URL).done(function(spreadsheet) {
             callback(spreadsheet, args);
@@ -421,14 +446,19 @@ $('#hist_img').on('load', function(year) {
         });
     };
 
-    // Updates the event info on the screen. Called when icon is clicked.
+    /**
+     * Updates the event info on the screen. Called when icon is clicked.
+     * @param {Object} data - The JSON data for all the events.
+     * @param {Object} args - Holds index of event in JSON and animation speed.
+     */
     var updateInfo = function(data, args) {
         var e = data[NS.DATA_TTL][args.index];
         var eTitle = $('#desc_title');
 
         if (e[NAME] != eTitle.text()) {
             var cptn = e[CAPT] ? '<i>Image:</i>   ' + e[CAPT] : '';
-            var imagePath = 'images/historical/' + e[NAME] + '.jpg';
+            var fileName = (e[NAME] + ', ' + e[STRT]) + '.jpg';
+            var imagePath = 'images/historical/' + fileName;
             var animateTime = args.fast ? 0 : 100;
 
             $('#street_view iframe').attr('src', e[STVW] || ST_VIEW_ABSENT);
@@ -449,8 +479,7 @@ $('#hist_img').on('load', function(year) {
                 desc.scrollTop(0);
             });
             eTitle.slideUp(animateTime, function() {
-                $(this)
-                    .text(e[NAME])
+                $(this).text(e[NAME])
                     .slideDown(animateTime);
             });
 
@@ -458,7 +487,10 @@ $('#hist_img').on('load', function(year) {
         }
     };
 
-    // Gets the new event and displays it.
+    /**
+     * Gets the new event and displays it.
+     * @param {Object} event - Event object, holds animation speed.
+     */
     var switchEvent = function(event) {
         if (this != LF_MAP.selected) {
             LF_MAP.setSelected(this);
@@ -470,9 +502,13 @@ $('#hist_img').on('load', function(year) {
         }
     };
 
-    // Translates an event type to the name of the icon that represents it.
+    /**
+     * Translates an event type to the name of the icon that represents it.
+     * @param {String} eventType - The category of event corresponding to legend icons.
+     * @return {String} - Name of the icon to use for the event type.
+     */
     var getIconByType = function(eventType) {
-        switch(eventType) {
+        switch (eventType) {
             case 'PA/IS':
                 return GLB;
             case 'BA':
@@ -488,7 +524,10 @@ $('#hist_img').on('load', function(year) {
         }
     };
 
-    // Returns a pair of icons for use by a marker to switch between selected and unselected.
+    /**
+     * Used when initially filling ALL_MARKERS. Event markers flip between icons.
+     * @return {String} - Selected/unselected icon pair for the event marker.
+     */
     var getIconPair = (function() {
         var pairs = {};
 
@@ -504,6 +543,10 @@ $('#hist_img').on('load', function(year) {
         };
     })();
 
+    /**
+     * If no image is found for an event, this displays a generic image instead.
+     * @param {Object} data - The JSON data for all the events.
+     */
     var handleNoImage = function(data) {
         var name = getIconByType(data[NS.DATA_TTL][LF_MAP.selected.EVENT_INDEX][LBL]);
         var filePath = IC_PTH + name + IC_EXT;
@@ -516,7 +559,12 @@ $('#hist_img').on('load', function(year) {
             .attr('data-title', NO_IMG_CAPTION);
     };
 
-    // Depending on an event's time span, it can appear in multiple years.
+    /**
+     * Depending on an event's time span, it can appear in multiple years.
+     * @param {Number} startYr - Start year of the event. Must be a four digit year.
+     * @param {Number} endYr - End year, either a number or "present".
+     * @return {Number} - Number of years and indices in ALL_MARKERS in which this event appears.
+     */
     var getEventTimeSpan = function(startYr, endYr) {
         if (endYr == 'present') {
             return LF_MAP.ALL_MARKERS.length;
@@ -529,7 +577,14 @@ $('#hist_img').on('load', function(year) {
         }
     };
 
-    // Determines if the properties necessary to display a marker are valid for an event.
+    /**
+     * Determines if the properties necessary to display a marker are valid for an event.
+     * @param {String} name - Name of the event.
+     * @param {Number} startYr - Year event begins.
+     * @param {Number} lat - Latitude of event marker.
+     * @param {Number} long - longitude of event marker.
+     * @return {Boolean} - If the event can be displayed.  
+     */
     var validateEvent = function(name, startYr, lat, long) {
         if (typeof startYr != 'number' || startYr < NS.BEGIN_YR || startYr > NS.END_YR) {
             console.log('Invalid start year in \'' + name + '.\'\n\t\'' + startYr + '\' not valid');
@@ -542,11 +597,14 @@ $('#hist_img').on('load', function(year) {
         return true;
     };
 
-    // Populate ALL_MARKERS, sorts each year, then queries first year.
+    /**
+     * Populate ALL_MARKERS, sorts each year, then queries first year.
+     * @param {Object} data - The JSON data for every event.
+     */
     var populateMarkerArray = function(data) {
         var numSuccess = i = 0;
 
-        for (var l = data[NS.DATA_TTL].length; i < l; i++) {
+        for (var len = data[NS.DATA_TTL].length; i < len; i++) {
             var e = data[NS.DATA_TTL][i];
 
             // To add a marker, it must have a start date and a position.
@@ -588,10 +646,7 @@ $('#hist_img').on('load', function(year) {
 
     // If a historical image fails to load, load a standard image.
     window.addEventListener('error', function(err) {
-        // Caption used in pop-up window when there's no historical image.
-        if (err.target.id == 'hist_img') {
-            requestData(handleNoImage);
-        }
+        (err.target.id == 'hist_img') && requestData(handleNoImage);
     }, true);
 
     requestData(populateMarkerArray);
