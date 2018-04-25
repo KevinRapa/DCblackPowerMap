@@ -47,7 +47,6 @@
 }
 
 #slider_box {
-	height: 20px;
 	position: relative;
 	bottom: 40px;
 	margin: 0 auto;
@@ -66,11 +65,15 @@
 	opacity: 1.0
 }
 
+#arrows {
+	width: 55px;
+}
+
 .arrow {
     height: 0;
     width: 0;
     position: relative;
-    bottom: 3px;
+    bottom: 2px; /* Not sure why, but the buttons don't vertically align perfectly */
     background-color: transparent;
     border: 9px solid rgb(42,42,42);
 }
